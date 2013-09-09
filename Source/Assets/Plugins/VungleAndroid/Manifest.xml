@@ -1,0 +1,14 @@
+<!-- ACTIVITIES -->
+	<activity android:name="com.vungle.sdk.VungleAdvert" android:configChanges="keyboardHidden|orientation|screenSize" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+
+<!-- META-DATA -->
+
+
+
+<!-- PERMISSIONS -->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+

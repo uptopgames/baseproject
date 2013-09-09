@@ -8,7 +8,7 @@ public class LogoPanel : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		logoPanel.Transitions.list[0].animParams[0].duration = 10;
+		//logoPanel.Transitions.list[0].animParams[0].duration = 10;
 		
 		logoPanel.StartTransition(UIPanelManager.SHOW_MODE.BringInForward);
 		
