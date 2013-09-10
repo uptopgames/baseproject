@@ -41,11 +41,11 @@ public class GameNativeGUI
 		showMessageOkCancel(title, message, null, null);
 	}
 	
-	public void startLoading(string title=null, string message=null)
+	public void startLoading(GameObject loadingDialog, string title=null, string message=null)
 	{
-		if (title == null) title = LOADING_TITLE;
-		if (message == null) message = LOADING_MESSAGE;
+		//if (title == null) title = LOADING_TITLE;
+		//if (message == null) message = LOADING_MESSAGE;
 		
-		loadingMessage(title, message);
+		loadingMessage(loadingDialog, title, message);
 	}
 }

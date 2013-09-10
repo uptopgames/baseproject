@@ -1,14 +1,20 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../../../../Dropbox/Project Building/Under Construction/New Base/Source/Assets/Plugins/GUI/GameComponents.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Login.cs">
     <Files>
-      <File FileName="../../../../Dropbox/Project Building/Under Construction/New Base/Source/Assets/Plugins/GUI/GameComponents.cs" Line="69" Column="44" />
+      <File FileName="Assets/Scripts/Invite.cs" Line="16" Column="3" />
+      <File FileName="Assets/Scripts/Login.cs" Line="335" Column="92" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Assets" expanded="True">
+              <Node name="Plugins" expanded="True">
+                <Node name="AnBSoft Common" expanded="True">
+                  <Node name="Standard Shaders" expanded="True" />
+                </Node>
+              </Node>
               <Node name="Scripts" expanded="True">
                 <Node name="Splashscreen" expanded="True" />
                 <Node name="Login.cs" selected="True" />

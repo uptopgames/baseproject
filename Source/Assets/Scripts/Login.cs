@@ -9,7 +9,10 @@ public class Login : MonoBehaviour
 	public UIPanelManager panelManager;
 	public GameObject passwordDialog;
 	
+	public GameObject loadingDialog;
+	
 	public SpriteText passwordText;
+	public SpriteText passwordPlaceholderText;
 	public GameObject messageOkDialog;
 	
 	private string authentication;
@@ -121,7 +124,7 @@ public class Login : MonoBehaviour
 		form.AddField("authentication", authentication);
 		
 		// Up Top Fix Me
-		//game_native.stopLoading();
+		Flow.game_native.stopLoading(loadingDialog);
 		//GameGUI.disableGui();
 		
 		while (max_attempts > 0)
@@ -199,7 +202,7 @@ public class Login : MonoBehaviour
 		}
 		
 		// Up Top Fix Me
-		Flow.game_native.startLoading();
+		Flow.game_native.startLoading(loadingDialog);
 		
 		//GameConnection conn = new GameConnection(components.url_login, connectionResult);
 		GameConnection conn = new GameConnection(Flow.URL_BASE + "login/", connectionResult);
@@ -258,7 +261,7 @@ public class Login : MonoBehaviour
 		// Verifica se houve erro
 		if (error == null && json.Contains("error")) error = json["error"].ToString();
 		
-		Flow.game_native.stopLoading();
+		Flow.game_native.stopLoading(loadingDialog);
 		
 		// Trata o erro
 		if (error != null)
@@ -328,7 +331,16 @@ public class Login : MonoBehaviour
 	{
 		messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = "ClickedOkMessageDialog";
 		ClickedOkMessageDialog();
+		
+		// TO DO: Chamar método que carrega a lista de invite antes de chamar o painel de invite.
+		
 		panelManager.BringIn("InviteScenePanel");
 		
+	}
+	
+	void HidePlaceholder()
+	{
+		Debug.Log("cliquei no treco");
+		passwordPlaceholderText.Hide(true);
 	}
 }

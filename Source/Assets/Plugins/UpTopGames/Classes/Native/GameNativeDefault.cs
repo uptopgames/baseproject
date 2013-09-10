@@ -94,14 +94,27 @@ public class GameNativeDefault: GameNativeBase
 	}
 	
 	// Inicia a tela de loading
-	public override void loadingMessage(string title, string message)
+	public override void loadingMessage(GameObject loadingDialog, string title = "", string message = "")
 	{
+		if(!title.IsEmpty())
+		{
+			loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+		}
+		
+		if(!message.IsEmpty())
+		{
+			loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+		}
+		
+		loadingDialog.SetActive(true);
+		
 		//GameGUI.startLoading(new GameLoadingWindow(title, message));
 	}
 	
 	// Termina a tela de loading
-	public override void stopLoading()
+	public override void stopLoading(GameObject loadingDialog)
 	{
+		loadingDialog.SetActive(false);
 		//GameGUI.stopLoading();
 	}
 	

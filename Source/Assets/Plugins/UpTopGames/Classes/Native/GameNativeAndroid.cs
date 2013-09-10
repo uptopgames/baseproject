@@ -15,9 +15,6 @@ public class GameNativeAndroid: GameNativeBase
 	private string take_picture = null;
 	private string from_library = null;
 	
-	// Semaforo para o loading
-	protected static Semaphore semaphore = new Semaphore(1, 1);
-	
 	public GameNativeAndroid()
 	{
 		addActionShowMessage(handlePhotoOption);
@@ -65,18 +62,10 @@ public class GameNativeAndroid: GameNativeBase
 		{
 			title = messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
 		}
-		else
-		{
-			messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
-		}
 		
 		if(message.IsEmpty())
 		{
 			message = messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
-		}
-		else
-		{
-			messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		if(button.IsEmpty())
@@ -89,10 +78,6 @@ public class GameNativeAndroid: GameNativeBase
 			{
 				button = default_ok_button;
 			}
-		}
-		else
-		{
-			 messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
 		}
 
 		EtceteraAndroid.showAlert(title, filterMessage(message), button);
@@ -131,23 +116,24 @@ public class GameNativeAndroid: GameNativeBase
 	}
 	
 	// Mostra o loading com uma mensagem
-	public override void loadingMessage(string title, string message)
+	public override void loadingMessage(GameObject loadingDialog, string title = "", string message = "")
 	{
-		if (!GameNativeAndroid.semaphore.WaitOne(0)) return;
+		if(title.IsEmpty())
+		{
+			title = loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
+		}
+		if(message.IsEmpty())
+		{
+			message = loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
+		}
 		
 		EtceteraAndroid.showProgressDialog(title, message);
 	}
 	
 	// Termina a tela de loading
-	public override void stopLoading()
+	public override void stopLoading(GameObject loadingDialog)
 	{
 		EtceteraAndroid.hideProgressDialog();
-		
-		try
-		{
-			GameNativeAndroid.semaphore.Release();
-		}
-		catch (SemaphoreFullException) {}
 	}
 	
 	// Abre uma URL com o navegador dentro do proprio aplicativo

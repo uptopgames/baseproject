@@ -50,8 +50,8 @@ public class ServerSettingsManager : MonoBehaviour
 	
 	void OnReceiveSettings(string error, IJSonObject data)
 	{
-		Debug.Log(error);
-		Debug.Log(data);
+		//Debug.Log(error);
+		//Debug.Log(data);
 		if (error != null || data.IsEmpty() || data.IsError())
 			return;
 		

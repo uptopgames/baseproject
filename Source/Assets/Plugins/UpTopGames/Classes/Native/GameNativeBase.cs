@@ -5,8 +5,8 @@ using System.Collections;
 public abstract class GameNativeBase: MonoBehaviour
 {
 	// Mensagens padrao das telas de loading
-	public static string LOADING_TITLE = "Loading";
-	public static string LOADING_MESSAGE = "Please wait...";
+	//public static string LOADING_TITLE = "Loading";
+	//public static string LOADING_MESSAGE = "Please wait...";
 	
 	// Mensagens padrao dos botoes
 	public string default_ok_button = "OK";
@@ -53,10 +53,10 @@ public abstract class GameNativeBase: MonoBehaviour
 	public abstract void cameraRoll(float x, float y, string photo_name);
 	
 	// Inicia a tela de loading
-	public abstract void loadingMessage(string title, string message);
+	public abstract void loadingMessage(GameObject loadingDialog, string title, string message);
 	
 	// Termina a tela de loading
-	public abstract void stopLoading();
+	public abstract void stopLoading(GameObject loadingDialog);
 	
 	// Abre uma URL com o navegador dentro do proprio aplicativo
 	public abstract bool openUrlInline(string url);

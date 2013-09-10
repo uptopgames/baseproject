@@ -57,18 +57,10 @@ public class GameNativeIos: GameNativeBase
 		{
 			title = messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
 		}
-		else
-		{
-			messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
-		}
 		
 		if(message.IsEmpty())
 		{
 			message = messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
-		}
-		else
-		{
-			messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		if(button.IsEmpty())
@@ -81,10 +73,6 @@ public class GameNativeIos: GameNativeBase
 			{
 				button = default_ok_button;
 			}
-		}
-		else
-		{
-			 messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
 		}
 		
 		EtceteraBinding.showAlertWithTitleMessageAndButtons(title, filterMessage(message), new string[] { button });
@@ -144,13 +132,18 @@ public class GameNativeIos: GameNativeBase
 	}
 	
 	// Mostra o loading com uma mensagem
-	public override void loadingMessage(string title, string message)
+	public override void loadingMessage(GameObject loadingDialog, string title = "", string message = "")
 	{
+		if(message.IsEmpty())
+		{
+			message = loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
+		}
+		
 		EtceteraBinding.showBezelActivityViewWithLabel(message);
 	}
 	
 	// Inicia a tela de loading
-	public override void stopLoading()
+	public override void stopLoading(GameObject loadingDialog)
 	{
 		EtceteraBinding.hideActivityView();
 	}
