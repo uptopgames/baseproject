@@ -14,9 +14,9 @@ public class GameNativeGUI
 	{
 	}
 	
-	public void showMessage(string title, string message)
+	public void showMessage(GameObject messageOkDialog, string title = "", string message = "", string button = "")
 	{
-		showMessage(title, message, null);
+		base.showMessage(messageOkDialog, title, message, button);
 	}
 	
 	public bool openAuthUrlInline(string url)

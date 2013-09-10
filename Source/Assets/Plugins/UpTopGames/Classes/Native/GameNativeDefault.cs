@@ -38,8 +38,24 @@ public class GameNativeDefault: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com um botao
-	public override void showMessage(string title, string message, string button)
+	public override void showMessage(GameObject messageOkDialog, string title = "", string message = "", string button = "")
 	{
+		if(!title.IsEmpty())
+		{
+			messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+		}
+		
+		if(!message.IsEmpty())
+		{
+			messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+		}
+		
+		if(!button.IsEmpty())
+		{
+			 messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
+		}
+		
+		messageOkDialog.SetActive(true);
 		//GameGUI.setMessageWindow(new GameMessageWindow(title, message, button));
 	}
 	

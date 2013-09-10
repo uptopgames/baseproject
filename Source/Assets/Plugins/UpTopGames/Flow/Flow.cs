@@ -28,6 +28,9 @@ public enum PlayerPrefsKeys
 
 public class Flow: MonoBehaviour
 {
+	public static GameNativeGUI game_native = new GameNativeGUI();
+	
+	
 #if UNITY_IPHONE || UNITY_WEBPLAYER
 	public static string URL_BASE = "https://uptopgames.com/";
 #elif UNITY_ANDROID

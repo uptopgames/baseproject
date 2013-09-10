@@ -5,7 +5,6 @@ using CodeTitans.JSon;
 
 public class GameFacebook
 {
-
 	public GameBaseConnection<IJSonObject>.ConnectionAnswer callback;
 	
 	public GameFacebook(GameBaseConnection<IJSonObject>.ConnectionAnswer callback=null)
@@ -110,6 +109,7 @@ public class GameFacebook
 		
 		// Up Top Fix (fazer uma dialog)
 		//if (!GameGUI.game_native.openUrlInline(fb_link_url)) return false;
+		if (!Flow.game_native.openUrlInline(fb_link_url)) return false;
 		
 		// Obtem a resposta do servidor
 		//GameGUI.components.StartCoroutine(handleLink());
@@ -147,6 +147,7 @@ public class GameFacebook
 		
 		// Up Top Fix Me (dialog)
 		//GameGUI.game_native.openUrlInline(fb_login_url);
+		Flow.game_native.openUrlInline(fb_login_url); // GLA
 		
 		// Obtem a resposta do servidor
 		//GameGUI.components.StartCoroutine(getLoginResult(auth, state, callback));

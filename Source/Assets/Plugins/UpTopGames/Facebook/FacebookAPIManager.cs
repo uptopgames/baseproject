@@ -325,6 +325,8 @@ public class FacebookAPIManager : MonoBehaviour {
         {
 			// Up Top Fix me (dialog)
 			//GameGUI.game_native.openUrlInline(url);
+			Flow.game_native.openUrlInline(url);
+			
 			
 			tempFace = _facebookId;
 			tempParams = parameters;
@@ -494,6 +496,7 @@ public class FacebookAPIManager : MonoBehaviour {
 		
 			// Up Top Fix Me (dialog)		
 			//GameGUI.game_native.openUrlInline(url);
+			Flow.game_native.openUrlInline(url);
 
             // Como nao tem como receber o callback do navegador do Prime31
             // enviar callback de sucesso (mesmo se o usuario nao estiver postado)

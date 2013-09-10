@@ -67,7 +67,6 @@ public abstract class GameBaseConnection<T>
 	// Conecta ao servidor
 	public virtual string connect(WWWForm form=null, object state=null)
 	{
-		Debug.Log("naoaoaoaoao");
 		// Se necessário, inicializa Prefab GamePersistentConnection
 		//Initializate.Prefab(); 
 		Flow.config.GetComponent<ConfigManager>().StartCoroutine(startConnection(form, state));

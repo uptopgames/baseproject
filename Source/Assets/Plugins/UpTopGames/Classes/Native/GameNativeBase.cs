@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public abstract class GameNativeBase
+public abstract class GameNativeBase: MonoBehaviour
 {
 	// Mensagens padrao das telas de loading
 	public static string LOADING_TITLE = "Loading";
@@ -44,7 +44,7 @@ public abstract class GameNativeBase
 	public abstract void removeActionPhotoChosen(Action<string, Texture2D> action);
 	
 	// Mostra uma mensagem na tela com um botao
-	public abstract void showMessage(string title, string message, string button);
+	public abstract void showMessage(GameObject messageOkDialog, string title, string message, string button);
 	
 	// Mostra uma mensagem na tela com dois botoes
 	public abstract void showMessageOkCancel(string title, string message, string ok_button, string cancel_button);

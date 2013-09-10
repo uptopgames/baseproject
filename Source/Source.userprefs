@@ -1,16 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Login.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../../../Dropbox/Project Building/Under Construction/New Base/Source/Assets/Plugins/GUI/GameComponents.cs">
     <Files>
       <File FileName="../../../../Dropbox/Project Building/Under Construction/New Base/Source/Assets/Plugins/GUI/GameComponents.cs" Line="69" Column="44" />
-      <File FileName="Assets/Plugins/UpTopGames/Connection/GameBaseConnection.cs" Line="70" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ConfigManager.cs" Line="133" Column="4" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ServerSettings/ServerSettings.cs" Line="51" Column="13" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ServerSettings/ServerSettingsManager.cs" Line="54" Column="19" />
-      <File FileName="Assets/Plugins/UpTopGames/Connection/GameConnection.cs" Line="25" Column="3" />
-      <File FileName="Assets/Plugins/Advertisement/AdvertisementManager.cs" Line="330" Column="5" />
-      <File FileName="Assets/Scripts/Login.cs" Line="86" Column="3" />
-      <File FileName="Assets/Scripts/Splashscreen/LogoPanel.cs" Line="11" Column="5" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -23,34 +15,24 @@
               </Node>
             </Node>
           </Node>
-          <Node name="Assembly-CSharp-Editor" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="Editor" expanded="True" />
-            </Node>
-          </Node>
           <Node name="Assembly-CSharp-firstpass" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Plugins" expanded="True">
-                <Node name="Advertisement" expanded="True">
-                  <Node name="Networks" expanded="True" />
-                </Node>
-                <Node name="GameCenter" expanded="True" />
-                <Node name="PushWoosh" expanded="True">
-                  <Node name="Objects" expanded="True" />
+                <Node name="EZ" expanded="True">
+                  <Node name="GUI" expanded="True">
+                    <Node name="Management" expanded="True" />
+                  </Node>
                 </Node>
                 <Node name="UpTopGames" expanded="True">
                   <Node name="Classes" expanded="True">
-                    <Node name="KTimer" expanded="True" />
+                    <Node name="Native" expanded="True" />
                     <Node name="Save" expanded="True" />
                   </Node>
                   <Node name="Connection" expanded="True" />
                   <Node name="Facebook" expanded="True" />
                   <Node name="Flow" expanded="True" />
-                  <Node name="Flurry" expanded="True" />
-                  <Node name="Ranking" expanded="True" />
                   <Node name="Server" expanded="True">
                     <Node name="Account" expanded="True" />
-                    <Node name="Coins" expanded="True" />
                     <Node name="ServerSettings" expanded="True" />
                   </Node>
                 </Node>
