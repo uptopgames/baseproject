@@ -21,9 +21,9 @@ public class Multiplayer : MonoBehaviour
 	
 	void GetFriendList()
 	{
-		Flow.game_native.startLoading(loadingDialog);
+		//Flow.game_native.startLoading(loadingDialog);
 		// TO DO: Chamar conexao que pega os amigos da pessoa para mostrar na cena de invite
 		
-		//panelManager.BringIn("InviteScenePanel");
+		panelManager.BringIn("InviteScenePanel");
 	}
 }

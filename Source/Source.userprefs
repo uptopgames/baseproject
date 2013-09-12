@@ -1,9 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Login.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Invite.cs">
     <Files>
-      <File FileName="Assets/Scripts/Invite.cs" Line="16" Column="3" />
-      <File FileName="Assets/Scripts/Login.cs" Line="335" Column="92" />
+      <File FileName="Assets/Scripts/Friend.cs" Line="32" Column="19" />
+      <File FileName="Assets/Plugins/UpTopGames/Flow/Flow.cs" Line="221" Column="117" />
+      <File FileName="Assets/Scripts/Invite.cs" Line="46" Column="44" />
+      <File FileName="Assets/Plugins/UpTopGames/Classes/Native/GameNativeDefault.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/EZ/GUI/Support/UIPanelBase.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Login.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Multiplayer.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/UpTopGames/Facebook/FacebookAPI.cs" Line="57" Column="1" />
+      <File FileName="Assets/Plugins/UpTopGames/Connection/GameJsonAuthConnection.cs" Line="134" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,7 +24,7 @@
               </Node>
               <Node name="Scripts" expanded="True">
                 <Node name="Splashscreen" expanded="True" />
-                <Node name="Login.cs" selected="True" />
+                <Node name="Invite.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -27,7 +34,11 @@
                 <Node name="EZ" expanded="True">
                   <Node name="GUI" expanded="True">
                     <Node name="Management" expanded="True" />
+                    <Node name="Support" expanded="True" />
                   </Node>
+                </Node>
+                <Node name="Sprite Scripts" expanded="True">
+                  <Node name="Support" expanded="True" />
                 </Node>
                 <Node name="UpTopGames" expanded="True">
                   <Node name="Classes" expanded="True">
