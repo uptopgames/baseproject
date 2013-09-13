@@ -12,6 +12,8 @@
 	</array>
 	<key>requiredFrameworks</key>
 	<array>
+		<string>EventKit.framework</string>
+		<string>CoreTelephony.framework</string>
 		<string>CoreGraphics.framework</string>
 		<string>MessageUI.framework</string>
 	</array>

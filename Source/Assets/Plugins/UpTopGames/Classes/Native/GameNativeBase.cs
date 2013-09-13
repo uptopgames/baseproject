@@ -47,7 +47,8 @@ public abstract class GameNativeBase: MonoBehaviour
 	public abstract void showMessage(GameObject messageOkDialog, string title, string message, string button);
 	
 	// Mostra uma mensagem na tela com dois botoes
-	public abstract void showMessageOkCancel(string title, string message, string ok_button, string cancel_button);
+	public abstract void showMessageOkCancel(GameObject messageOkCancelDialog,
+		string title, string message, string ok_button, string cancel_button);
 	
 	// Abre a tela para o usuario escolher uma foto
 	public abstract void cameraRoll(float x, float y, string photo_name);

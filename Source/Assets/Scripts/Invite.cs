@@ -7,10 +7,14 @@ public class Invite : MonoBehaviour
 {
 	public GameObject loadingDialog;
 	public GameObject messageOkDialog;
+	public GameObject messageOkCancelDialog;
 	public UIInteractivePanel nextPanel;
 	public UIScrollList scroll;
+	public UIScrollList playingScroll;
 	public GameObject friendPrefab;
 	public GameObject letterPrefab;
+	
+	public UIStateToggleBtn allPlayingButton;
 	
 	public UIScrollList removedScroll;
 	
@@ -31,7 +35,7 @@ public class Invite : MonoBehaviour
 	string TextChanged(UITextField field, string text, ref int insertion)
 	{
 		Debug.Log("TO DO: FAZER O SEARCH");
-		//Debug.Log(text);
+		///Debug.Log(text);
 		
 		//Debug.Log(scroll.Count);
 		
@@ -40,25 +44,26 @@ public class Invite : MonoBehaviour
 			if(removedScroll.GetItem(i).transform.FindChild("Name").GetComponent<SpriteText>().Text.Contains(text)) 
 			{
 				scroll.InsertItem(removedScroll.GetItem(i),removedScroll.GetItem(i).transform.GetComponent<Friend>().index);
+				removedScroll.RemoveItem(removedScroll.GetItem(i),false);
 			}
-		}*/
+		}
 		
-		/*for(int i = 0 ; i < scroll.Count ; i++)
+		for(int i = 0 ; i < scroll.Count ; i++)
 		{
 			if(scroll.GetItem(i).transform.tag != "Letter")
 			{
-				Debug.Log(scroll.GetItem(i).transform.FindChild("Name").GetComponent<SpriteText>().Text);
+				//Debug.Log(scroll.GetItem(i).transform.FindChild("Name").GetComponent<SpriteText>().Text);
 				if(!scroll.GetItem(i).transform.FindChild("Name").GetComponent<SpriteText>().Text.Contains(text)) 
 				{
-					//scroll.GetItem(i).transform.GetComponent<Friend>().index = i;
-					//removedScroll.AddItem(scroll.GetItem(i));
+					scroll.GetItem(i).transform.GetComponent<Friend>().index = i;
+					removedScroll.AddItem(scroll.GetItem(i));
 					scroll.RemoveItem(scroll.GetItem(i),false);
 				}
 			}
-		}*/
+		}
 		
 		
-		return text;
+		*/return text;
 	}
 	
 	public void GetFriends(EZTransition transition)
@@ -89,34 +94,51 @@ public class Invite : MonoBehaviour
 			return;
 		}
 		
-		string letter = "";
+		string allLetter = "";
+		string playingLetter = "";
 		if(data.Count>0)
 		{
-			letter = data[0]["name"].StringValue.Substring(0,1);
+			allLetter = data[0]["name"].StringValue.Substring(0,1).ToUpper();
 			GameObject firstL = GameObject.Instantiate(letterPrefab) as GameObject;
-			firstL.transform.FindChild("Letter").GetComponent<SpriteText>().Text = letter.ToUpper ();
+			firstL.transform.FindChild("Letter").GetComponent<SpriteText>().Text = allLetter.ToUpper ();
 			scroll.AddItem(firstL);
+			
+			if(data[0]["is_playing"].BooleanValue)
+			{
+				playingLetter = data[0]["name"].StringValue.Substring(0,1).ToUpper();
+				GameObject firstPlayingL = GameObject.Instantiate(letterPrefab) as GameObject;
+				firstL.transform.FindChild("Letter").GetComponent<SpriteText>().Text = playingLetter.ToUpper ();
+				playingScroll.AddItem(firstPlayingL);
+			}
 		}
 		
 		foreach (IJSonObject friend in data.ArrayItems)
 		{
-			GameObject t = GameObject.Instantiate(friendPrefab) as GameObject;
-			t.GetComponent<Friend>().SetFriend(
-				friend["user_id"].ToString(), 
-				friend["facebook_id"].ToString(),
-				friend["name"].ToString(),
-				friend["from_facebook"].BooleanValue? FriendshipStatus.FACEBOOK: FriendshipStatus.STANDALONE,
-				friend["is_playing"].BooleanValue);
+			GameObject allContainer = CreateFriendContainer(friend);
 			
-			if(friend["name"].StringValue.Substring(0,1) != letter)
+			
+			
+			if(friend["name"].StringValue.Substring(0,1).ToUpper() != allLetter)
 			{
-				letter = friend["name"].StringValue.Substring(0,1);
+				allLetter = friend["name"].StringValue.Substring(0,1).ToUpper();
 				GameObject l = GameObject.Instantiate(letterPrefab) as GameObject;
-				l.transform.FindChild("Letter").GetComponent<SpriteText>().Text = letter.ToUpper ();
+				l.transform.FindChild("Letter").GetComponent<SpriteText>().Text = allLetter.ToUpper ();
 				scroll.AddItem(l);
 			}
+			scroll.AddItem(allContainer);
 			
-			scroll.AddItem(t);
+			if(friend["is_playing"].BooleanValue) 
+			{
+				if(friend["name"].StringValue.Substring(0,1).ToUpper() != playingLetter)
+				{
+					playingLetter = friend["name"].StringValue.Substring(0,1).ToUpper();
+					GameObject l = GameObject.Instantiate(letterPrefab) as GameObject;
+					l.transform.FindChild("Letter").GetComponent<SpriteText>().Text = playingLetter.ToUpper ();
+					playingScroll.AddItem(l);
+				}
+				GameObject playingContainer = CreateFriendContainer(friend);
+				playingScroll.AddItem(playingContainer);
+			}
 		}
 		
 		scroll.sceneItems.ToList().Sort
@@ -128,43 +150,50 @@ public class Invite : MonoBehaviour
 		);
 	}
 	
-	// Escolhe amigo
-	void Choose(string id = null, string facebook_id = null)
-	{
-		// Se ja tem identificador, retorna
-		if (id != null)
-		{
-			//redirectScene(scene, id);
-			return;
-		}
-		
-		//Flow.game_native.startLoading();
-		
-		// Cria o identificador para o usuario
-		GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/friends/create.php", HandleChoose);
-		WWWForm form = new WWWForm();
-		form.AddField("facebook_id", facebook_id);
-		conn.connect(form, id);
-	}
-	
-	void HandleChoose(string error, IJSonObject data, object state)
-	{
-		string id = state.ToString();
-		//GameGUI.game_native.stopLoading();
-		
-		if (error != null)
-		{
-			//GameGUI.game_native.showMessage("Error", error);
-			return;
-		}
-		
-		id = data["user_id"].ToString();
-		Flow.Game.currentGame.friendID = int.Parse(id);
-	}
-	
 	void ClearText(UITextField field)
 	{
 		Debug.Log("vaaaaaai");
 		field.Text = "";
+	}
+	
+	GameObject CreateFriendContainer(IJSonObject friend)
+	{
+		GameObject t = GameObject.Instantiate(friendPrefab) as GameObject;
+		t.GetComponent<Friend>().SetFriend(
+			friend["user_id"].ToString(), 
+			friend["facebook_id"].ToString(),
+			friend["name"].ToString(),
+			friend["from_facebook"].BooleanValue? FriendshipStatus.FACEBOOK: FriendshipStatus.STANDALONE,
+			friend["is_playing"].BooleanValue,
+			loadingDialog,
+			messageOkDialog,
+			messageOkCancelDialog);
+		
+		
+		
+		if(t.GetComponent<Friend>().status == FriendshipStatus.FACEBOOK)
+		{
+			t.transform.FindChild("FacebookIcon").gameObject.SetActive(true);
+		}
+		else
+		{
+			t.transform.FindChild("StandaloneIcon").gameObject.SetActive(true);
+		}
+		
+		return t;
+	}
+	
+	void ChangedAllPlaying()
+	{
+		if(allPlayingButton.StateName == "All")
+		{
+			playingScroll.gameObject.SetActive(false);
+			scroll.gameObject.SetActive(true);
+		}
+		else
+		{
+			scroll.gameObject.SetActive(false);
+			playingScroll.gameObject.SetActive(true);
+		}
 	}
 }

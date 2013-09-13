@@ -79,12 +79,44 @@ public class GameNativeIos: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com dois botoes
-	public override void showMessageOkCancel(string title, string message, string ok_button, string cancel_button)
+	public override void showMessageOkCancel(GameObject messageOkCancelDialog,
+		string title = "", string message = "", string okButton = "", string cancelButton = "")
 	{
-		if (ok_button == null) ok_button = default_ok_button;
-		if (cancel_button == null) cancel_button = default_cancel_button;
+		if(title.IsEmpty())
+		{
+			title = messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
+		}
 		
-		EtceteraBinding.showAlertWithTitleMessageAndButtons(title, filterMessage(message), new string[] { ok_button, cancel_button });
+		if(message.IsEmpty())
+		{
+			message = messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
+		}
+		
+		if(okButton.IsEmpty())
+		{
+			try
+			{
+				okButton = messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text;
+			}
+			catch
+			{
+				okButton = default_ok_button;
+			}
+		}
+		
+		if(cancelButton.IsEmpty())
+		{
+			try
+			{
+				cancelButton = messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text;
+			}
+			catch
+			{
+				cancelButton = default_cancel_button;
+			}
+		}
+		
+		EtceteraBinding.showAlertWithTitleMessageAndButtons(title, filterMessage(message), new string[] { okButton, cancelButton });
 	}
 	
 	// Obtem a imagem e chama os eventos com o resultado

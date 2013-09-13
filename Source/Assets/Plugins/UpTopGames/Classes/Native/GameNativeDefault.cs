@@ -82,8 +82,30 @@ public class GameNativeDefault: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com dois botoes
-	public override void showMessageOkCancel(string title, string message, string ok_button, string cancel_button)
+	public override void showMessageOkCancel(GameObject messageOkCancelDialog,
+		string title = "", string message = "", string okButton = "", string cancelButton = "")
 	{
+		if(!title.IsEmpty())
+		{
+			messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+		}
+		
+		if(!message.IsEmpty())
+		{
+			messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+		}
+		
+		if(!okButton.IsEmpty())
+		{
+			 messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = okButton;
+		}
+		
+		if(!cancelButton.IsEmpty())
+		{
+			 messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text = cancelButton;
+		}
+		
+		messageOkCancelDialog.SetActive(true);
 		//GameGUI.setMessageWindow(new GameTwoButtonWindow(title, message, ok_button, cancel_button));
 	}
 	
