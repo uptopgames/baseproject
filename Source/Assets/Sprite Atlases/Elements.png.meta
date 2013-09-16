@@ -33,15 +33,15 @@ TextureImporter:
   textureType: 5
   buildTargetSettings:
   - buildTarget: iPhone
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     textureFormat: 33
     compressionQuality: 50
   - buildTarget: Android
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     textureFormat: 36
     compressionQuality: 50
   - buildTarget: Web
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     textureFormat: 12
     compressionQuality: 50
   userData: 

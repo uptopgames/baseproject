@@ -93,7 +93,7 @@ public class GameFacebook
 		
 		data = data["result"];
 		
-		Save.Set(PlayerPrefsKeys.TOKEN.ToString() , data["fbtoken"].ToString(), true);
+		Save.Set(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString() , data["fbtoken"].ToString(), true);
 		sendToCallback(null, data);
 	}
 	

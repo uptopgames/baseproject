@@ -31,5 +31,17 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   textureType: 5
-  buildTargetSettings: []
+  buildTargetSettings:
+  - buildTarget: Web
+    maxTextureSize: 512
+    textureFormat: 5
+    compressionQuality: 50
+  - buildTarget: iPhone
+    maxTextureSize: 512
+    textureFormat: 4
+    compressionQuality: 50
+  - buildTarget: Android
+    maxTextureSize: 512
+    textureFormat: 4
+    compressionQuality: 50
   userData: 
