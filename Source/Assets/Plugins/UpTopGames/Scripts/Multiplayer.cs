@@ -10,6 +10,11 @@ public class Multiplayer : MonoBehaviour
 	public GameObject loadingDialog;
 	public GameObject messageOkDialog;
 	public GameObject messageOkCancelDialog;
+	public GameObject gamePrefab;
+	public GameObject yourTurnPrefab;
+	public GameObject theirTurnPrefab;
+	
+	public UIScrollList scroll;
 	
 	// Tempo de espera entre consultas
 	private const float MIN_WAITING_TIME = 4;
@@ -24,6 +29,11 @@ public class Multiplayer : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () 
+	{
+		GetComponent<UIInteractivePanel>().transitions.list[0].AddTransitionStartDelegate(Connect);
+	}
+	
+	void Connect(EZTransition transition)
 	{
 		WWWForm form = new WWWForm();
 		form.AddField("lastUpdate",TimeZoneInfo.ConvertTimeToUtc(Flow.lastUpdate).ToString());
@@ -45,7 +55,9 @@ public class Multiplayer : MonoBehaviour
 		else 
 		{
 			Debug.Log(data);
-						
+			
+			
+			
 			for(int i = 0 ; i < data["games"].Count ; i++)
 			{
 				if(!data["games"][i]["lastUpdate"].IsNull && Flow.lastUpdate < data["games"][i]["lastUpdate"].DateTimeValue) Flow.lastUpdate = data["games"][i]["lastUpdate"].DateTimeValue;
@@ -69,10 +81,10 @@ public class Multiplayer : MonoBehaviour
 				
 				string[] separator = {"|$@@$|"};
 				
-				if(data["games"][i]["turnStatus"].StringValue != "waitingTheme")
+				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice")
 				{
-					scores = data["games"][i]["scores"].StringValue.Split(separator,StringSplitOptions.None);
-					times = data["games"][i]["times"].StringValue.Split(separator,StringSplitOptions.None);
+					if(!data["games"][i]["scores"].IsNull) scores = data["games"][i]["scores"].StringValue.Split(separator,StringSplitOptions.None);
+					if(!data["games"][i]["times"].IsNull) times = data["games"][i]["times"].StringValue.Split(separator,StringSplitOptions.None);
 				}
 				if(!data["games"][i]["lastTurn"].IsNull) 
 				{
@@ -90,15 +102,17 @@ public class Multiplayer : MonoBehaviour
 					
 				if(!data["games"][i]["facebookID"].IsNull) faceID = data["games"][i]["facebookID"].StringValue;
 				if(!data["games"][i]["lastTurn"].IsNull)lastTurnID = data["games"][i]["lastTurn"].Int32Value;
-				if(!data["games"][i]["worldID"].IsNull)tempWorldID = data["games"][i]["worldID"].Int32Value;
+				//if(!data["games"][i]["worldID"].IsNull)tempWorldID = data["games"][i]["worldID"].Int32Value;
+				if(!data["games"][i]["world"].IsNull)tempWorldID = data["games"][i]["world"].Int32Value;
 				if(!data["games"][i]["worldName"].IsNull)tempWorldName = data["games"][i]["worldName"].StringValue;
 				if(!data["games"][i]["pastWorldName"].IsNull)tempPastWorldName = data["games"][i]["pastWorldName"].StringValue;
 				
-				if(data["games"][i]["turnStatus"].StringValue != "waitingTheme")
+				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice" && data["games"][i]["whoseMove"] == "their")
 				{
 					for(int j = 0 ; j < 5 ; j++)
 					{
-						tempRoundList.Add(new Round(-1,data["games"][i]["turn"].Int32Value,data["games"][i]["friendID"].Int32Value,times[j].ToFloat(),scores[j].ToInt32()));
+						tempRoundList.Add (new Round (-1,data["games"][i]["turn"].Int32Value, data["games"][i]["friendID"].Int32Value, times[j].ToFloat(),
+							scores[j].ToInt32()));
 					}
 				}
 				
@@ -150,6 +164,20 @@ public class Multiplayer : MonoBehaviour
 				if(!foundGame) Flow.gameList.Add(tempGame);
 				
 			}
+			
+			// Adiciona os containers no scroll
+			
+			foreach (IJSonObject game in data["games"].ArrayItems)
+			{
+				GameObject gameContainer = CreateGameContainer(game);
+			}
+			
+			GameObject yourTurnContainer = GameObject.Instantiate(yourTurnPrefab) as GameObject;
+			GameObject theirTurnContainer = GameObject.Instantiate(theirTurnPrefab) as GameObject;
+			
+			
+			
+			
 			//Up Top Fix Me
 			//sortList();
 			
@@ -201,4 +229,27 @@ public class Multiplayer : MonoBehaviour
 		
 		panelManager.BringIn("InviteScenePanel");
 	}
+	
+	GameObject CreateGameContainer (IJSonObject game)
+	{
+		GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
+		Debug.Log ("game: " + game);
+		tempGameContainer.GetComponent<Friend>().SetFriend 
+		(
+			game["friendID"].ToString(), 
+			game["facebookID"].IsNull ?  "" : game["facebookID"].ToString(),
+			game["username"].ToString(),
+			FriendshipStatus.NONE,
+			game["hasApp"] == "1",
+			loadingDialog,
+			messageOkDialog,
+			messageOkCancelDialog
+		);
+		
+		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].ToString();
+		
+		return tempGameContainer;
+	}
+	
+	
 }

@@ -187,7 +187,6 @@ public class Login : MonoBehaviour
 		
 		//GameConnection conn = new GameConnection(components.url_login, connectionResult);
 		GameConnection conn = new GameConnection(Flow.URL_BASE + "login/", connectionResult);
-		
 			
 		WWWForm form = new WWWForm();
 		form.AddField("app_id", Info.appId);
@@ -222,13 +221,12 @@ public class Login : MonoBehaviour
 		JSonReader reader = new JSonReader();
 		IJSonObject json = null;
 		
-		Debug.Log("data: "+data);
+		Debug.Log("data: "+data.text);
 		
 		// Tenta ler o retorno
 		if (data == null) error = "json_error";
 		else
 		{
-			
 			try
 			{
 				if (error == null) json = reader.ReadAsJSonObject(data.text);
@@ -269,6 +267,9 @@ public class Login : MonoBehaviour
 		GameToken.save(json);
 		Save.Set(PlayerPrefsKeys.EMAIL.ToString(), email);
 		Save.Set(PlayerPrefsKeys.PASSWORD.ToString(), password);
+		
+		Save.Set(PlayerPrefsKeys.NAME.ToString(), json["username"].ToString(),true);
+		Save.Set(PlayerPrefsKeys.ID.ToString(), json["user_id"].ToString(),true);
 		
 		// Verifica se possui Facebook
 		if (json.Contains("fbtoken") && json.Contains("facebook_id"))

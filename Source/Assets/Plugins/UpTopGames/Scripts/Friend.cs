@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using CodeTitans.JSon;
-	
+
 // Tipo da amizade
 public enum FriendshipStatus
 {
@@ -132,11 +132,7 @@ public class Friend : MonoBehaviour
 		// Se ja tem identificador, retorna
 		if (id != null)
 		{
-			//redirectScene(scene, id);
-			Debug.Log(name);
-			Debug.Log(id);
-			Flow.currentGame.friend = this;
-			GetComponent<UIListItemContainer>().GetScrollList().transform.parent.GetComponent<Invite>().EraseFriendsList();
+			AssignDataToFlow();
 			return;
 		}
 		
@@ -162,8 +158,21 @@ public class Friend : MonoBehaviour
 		
 		id = data["user_id"].ToString();
 		Debug.Log("e o id novo do cara é..."+id);
+		
+		AssignDataToFlow();
+	}
+	
+	void AssignDataToFlow()
+	{
+		if(name.Contains("@"))
+		{
+			string[] ar = {};
+			ar = name.Split('@');
+			name = ar[0];
+		}
 		Flow.currentGame.friend = this;
-		GetComponent<UIListItemContainer>().GetScrollList().transform.GetComponent<Invite>().EraseFriendsList();
+		GetComponent<UIListItemContainer>().GetScrollList().transform.parent.GetComponent<Invite>().EraseFriendsList();
+		UIPanelManager.instance.BringIn("WorldSelectionScenePanel");
 	}
 	
 	public void DeleteFriend()

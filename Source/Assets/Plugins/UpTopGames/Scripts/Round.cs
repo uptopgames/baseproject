@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 	
-public class Round : MonoBehaviour
+public class Round
 {
 	public int roundID;	
 	public int turnID;

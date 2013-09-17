@@ -26,6 +26,13 @@ public enum PlayerPrefsKeys
 	APP_ID = 15
 }
 
+public enum PanelToLoad
+{
+	Menu,
+	WinLose,
+	BattleStatus
+}
+
 public class Flow: MonoBehaviour
 {
 	public static GameNativeGUI game_native = new GameNativeGUI();
@@ -57,6 +64,7 @@ public class Flow: MonoBehaviour
 	//variáveis que estavam dentro de Game
 	public static string[] availableMaps = { "usa", "brazil", "uk", "southafrica", "world", "china", "france", "australia" };
 	
+	public static PanelToLoad nextPanel = PanelToLoad.Menu;
 	public static string path = "";
 	public static bool thereIsAnotherPlayer = false;
 	
@@ -84,7 +92,7 @@ public class Flow: MonoBehaviour
 	public static int currentLevel;
 	public static int currentScore;
 	public static int MAX_LEVEL_NUMBER = 10;
-	public static int CITIES_PER_LEVEL = 5;
+	public static int ROUNDS_PER_TURN = 3;
 	
 	public static void getPlayerPhoto(string error, WWW data)
     {
