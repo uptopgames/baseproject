@@ -92,7 +92,7 @@ public class Flow: MonoBehaviour
 	public static int currentLevel;
 	public static int currentScore;
 	public static int MAX_LEVEL_NUMBER = 10;
-	public static int ROUNDS_PER_TURN = 3;
+	public const int ROUNDS_PER_TURN = 3;
 	
 	public static void getPlayerPhoto(string error, WWW data)
     {

@@ -49,7 +49,10 @@ public static class ExtensionConvert
     public static float ToFloat(this string value)
     {
         float floatValue = default(float);
-		value = value.Replace("f", "");
+		if(value.Contains("f")) 
+		{
+			value = value.Replace("f", "");
+		}
         bool result = float.TryParse(value, out floatValue);
         if (result == false)
             Debug.LogWarning("string.ToFloat() '" + value + "' is not a float value!");

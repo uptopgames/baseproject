@@ -64,12 +64,12 @@ public class Multiplayer : MonoBehaviour
 			{
 				if(!data["games"][i]["lastUpdate"].IsNull && Flow.lastUpdate < data["games"][i]["lastUpdate"].DateTimeValue) Flow.lastUpdate = data["games"][i]["lastUpdate"].DateTimeValue;
 				
-				string[] scores = {};
-				string[] times = {};
-				string[] pastMyScores = {};
-				string[] pastMyTimes = {};
-				string[] pastTheirScores = {};
-				string[] pastTheirTimes = {};
+				string[] scores = new string[Flow.ROUNDS_PER_TURN];
+				string[] times = new string[Flow.ROUNDS_PER_TURN];
+				string[] pastMyScores = new string[Flow.ROUNDS_PER_TURN];
+				string[] pastMyTimes = new string[Flow.ROUNDS_PER_TURN];
+				string[] pastTheirScores = new string[Flow.ROUNDS_PER_TURN];
+				string[] pastTheirTimes = new string[Flow.ROUNDS_PER_TURN];
 				
 				string faceID = "";
 				int lastTurnID = -1;
@@ -83,7 +83,7 @@ public class Multiplayer : MonoBehaviour
 				
 				string[] separator = {"|$@@$|"};
 				
-				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice")
+				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice" && data["games"][i]["whoseMove"].StringValue != "their")
 				{
 					if(!data["games"][i]["scores"].IsNull) scores = data["games"][i]["scores"].StringValue.Split(separator,StringSplitOptions.None);
 					if(!data["games"][i]["times"].IsNull) times = data["games"][i]["times"].StringValue.Split(separator,StringSplitOptions.None);
@@ -109,11 +109,13 @@ public class Multiplayer : MonoBehaviour
 				if(!data["games"][i]["worldName"].IsNull)tempWorldName = data["games"][i]["worldName"].StringValue;
 				if(!data["games"][i]["pastWorldName"].IsNull)tempPastWorldName = data["games"][i]["pastWorldName"].StringValue;
 				
-				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice" && data["games"][i]["whoseMove"] == "their")
+				Debug.Log("nome do cara "+data["games"][i]["username"].StringValue);
+				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice" && data["games"][i]["whoseMove"].StringValue != "their")
 				{
-					for(int j = 0 ; j < 5 ; j++)
+					
+					for(int j = 0 ; j < Flow.ROUNDS_PER_TURN ; j++)
 					{
-						tempRoundList.Add (new Round (-1,data["games"][i]["turn"].Int32Value, data["games"][i]["friendID"].Int32Value, times[j].ToFloat(),
+						tempRoundList.Add (new Round (-1, data["games"][i]["turn"].Int32Value, data["games"][i]["friendID"].Int32Value, times[j].ToFloat(),
 							scores[j].ToInt32()));
 					}
 				}
@@ -202,24 +204,6 @@ public class Multiplayer : MonoBehaviour
 					}
 				}
 			}
-			
-			// Adiciona os containers no scroll
-			
-			//foreach (IJSonObject game in data["games"].ArrayItems)
-			
-			/*for(int i = 0; i<data["games"].Count; i++)
-			{
-				foreach(Game flowGame in Flow.gameList)
-				{
-					if(flowGame.id==data["games"][i]["gameID"].Int32Value)
-					{
-						
-					}
-				}
-				GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
-				tempGameContainer.GetComponent<Game>() = Flow.gameList[i];
-				//GameObject gameContainer = CreateGameContainer(game);
-			}*/
 			
 			GameObject yourTurnContainer = GameObject.Instantiate(yourTurnPrefab) as GameObject;
 			GameObject theirTurnContainer = GameObject.Instantiate(theirTurnPrefab) as GameObject;
@@ -313,6 +297,7 @@ public class Multiplayer : MonoBehaviour
 		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].ToString();
 		
 		scroll.InsertItem(tempGameContainer.GetComponent<UIListItemContainer>(), index);
+		tempGameContainer.GetComponent<Game>().SetGame(Flow.gameList[index]);
 		
 		return tempGameContainer;
 	}

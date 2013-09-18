@@ -90,10 +90,49 @@ public class Game : MonoBehaviour
 		Flow.thereIsAnotherPlayer = false;
 	}
 	
-	public Game SetGame(Game game)
+	public void SetGame(Game game)
 	{
 		Game tempGame = new Game(game.id, game.friend, game.worldID, game.worldName, game.myRoundList, game.theirRoundList, game.turnID, game.lastTurnID,
 			game.turnsWon, game.turnsLost, game.whoseMove, game.status, game.lastUpdate, game.pastMyRoundList, game.pastTheirRoundList, game.pastWorldName);
-		return tempGame;
+		
+		id = game.id;
+		friend = game.friend;
+		worldID = game.worldID;
+		worldName = game.worldName;
+		myRoundList = game.myRoundList;
+		theirRoundList = game.theirRoundList;
+		turnID = game.turnID;
+		lastTurnID = game.lastTurnID;
+		turnsWon = game.turnsWon;
+		turnsLost = game.turnsLost;
+		whoseMove = game.whoseMove;
+		status = game.status;
+		lastUpdate = game.lastUpdate;
+		pastMyRoundList = game.pastMyRoundList;
+		pastTheirRoundList = game.pastTheirRoundList;
+		pastWorldName = game.pastWorldName;
+	}
+	
+	public void AnswerGame()
+	{
+		Flow.currentGame = this;
+		Debug.Log("ID: " + Flow.currentGame.id.ToString() + "\nPast Index: " + Flow.currentGame.pastIndex.ToString() + 
+			"\nIs New Game: " + Flow.currentGame.isNewGame.ToString() + "\nFriend: " + Flow.currentGame.friend.ToString() + 
+			"\nMy Round List: " + Flow.currentGame.myRoundList.ToString() + "\nTheir Round List: " + Flow.currentGame.theirRoundList.ToString() + 
+			"\nPast My Round List: " + Flow.currentGame.pastMyRoundList.ToString() + "\nPast Their Round List: " +
+			Flow.currentGame.pastTheirRoundList.ToString() + "\nPast World Name: " + Flow.currentGame.pastWorldName.ToString() + 
+			"\nWorld ID: " + Flow.currentGame.worldID.ToString() + "\nWorld Name: " + Flow.currentGame.worldName.ToString() + "\nTurn ID: " + 
+			Flow.currentGame.turnID.ToString() + "\nLast Turn ID: " + Flow.currentGame.lastTurnID.ToString() + "\nTurns Won: " + 
+			Flow.currentGame.turnsWon.ToString() + "\nTurns Lost: " + Flow.currentGame.turnsLost.ToString() + "\nWhose Move: " + 
+			Flow.currentGame.whoseMove.ToString() + "\nStatus: " + Flow.currentGame.status.ToString() + "\nLast Update: " + 
+			Flow.currentGame.lastUpdate.ToString() + "\nMy Total Score: " + Flow.currentGame.myTotalScore.ToString() + "\nTheir Total Score: " +
+			Flow.currentGame.theirTotalScore.ToString());
+		
+		for(int i = 0; i<Flow.currentGame.theirRoundList.Count; i++)
+		{
+			Debug.Log(Flow.currentGame.theirRoundList[i].score);
+		}
+		
+		UIPanelManager.instance.BringIn("WorldSelectionScenePanel");
 	}
 }
