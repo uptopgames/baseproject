@@ -14,6 +14,8 @@ public class Multiplayer : MonoBehaviour
 	public GameObject yourTurnPrefab;
 	public GameObject theirTurnPrefab;
 	
+	public SpriteText noGamesYet;
+	
 	public UIScrollList scroll;
 	
 	// Tempo de espera entre consultas
@@ -56,7 +58,7 @@ public class Multiplayer : MonoBehaviour
 		{
 			Debug.Log(data);
 			
-			
+			if (data["games"].Count > 0) noGamesYet.Text = "";
 			
 			for(int i = 0 ; i < data["games"].Count ; i++)
 			{
@@ -156,30 +158,71 @@ public class Multiplayer : MonoBehaviour
 							//eh o mesmo e tah mais atualizado
 							foundGame = true;
 							tempGame.friend.picture = Flow.gameList[h].friend.picture;
+							tempGame.pastIndex = Flow.gameList[h].pastIndex;
 							Flow.gameList[h] = tempGame;
 						}
 						else foundGame = true;
 					}
 				}
-				if(!foundGame) Flow.gameList.Add(tempGame);
-				
+				if(!foundGame)
+				{
+					tempGame.isNewGame = true;
+					Flow.gameList.Add(tempGame);
+				}
+			}
+			
+			sortList();
+			
+			for(int i = 0; i<data["games"].Count; i++)
+			{
+				for(int j = 0; j<Flow.gameList.Count; j++)
+				{
+					if(i==0)
+					{
+						Debug.Log("Name: " + Flow.gameList[j].friend.name + "\nWhose Move: " + Flow.gameList[j].whoseMove.ToString() +
+						"\nLast Update: " + Flow.gameList[j].lastUpdate.ToString());
+					}
+					
+					if(Flow.gameList[j].id==data["games"][i]["gameID"].Int32Value)
+					{
+						if(Flow.gameList[j].isNewGame)
+						{
+							CreateGameContainer(data["games"][i], j);
+						}
+						else
+						{
+							scroll.GetItem(Flow.gameList[j].pastIndex).transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
+							GameObject tempContainer = GameObject.Instantiate(scroll.GetItem(Flow.gameList[j].pastIndex).gameObject) as GameObject;
+							scroll.RemoveItem(Flow.gameList[j].pastIndex, true);
+							scroll.InsertItem(tempContainer.GetComponent<UIListItemContainer>(), j);
+						}
+						
+						Flow.gameList[j].pastIndex = j;
+						Debug.Log("setPastIndex: "+Flow.gameList[j].pastIndex);
+					}
+				}
 			}
 			
 			// Adiciona os containers no scroll
 			
-			foreach (IJSonObject game in data["games"].ArrayItems)
+			//foreach (IJSonObject game in data["games"].ArrayItems)
+			
+			/*for(int i = 0; i<data["games"].Count; i++)
 			{
-				GameObject gameContainer = CreateGameContainer(game);
-			}
+				foreach(Game flowGame in Flow.gameList)
+				{
+					if(flowGame.id==data["games"][i]["gameID"].Int32Value)
+					{
+						
+					}
+				}
+				GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
+				tempGameContainer.GetComponent<Game>() = Flow.gameList[i];
+				//GameObject gameContainer = CreateGameContainer(game);
+			}*/
 			
 			GameObject yourTurnContainer = GameObject.Instantiate(yourTurnPrefab) as GameObject;
 			GameObject theirTurnContainer = GameObject.Instantiate(theirTurnPrefab) as GameObject;
-			
-			
-			
-			
-			//Up Top Fix Me
-			//sortList();
 			
 			// Recalcula o tempo de espera
 			if(updatedAutomatically)
@@ -198,6 +241,27 @@ public class Multiplayer : MonoBehaviour
 		}
 		
 		Invoke("updatingAutomatically",waitingTime);
+	}
+	
+	void sortList()
+	{
+		// sort eh uma funcao de lista da unity
+		Flow.gameList.Sort
+		(
+		    // delegate retorna -1, 0 ou 1 que neste caso foi atribuido a variavel "resultado"
+			// whoseMove pode ser "yourTurn" ou "theirThurn"
+			// se forem diferentes, o sort ja vai alocar na lista "yourTurn" em cima e "theirTurn" embaixo
+			// se forem iguais, o resultado sera 0. Neste caso, uma nova comparacao eh feita para o sort colocar em cima de acordo com o lastUpdate
+			delegate(Game p1, Game p2)
+		    {
+		        int resultado = -p1.whoseMove.CompareTo(p2.whoseMove);
+				if(resultado == 0)
+				{
+					resultado = -p1.lastUpdate.CompareTo(p2.lastUpdate);
+				}
+		        return resultado;
+		    }
+		);
 	}
 	
 	void FindFriends()
@@ -230,11 +294,11 @@ public class Multiplayer : MonoBehaviour
 		panelManager.BringIn("InviteScenePanel");
 	}
 	
-	GameObject CreateGameContainer (IJSonObject game)
+	GameObject CreateGameContainer (IJSonObject game, int index)
 	{
 		GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
-		Debug.Log ("game: " + game);
-		tempGameContainer.GetComponent<Friend>().SetFriend 
+		//Debug.Log ("game: " + game);
+		tempGameContainer.GetComponent<Friend>().SetFriend
 		(
 			game["friendID"].ToString(), 
 			game["facebookID"].IsNull ?  "" : game["facebookID"].ToString(),
@@ -248,8 +312,8 @@ public class Multiplayer : MonoBehaviour
 		
 		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].ToString();
 		
+		scroll.InsertItem(tempGameContainer.GetComponent<UIListItemContainer>(), index);
+		
 		return tempGameContainer;
 	}
-	
-	
 }

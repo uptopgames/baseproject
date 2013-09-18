@@ -2,10 +2,12 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-	
-public class Game
-{			
+
+public class Game : MonoBehaviour
+{
 	public int id = -1;
+	public int pastIndex = -1;
+	public bool isNewGame = false;
 	public Friend friend = new Friend();
 	public List<Round> myRoundList = new List<Round>();
 	public List<Round> theirRoundList = new List<Round>();
@@ -86,5 +88,12 @@ public class Game
 		Flow.currentMode = GameMode.None;
 		Flow.path = "";
 		Flow.thereIsAnotherPlayer = false;
+	}
+	
+	public Game SetGame(Game game)
+	{
+		Game tempGame = new Game(game.id, game.friend, game.worldID, game.worldName, game.myRoundList, game.theirRoundList, game.turnID, game.lastTurnID,
+			game.turnsWon, game.turnsLost, game.whoseMove, game.status, game.lastUpdate, game.pastMyRoundList, game.pastTheirRoundList, game.pastWorldName);
+		return tempGame;
 	}
 }

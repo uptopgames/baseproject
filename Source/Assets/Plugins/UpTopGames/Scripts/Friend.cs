@@ -47,9 +47,9 @@ public class Friend : MonoBehaviour
 	
 	private float imageLoadCounter = 1;
 	
-	private GameObject loadWindow;
-	private GameObject messageOkWindow;
-	private GameObject messageOkCancelWindow;
+	public GameObject loadWindow;
+	public GameObject messageOkWindow;
+	public GameObject messageOkCancelWindow;
 	
 	public Friend SetFriend(string idNew, string facebook_idNew, string nameNew, FriendshipStatus statusNew, bool is_playingNew,
 		GameObject loadWindowNew, GameObject messageOkWindowNew, GameObject messageOkCancelWindowNew)
