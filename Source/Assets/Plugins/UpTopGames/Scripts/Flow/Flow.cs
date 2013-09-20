@@ -33,6 +33,11 @@ public enum PanelToLoad
 	BattleStatus
 }
 
+public enum TurnStatus
+{
+	BeginGame, AnswerGame, ShowPast
+}
+
 public class Flow: MonoBehaviour
 {
 	public static GameNativeGUI game_native = new GameNativeGUI();
@@ -65,14 +70,15 @@ public class Flow: MonoBehaviour
 	public static string[] availableMaps = { "usa", "brazil", "uk", "southafrica", "world", "china", "france", "australia" };
 	
 	public static PanelToLoad nextPanel = PanelToLoad.Menu;
-	public static string path = "";
-	public static bool thereIsAnotherPlayer = false;
 	
 	public static List<Game> gameList = new List<Game>();
+	public static int yourTurnGames = 0;
+	public static int theirTurnGames = 0;
 	public static Game currentGame = new Game();
 	public static GameMode currentMode = GameMode.None;
 	public static int selectedListIndex = -1;
 	
+	public static TurnStatus path = TurnStatus.BeginGame;
 	
 	// setar aqui o nome do arquivo xml a ser usado, se houver necessidade de mudar
 	public static string xmlFileName = "gameData.xml";
@@ -93,6 +99,8 @@ public class Flow: MonoBehaviour
 	public static int currentScore;
 	public static int MAX_LEVEL_NUMBER = 10;
 	public const int ROUNDS_PER_TURN = 3;
+	
+	public static float soundVolume = 0.5f;
 	
 	public static void getPlayerPhoto(string error, WWW data)
     {

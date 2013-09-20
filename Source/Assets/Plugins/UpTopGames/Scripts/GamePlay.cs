@@ -56,10 +56,12 @@ public class GamePlay : MonoBehaviour
 		Debug.Log(data);
 		//Application.LoadLevel("GamePlay");
 		
+		//Flow.currentGame.id = data["gameID"].Int32Value;
+		
 		foreach(IJSonObject score in data.ArrayItems)
 			Flow.currentGame.myTotalScore += score.Int32Value;
 		
-		Debug.Log(Flow.currentGame.myTotalScore);
+		Debug.Log( Flow.currentGame.myTotalScore);
 		
 		if(Flow.currentMode == GameMode.SinglePlayer)
 		{

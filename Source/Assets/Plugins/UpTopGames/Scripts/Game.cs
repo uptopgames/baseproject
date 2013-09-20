@@ -26,6 +26,9 @@ public class Game : MonoBehaviour
 	public int myTotalScore = 0;
 	public int theirTotalScore = 0;
 	
+	public GameObject yourTurnContainer;
+	public GameObject theirTurnContainer;
+	
 	public Game()
 	{
 		this.id = -1;
@@ -86,8 +89,7 @@ public class Game : MonoBehaviour
 		Flow.currentGame = new Game();
 		Flow.selectedListIndex = -1;
 		Flow.currentMode = GameMode.None;
-		Flow.path = "";
-		Flow.thereIsAnotherPlayer = false;
+		Flow.path = TurnStatus.BeginGame;
 	}
 	
 	public void SetGame(Game game)
@@ -111,28 +113,68 @@ public class Game : MonoBehaviour
 		pastMyRoundList = game.pastMyRoundList;
 		pastTheirRoundList = game.pastTheirRoundList;
 		pastWorldName = game.pastWorldName;
+		
+		//Debug.Log("whoseMove: " + whoseMove);
+		
+		if(whoseMove=="their")
+		{
+			yourTurnContainer.SetActive(false);
+			theirTurnContainer.SetActive(true);
+		}
+		else if(whoseMove=="your")
+		{
+			yourTurnContainer.SetActive(true);
+			theirTurnContainer.SetActive(false);
+		}
 	}
 	
 	public void AnswerGame()
 	{
-		Flow.currentGame = this;
-		Debug.Log("ID: " + Flow.currentGame.id.ToString() + "\nPast Index: " + Flow.currentGame.pastIndex.ToString() + 
-			"\nIs New Game: " + Flow.currentGame.isNewGame.ToString() + "\nFriend: " + Flow.currentGame.friend.ToString() + 
-			"\nMy Round List: " + Flow.currentGame.myRoundList.ToString() + "\nTheir Round List: " + Flow.currentGame.theirRoundList.ToString() + 
-			"\nPast My Round List: " + Flow.currentGame.pastMyRoundList.ToString() + "\nPast Their Round List: " +
-			Flow.currentGame.pastTheirRoundList.ToString() + "\nPast World Name: " + Flow.currentGame.pastWorldName.ToString() + 
-			"\nWorld ID: " + Flow.currentGame.worldID.ToString() + "\nWorld Name: " + Flow.currentGame.worldName.ToString() + "\nTurn ID: " + 
-			Flow.currentGame.turnID.ToString() + "\nLast Turn ID: " + Flow.currentGame.lastTurnID.ToString() + "\nTurns Won: " + 
-			Flow.currentGame.turnsWon.ToString() + "\nTurns Lost: " + Flow.currentGame.turnsLost.ToString() + "\nWhose Move: " + 
-			Flow.currentGame.whoseMove.ToString() + "\nStatus: " + Flow.currentGame.status.ToString() + "\nLast Update: " + 
-			Flow.currentGame.lastUpdate.ToString() + "\nMy Total Score: " + Flow.currentGame.myTotalScore.ToString() + "\nTheir Total Score: " +
-			Flow.currentGame.theirTotalScore.ToString());
-		
-		for(int i = 0; i<Flow.currentGame.theirRoundList.Count; i++)
+		if(whoseMove=="your")
 		{
-			Debug.Log(Flow.currentGame.theirRoundList[i].score);
+			//Debug.Log("lt "+lastTurnID);
+			if(lastTurnID == -1 || status == "waitingChoice")
+			{
+				Flow.path = TurnStatus.AnswerGame;
+			}
+			else
+			{
+				Flow.path = TurnStatus.ShowPast;
+			}
+			Flow.currentGame = this;
+			/*Debug.Log("ID: " + Flow.currentGame.id.ToString() + "\nPast Index: " + Flow.currentGame.pastIndex.ToString() + 
+				"\nIs New Game: " + Flow.currentGame.isNewGame.ToString() + "\nFriend: " + Flow.currentGame.friend.ToString() + 
+				"\nMy Round List: " + Flow.currentGame.myRoundList.ToString() + "\nTheir Round List: " + Flow.currentGame.theirRoundList.ToString() + 
+				"\nPast My Round List: " + Flow.currentGame.pastMyRoundList.ToString() + "\nPast Their Round List: " +
+				Flow.currentGame.pastTheirRoundList.ToString() + "\nPast World Name: " + Flow.currentGame.pastWorldName.ToString() + 
+				"\nWorld ID: " + Flow.currentGame.worldID.ToString() + "\nWorld Name: " + Flow.currentGame.worldName.ToString() + "\nTurn ID: " + 
+				Flow.currentGame.turnID.ToString() + "\nLast Turn ID: " + Flow.currentGame.lastTurnID.ToString() + "\nTurns Won: " + 
+				Flow.currentGame.turnsWon.ToString() + "\nTurns Lost: " + Flow.currentGame.turnsLost.ToString() + "\nWhose Move: " + 
+				Flow.currentGame.whoseMove.ToString() + "\nStatus: " + Flow.currentGame.status.ToString() + "\nLast Update: " + 
+				Flow.currentGame.lastUpdate.ToString() + "\nMy Total Score: " + Flow.currentGame.myTotalScore.ToString() + "\nTheir Total Score: " +
+				Flow.currentGame.theirTotalScore.ToString());*/
+			
+			/*for(int i = 0; i<Flow.currentGame.theirRoundList.Count; i++)
+			{
+				Debug.Log(Flow.currentGame.theirRoundList[i].score);
+			}*/
+			
+			if(status == "waitingChoice")
+			{
+				UIPanelManager.instance.BringIn("WorldSelectionScenePanel");
+			}
+			else
+			{
+				//Debug.Log(Flow.path);
+				if(Flow.path == TurnStatus.ShowPast)
+				{
+					UIPanelManager.instance.BringIn("BattleStatusScenePanel");
+				}
+				else if(Flow.path == TurnStatus.AnswerGame)
+				{
+					Application.LoadLevel("Game");
+				}
+			}
 		}
-		
-		UIPanelManager.instance.BringIn("WorldSelectionScenePanel");
 	}
 }
