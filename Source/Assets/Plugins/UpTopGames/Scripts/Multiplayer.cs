@@ -52,16 +52,18 @@ public class Multiplayer : MonoBehaviour
 				
 				for (int i = 0; i < Flow.gameList.Count; i++)
 				{
-					CreateGameContainer (Flow.gameList[i], i);
+					if (Flow.gameList[i].id != -999) CreateGameContainer (Flow.gameList[i], i);
 				}
 				
-				string move = Flow.gameList[0].whoseMove;
-				for(int j = 0 ; j < Flow.gameList.Count ; j++) 
+				if(Flow.yourTurnGames > 0)
 				{
-					if(j == 0) AddTurnLabel(Flow.gameList[0].whoseMove,0);
-					if(move != Flow.gameList[j].whoseMove) AddTurnLabel(Flow.gameList[j].whoseMove,j);
-					
-					move = Flow.gameList[j].whoseMove;
+					AddTurnLabel("your",0);
+				}
+				
+				if(Flow.theirTurnGames > 0)
+				{
+					if(Flow.yourTurnGames > 0) AddTurnLabel("their",Flow.yourTurnGames+1);
+					else AddTurnLabel("their", 0);
 				}
 			}
 		}
@@ -90,10 +92,14 @@ public class Multiplayer : MonoBehaviour
 			
 			Debug.Log(data);
 			
-			if (data["games"].Count > 0) noGamesYet.Text = "";
-			
-			
-			
+			if (data["games"].Count > 0)
+			{
+				noGamesYet.Text = "";
+			}
+			else
+			{
+				noGamesYet.Text = "No Games Yet!";
+			}
 			
 			for(int i = 0 ; i < data["games"].Count ; i++)
 			{
@@ -200,6 +206,12 @@ public class Multiplayer : MonoBehaviour
 							//eh o mesmo e tah mais atualizado
 							Debug.Log ("foundGame");
 							
+							if(data["games"][i]["whoseMove"].StringValue != Flow.gameList[h].whoseMove && Flow.gameList[h].whoseMove == "their")
+							{
+								Flow.yourTurnGames++;
+								Flow.theirTurnGames--;
+							}
+							
 							foundGame = true;
 							tempGame.friend.picture = Flow.gameList[h].friend.picture;
 							tempGame.pastIndex = Flow.gameList[h].pastIndex;
@@ -208,6 +220,7 @@ public class Multiplayer : MonoBehaviour
 						else foundGame = true;
 					}
 				}
+				
 				if(!foundGame)
 				{
 					tempGame.isNewGame = true;
@@ -227,6 +240,8 @@ public class Multiplayer : MonoBehaviour
 					g.id = -999;
 					g.whoseMove = "your";
 					g.lastUpdate = new DateTime(2999,12,31);
+					g.friend = new Friend();
+					g.friend.id = "-999";
 					Debug.Log("adicionei label yourturn na gamelist");
 					Flow.gameList.Add(g);
 				}
@@ -237,6 +252,8 @@ public class Multiplayer : MonoBehaviour
 					g.id = -999;
 					g.whoseMove = "their";
 					g.lastUpdate = new DateTime(2999,12,31);
+					g.friend = new Friend();
+					g.friend.id = "-999";
 					Debug.Log("adicionei label theirturn na gamelist");
 					Flow.gameList.Add(g);
 				}
@@ -270,16 +287,15 @@ public class Multiplayer : MonoBehaviour
 						{
 							Debug.Log("nomes new game: "+Flow.gameList[j].friend.name);
 							
-							
 							CreateGameContainer(data["games"][i], j);
 							//quando o jogador já respondeu a um jogo e está desafiando o amigo nesse mesmo jogo, criando um novo turno,
 							//é necessário colocar esse antigo jogo na lista de jogos do Flow (por algum motivo, ele some de lá)
 						}
 						else
 						{
-							//Debug.Log ("pastIndex: " + Flow.gameList[j].pastIndex);
-							//Debug.Log ("gameListIndex: " + j);
-							//Debug.Log ("game friend: " + Flow.gameList[j].friend.name);
+							Debug.Log ("pastIndex: " + Flow.gameList[j].pastIndex);
+							Debug.Log ("gameListIndex: " + j);
+							Debug.Log ("game friend: " + Flow.gameList[j].friend.name);
 							
 							GameObject tempContainer;
 							// seta jogo novo no container com o pastIndex = -1, devemos atualizar depois
@@ -353,7 +369,7 @@ public class Multiplayer : MonoBehaviour
 			}
 		}
 		
-		Invoke("updatingAutomatically",waitingTime);
+		Invoke("updatingAutomatically", waitingTime);
 	}
 	
 	void sortList()

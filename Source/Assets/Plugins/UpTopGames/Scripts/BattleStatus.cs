@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 public class BattleStatus : MonoBehaviour
@@ -15,7 +16,6 @@ public class BattleStatus : MonoBehaviour
 	public SpriteText friendScore;
 	public SpriteText[] userTimes;
 	public SpriteText[] friendTimes;
-	
 	
 	public GameObject loadingDialog;
 	public GameObject messageOkDialog;
@@ -39,7 +39,7 @@ public class BattleStatus : MonoBehaviour
 		Debug.Log(Save.GetString(PlayerPrefsKeys.NAME.ToString()));
 		
 		if(Flow.path == TurnStatus.BeginGame)
-		{	
+		{
 			Flow.currentGame.myTotalScore = 0;
 			foreach(Round r in Flow.currentGame.myRoundList)
 			{
@@ -123,21 +123,39 @@ public class BattleStatus : MonoBehaviour
 			Debug.Log ("past Index: " + Flow.currentGame.pastIndex);
 			if (Flow.currentGame.id != -1) 
 			{
+				Flow.yourTurnGames--;
+				Flow.theirTurnGames++;
 				Flow.gameList[Flow.currentGame.pastIndex].whoseMove = "their";
 			}
 			else
 			{
-				Flow.currentGame.whoseMove = "their";
-				
 				//tempContainer.transform.FindChild("ContainerButton").gameObject.SetActive(false);
 				//tempContainer.transform.FindChild("ContainerSprite").gameObject.SetActive(true);
 				
 				Debug.Log ("id : " + Flow.currentGame.id);
 				Debug.Log ("listCount: " + Flow.gameList.Count);
+				Debug.Log ("tt count: " +Flow.theirTurnGames);
+				
+				if(Flow.theirTurnGames == 0)
+				{
+					Game g = new Game();
+					g.id = -999;
+					g.whoseMove = "their";
+					g.lastUpdate = new DateTime(2999,12,31);
+					g.friend = new Friend();
+					g.friend.id = "-999";
+					if(Flow.yourTurnGames > 0) g.pastIndex = Flow.yourTurnGames+1;
+					else g.pastIndex = 0;
+					Debug.Log("adicionei label theirturn na gamelist");
+					Flow.gameList.Add(g);
+				}
+				
+				Flow.theirTurnGames++;
+				Flow.currentGame.whoseMove = "their";
+				
 				Flow.currentGame.pastIndex = Flow.gameList.Count;
 				Flow.gameList.Add (Flow.currentGame);
 			}
-				
 			
 			UIPanelManager.instance.BringIn("MultiplayerScenePanel");
 		}
