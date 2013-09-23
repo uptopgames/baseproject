@@ -125,9 +125,17 @@ public class BattleStatus : MonoBehaviour
 			Debug.Log ("past Index: " + Flow.currentGame.pastIndex);
 			if (Flow.currentGame.id != -1) 
 			{
+				Flow.gameList[Flow.currentGame.pastIndex].whoseMove = "their";
+				
+				if(Flow.yourTurnGames == 1)
+				{
+					// os jogos do your turn acabaram, remover a label da gamelist
+					Flow.gameList.RemoveAt(0);
+				}
+				
 				Flow.yourTurnGames--;
 				Flow.theirTurnGames++;
-				Flow.gameList[Flow.currentGame.pastIndex].whoseMove = "their";
+				
 			}
 			else
 			{
