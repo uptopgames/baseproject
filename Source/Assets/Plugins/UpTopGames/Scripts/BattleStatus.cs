@@ -89,6 +89,8 @@ public class BattleStatus : MonoBehaviour
 				Flow.currentGame.theirTotalScore += r.score;
 			}
 			
+			Debug.Log(Flow.currentGame.pastTheirRoundList.Count);
+			
 			for(int i = 0; i<friendTimes.Length; i++)
 			{
 				friendTimes[i].Text = "Time " + (i+1).ToString() + ": " + Flow.currentGame.pastTheirRoundList[i].time.ToString();
@@ -156,6 +158,8 @@ public class BattleStatus : MonoBehaviour
 				Flow.currentGame.pastIndex = Flow.gameList.Count;
 				Flow.gameList.Add (Flow.currentGame);
 			}
+			
+			//Flow.currentGame.ResetGame();
 			
 			UIPanelManager.instance.BringIn("MultiplayerScenePanel");
 		}

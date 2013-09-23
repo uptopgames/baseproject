@@ -92,13 +92,31 @@ public class Game : MonoBehaviour
 		Flow.path = TurnStatus.BeginGame;
 	}
 	
+	public void ResetGame()
+	{
+		Flow.currentGame = new Game();
+		Flow.selectedListIndex = -1;
+		Flow.currentMode = GameMode.None;
+		Flow.path = TurnStatus.BeginGame;
+	}
+	
 	public void SetGame(Game game)
 	{
-		Game tempGame = new Game(game.id, game.friend, game.worldID, game.worldName, game.myRoundList, game.theirRoundList, game.turnID, game.lastTurnID,
-			game.turnsWon, game.turnsLost, game.whoseMove, game.status, game.lastUpdate, game.pastMyRoundList, game.pastTheirRoundList, game.pastWorldName);
-		
+		foreach (Round r in game.pastMyRoundList)
+		{
+			Debug.Log("round score: "+r.score);
+		}
 		id = game.id;
-		friend = game.friend;
+		
+		friend = GetComponent<Friend>().SetFriend(game.friend.id,
+			game.friend.facebook_id,
+			game.friend.name,
+			FriendshipStatus.NONE,
+			game.friend.is_playing,
+			null,
+			null,
+			null);
+		
 		worldID = game.worldID;
 		worldName = game.worldName;
 		myRoundList = game.myRoundList;
@@ -128,8 +146,32 @@ public class Game : MonoBehaviour
 		}
 	}
 	
+	public void SetGame(int id, Friend friend, int worldID, 
+		string worldName, List<Round> myList = null, List<Round> theirList = null, 
+		int turnID = -1, int lastTurnID = -1, int turnsWon = -1, int turnsLost = -1, string whoseMove = null, string status = null, DateTime? time = null, 
+		List<Round> myPastList = null, List<Round> theirPastList = null, string pastWorldName = null)
+	{
+		this.id = id;
+		this.friend = friend;
+		this.myRoundList = myList;
+		this.theirRoundList = theirList;
+		this.worldID = worldID;
+		this.worldName = worldName;
+		this.turnID = turnID;
+		this.lastTurnID = lastTurnID;
+		this.turnsWon = turnsWon;
+		this.turnsLost = turnsLost;
+		this.whoseMove = whoseMove;
+		this.status = status;
+		this.lastUpdate = (time == null)? new DateTime(0) : (DateTime) time;
+		this.pastMyRoundList = myPastList;
+		this.pastTheirRoundList = theirPastList;
+		this.pastWorldName = pastWorldName;
+	}
+	
 	public void AnswerGame()
 	{
+		
 		if(whoseMove=="your")
 		{
 			//Debug.Log("lt "+lastTurnID);
@@ -141,8 +183,10 @@ public class Game : MonoBehaviour
 			{
 				Flow.path = TurnStatus.ShowPast;
 			}
-			Flow.currentGame = this;
-			/*Debug.Log("ID: " + Flow.currentGame.id.ToString() + "\nPast Index: " + Flow.currentGame.pastIndex.ToString() + 
+			
+			
+			Flow.currentGame = GetComponent<Game>();
+			Debug.Log("ID: " + Flow.currentGame.id.ToString() + "\nPast Index: " + Flow.currentGame.pastIndex.ToString() + 
 				"\nIs New Game: " + Flow.currentGame.isNewGame.ToString() + "\nFriend: " + Flow.currentGame.friend.ToString() + 
 				"\nMy Round List: " + Flow.currentGame.myRoundList.ToString() + "\nTheir Round List: " + Flow.currentGame.theirRoundList.ToString() + 
 				"\nPast My Round List: " + Flow.currentGame.pastMyRoundList.ToString() + "\nPast Their Round List: " +
@@ -152,12 +196,12 @@ public class Game : MonoBehaviour
 				Flow.currentGame.turnsWon.ToString() + "\nTurns Lost: " + Flow.currentGame.turnsLost.ToString() + "\nWhose Move: " + 
 				Flow.currentGame.whoseMove.ToString() + "\nStatus: " + Flow.currentGame.status.ToString() + "\nLast Update: " + 
 				Flow.currentGame.lastUpdate.ToString() + "\nMy Total Score: " + Flow.currentGame.myTotalScore.ToString() + "\nTheir Total Score: " +
-				Flow.currentGame.theirTotalScore.ToString());*/
+				Flow.currentGame.theirTotalScore.ToString());
 			
-			/*for(int i = 0; i<Flow.currentGame.theirRoundList.Count; i++)
+			for(int i = 0; i<Flow.currentGame.pastTheirRoundList.Count; i++)
 			{
-				Debug.Log(Flow.currentGame.theirRoundList[i].score);
-			}*/
+				Debug.Log(Flow.currentGame.pastTheirRoundList[i].score);
+			}
 			
 			if(status == "waitingChoice")
 			{

@@ -34,9 +34,9 @@ public class Login : MonoBehaviour
 	
 	void CheckLogin()
 	{
-		Debug.Log ("Token: " + Save.GetString(PlayerPrefsKeys.TOKEN.ToString()));
-		Debug.Log ("FacebookToken: " + Save.GetString(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()));
-		Debug.Log("vamos checar o login");
+		//Debug.Log ("Token: " + Save.GetString(PlayerPrefsKeys.TOKEN.ToString()));
+		//Debug.Log ("FacebookToken: " + Save.GetString(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()));
+		//Debug.Log("vamos checar o login");
 		//if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()) || Save.HasKey(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()))
 		if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
 		{
@@ -171,8 +171,8 @@ public class Login : MonoBehaviour
 	// Loga o usuario no servidor
 	private void logUserIn()
 	{
-		Debug.Log("email: "+email);
-		Debug.Log("password: "+password);
+		//Debug.Log("email: "+email);
+		//Debug.Log("password: "+password);
 		if (!Info.HasConnection(true) || email.IsEmpty())
 		{
 			//screen_status = ScreenStatus.not_logged;
@@ -211,17 +211,17 @@ public class Login : MonoBehaviour
 #endif	
 		
 		conn.connect(form);
-		Debug.Log("conecta novamente");
+		//Debug.Log("conecta novamente");
 	}
 
 	// Processa o resultado da conexao de login
 	private void connectionResult(string error, WWW data)
 	{
-		Debug.Log("resultado chegou");
+		//Debug.Log("resultado chegou");
 		JSonReader reader = new JSonReader();
 		IJSonObject json = null;
 		
-		Debug.Log("data: "+data.text);
+		//Debug.Log("data: "+data.text);
 		
 		// Tenta ler o retorno
 		if (data == null) error = "json_error";
@@ -323,7 +323,7 @@ public class Login : MonoBehaviour
 	
 	void ClearText(UITextField field)
 	{
-		Debug.Log("vaaaaaai");
+		//Debug.Log("vaaaaaai");
 		field.Text = "";
 	}
 }

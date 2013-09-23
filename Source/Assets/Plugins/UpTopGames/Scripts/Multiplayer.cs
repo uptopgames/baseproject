@@ -129,6 +129,7 @@ public class Multiplayer : MonoBehaviour
 				
 				if(data["games"][i]["turnStatus"].StringValue != "waitingChoice" && data["games"][i]["whoseMove"].StringValue != "their")
 				{
+					Debug.Log("adicionei rounds atuais");
 					if(!data["games"][i]["scores"].IsNull) scores = data["games"][i]["scores"].StringValue.Split(separator,StringSplitOptions.None);
 					if(!data["games"][i]["times"].IsNull) times = data["games"][i]["times"].StringValue.Split(separator,StringSplitOptions.None);
 					
@@ -140,6 +141,7 @@ public class Multiplayer : MonoBehaviour
 				}
 				if(!data["games"][i]["lastTurn"].IsNull) 
 				{
+					Debug.Log("adicionei os rounds passados");
 					pastMyScores = data["games"][i]["myPastScores"].StringValue.Split(separator,StringSplitOptions.None);
 					pastMyTimes = data["games"][i]["myPastTimes"].StringValue.Split(separator,StringSplitOptions.None);
 					pastTheirScores = data["games"][i]["theirPastScores"].StringValue.Split(separator,StringSplitOptions.None);
@@ -173,7 +175,8 @@ public class Multiplayer : MonoBehaviour
 					messageOkDialog,
 					messageOkCancelDialog);
 					
-				Game tempGame = new Game(
+				Game tempGame =  new Game
+				(
 					data["games"][i]["gameID"].Int32Value,
 					tempFriend,
 					tempWorldID,
@@ -189,10 +192,14 @@ public class Multiplayer : MonoBehaviour
 					data["games"][i]["lastUpdate"].DateTimeValue,
 					tempPastMyRoundList,
 					tempPastTheirRoundList,
-					tempPastWorldName);
+					tempPastWorldName
+				);
 				
 				for(int h = 0 ; h < Flow.gameList.Count ; h++)
 				{
+					Debug.Log ("temGameFriendName" + h + ": " + tempGame.friend.name);
+					
+					
 					Debug.Log ("ListfriendId: " + Flow.gameList[h].friend.id);
 					Debug.Log ("gameFriendId: " + data["games"][i]["friendID"]);
 					Debug.Log ("foundGame: " + foundGame);
@@ -234,8 +241,21 @@ public class Multiplayer : MonoBehaviour
 			
 			if(data["games"].Count > 0)
 			{
-				if(oldYourTurnNumber == 0  && Flow.yourTurnGames > 0)
+				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
 				{
+					Flow.gameList.RemoveAt(0);
+					Debug.Log("removi label yourturn na gamelist");
+				}
+				
+				if(oldTheirTurnNumber > 0 && Flow.theirTurnGames == 0)
+				{
+					if(oldYourTurnNumber > 0) Flow.gameList.RemoveAt(oldYourTurnNumber+1);
+					else Flow.gameList.RemoveAt(0);
+					Debug.Log("removi label theirturn na gamelist");
+				}
+				
+				if(oldYourTurnNumber == 0  && Flow.yourTurnGames > 0)
+				{	
 					Game g = new Game();
 					g.id = -999;
 					g.whoseMove = "your";
@@ -257,25 +277,14 @@ public class Multiplayer : MonoBehaviour
 					Debug.Log("adicionei label theirturn na gamelist");
 					Flow.gameList.Add(g);
 				}
-				
-				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
-				{
-					Flow.gameList.RemoveAt(0);
-					Debug.Log("removi label yourturn na gamelist");
-				}
-				
-				if(oldTheirTurnNumber > 0 && Flow.theirTurnGames == 0)
-				{
-					if(Flow.yourTurnGames > 0) Flow.gameList.RemoveAt(Flow.yourTurnGames+1);
-					else Flow.gameList.RemoveAt(0);
-					Debug.Log("removi label theirturn na gamelist");
-				}
 			}
 			
 			//Debug.Log("yt number: "+Flow.yourTurnGames);
 			//Debug.Log("tt number: "+Flow.theirTurnGames);
 			
 			sortList();
+			
+			foreach(Game g in Flow.gameList) Debug.Log("nome da pessoa " + g.friend.name);
 			
 			for(int j = 0; j < Flow.gameList.Count; j++)
 			{
@@ -287,23 +296,32 @@ public class Multiplayer : MonoBehaviour
 						{
 							Debug.Log("nomes new game: "+Flow.gameList[j].friend.name);
 							
-							CreateGameContainer(data["games"][i], j);
+							CreateGameContainer(Flow.gameList[j], j);
 							//quando o jogador já respondeu a um jogo e está desafiando o amigo nesse mesmo jogo, criando um novo turno,
 							//é necessário colocar esse antigo jogo na lista de jogos do Flow (por algum motivo, ele some de lá)
 						}
-						else
+						else if (Flow.gameList[j].id != -999)
 						{
 							Debug.Log ("pastIndex: " + Flow.gameList[j].pastIndex);
 							Debug.Log ("gameListIndex: " + j);
 							Debug.Log ("game friend: " + Flow.gameList[j].friend.name);
 							
 							GameObject tempContainer;
+							
 							// seta jogo novo no container com o pastIndex = -1, devemos atualizar depois
 							scroll.GetItem(Flow.gameList[j].pastIndex).transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
 							tempContainer = GameObject.Instantiate(scroll.GetItem(Flow.gameList[j].pastIndex).gameObject) as GameObject;
+							tempContainer.transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
+							
 							scroll.RemoveItem(Flow.gameList[j].pastIndex, true);
 							scroll.InsertItem(tempContainer.GetComponent<UIListItemContainer>(), j);
+							
 							scroll.GetItem(j).transform.GetComponent<Game>().pastIndex = j;
+							
+							foreach (Round r in scroll.GetItem(j).transform.GetComponent<Game>().pastTheirRoundList)
+							{
+								Debug.Log("set update round: "+ r.score);
+							}
 						}
 					}
 				}
@@ -311,6 +329,17 @@ public class Multiplayer : MonoBehaviour
 			
 			if(data["games"].Count > 0)
 			{
+				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
+				{
+					scroll.RemoveItem(0,true);
+				}
+				
+				if(oldTheirTurnNumber > 0 && Flow.theirTurnGames == 0)
+				{
+					if(oldYourTurnNumber > 0) scroll.RemoveItem(oldYourTurnNumber+1,true);
+					else scroll.RemoveItem(0, true);
+				}
+				
 				if(oldYourTurnNumber == 0  && Flow.yourTurnGames > 0)
 				{
 					AddTurnLabel("your",0);
@@ -322,16 +351,7 @@ public class Multiplayer : MonoBehaviour
 					else AddTurnLabel("their",0);
 				}
 				
-				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
-				{
-					scroll.RemoveItem(0,true);
-				}
 				
-				if(oldTheirTurnNumber > 0 && Flow.theirTurnGames == 0)
-				{
-					if(Flow.yourTurnGames > 0) scroll.RemoveItem(Flow.yourTurnGames+1,true);
-					else scroll.RemoveItem(0, true);
-				}
 			}
 			
 			/*if(data["games"].Count > 0)
@@ -456,7 +476,7 @@ public class Multiplayer : MonoBehaviour
 		);
 		
 		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].ToString();
-		
+		Flow.gameList[index].friend = tempGameContainer.GetComponent<Friend>();
 		scroll.InsertItem(tempGameContainer.GetComponent<UIListItemContainer>(), index);
 		Flow.gameList[index].pastIndex = index;
 		tempGameContainer.GetComponent<Game>().SetGame(Flow.gameList[index]);
@@ -480,7 +500,7 @@ public class Multiplayer : MonoBehaviour
 			messageOkDialog,
 			messageOkCancelDialog
 		);
-		
+		game.friend = tempGameContainer.GetComponent<Friend>();
 		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game.friend.name;
 		
 		scroll.InsertItem(tempGameContainer.GetComponent<UIListItemContainer>(), index);
