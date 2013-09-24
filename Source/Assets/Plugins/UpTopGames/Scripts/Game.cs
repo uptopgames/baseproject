@@ -8,6 +8,7 @@ public class Game : MonoBehaviour
 	public int id = -1;
 	public int pastIndex = -1;
 	public bool isNewGame = false;
+	public bool wasUpdated = false;
 	public Friend friend = new Friend();
 	public List<Round> myRoundList = new List<Round>();
 	public List<Round> theirRoundList = new List<Round>();
@@ -170,8 +171,7 @@ public class Game : MonoBehaviour
 	}
 	
 	public void AnswerGame()
-	{
-		
+	{		
 		if(whoseMove=="your")
 		{
 			//Debug.Log("lt "+lastTurnID);
@@ -187,7 +187,7 @@ public class Game : MonoBehaviour
 			
 			Flow.currentGame = GetComponent<Game>();
 			Debug.Log("ID: " + Flow.currentGame.id.ToString() + "\nPast Index: " + Flow.currentGame.pastIndex.ToString() + 
-				"\nIs New Game: " + Flow.currentGame.isNewGame.ToString() + "\nFriend: " + Flow.currentGame.friend.ToString() + 
+				"\nIs New Game: " + Flow.currentGame.isNewGame.ToString()+ "\nWas Updated: " + Flow.currentGame.wasUpdated.ToString()  + "\nFriend: " + Flow.currentGame.friend.ToString() + 
 				"\nMy Round List: " + Flow.currentGame.myRoundList.ToString() + "\nTheir Round List: " + Flow.currentGame.theirRoundList.ToString() + 
 				"\nPast My Round List: " + Flow.currentGame.pastMyRoundList.ToString() + "\nPast Their Round List: " +
 				Flow.currentGame.pastTheirRoundList.ToString() + "\nPast World Name: " + Flow.currentGame.pastWorldName.ToString() + 

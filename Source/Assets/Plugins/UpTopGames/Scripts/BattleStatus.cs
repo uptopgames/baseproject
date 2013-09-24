@@ -131,6 +131,21 @@ public class BattleStatus : MonoBehaviour
 				{
 					// os jogos do your turn acabaram, remover a label da gamelist
 					Flow.gameList.RemoveAt(0);
+					
+					// e adicionar their turn...
+					if(Flow.theirTurnGames == 0)
+					{
+						Game g = new Game();
+						g.id = -999;
+						g.whoseMove = "their";
+						g.lastUpdate = new DateTime(2999,12,31);
+						g.friend = new Friend();
+						g.friend.id = "-999";
+						if(Flow.yourTurnGames > 0) g.pastIndex = Flow.yourTurnGames+1;
+						else g.pastIndex = 0;
+						Debug.Log("adicionei label theirturn na gamelist");
+						Flow.gameList.Add(g);
+					}
 				}
 				
 				Flow.yourTurnGames--;

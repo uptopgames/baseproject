@@ -14,6 +14,8 @@ public class Multiplayer : MonoBehaviour
 	public GameObject yourTurnPrefab;
 	public GameObject theirTurnPrefab;
 	
+	public bool notInThisPanel = false;
+	
 	public SpriteText noGamesYet;
 	
 	public UIScrollList scroll;
@@ -36,15 +38,25 @@ public class Multiplayer : MonoBehaviour
 	{
 		GetComponent<UIInteractivePanel>().transitions.list[0].AddTransitionStartDelegate(Connect);
 		GetComponent<UIInteractivePanel>().transitions.list[1].AddTransitionStartDelegate(Connect);
+		GetComponent<UIInteractivePanel>().transitions.list[2].AddTransitionStartDelegate(LeavePanel);
+		GetComponent<UIInteractivePanel>().transitions.list[3].AddTransitionStartDelegate(LeavePanel);
+	}
+	
+	void LeavePanel(EZTransition transition)
+	{
+		notInThisPanel = true;
 	}
 	
 	void Connect(EZTransition transition)
 	{
+		notInThisPanel = false;
 		Debug.Log ("gameListCount: " + Flow.gameList.Count);
 		Debug.Log ("scrollCount: " + scroll.Count);
 		
 		if (Flow.gameList.Count > 0)
 		{
+			noGamesYet.Text = "";
+				
 			// Fix Me Up Top Coloquei um porque adicionei a forca um container offline
 			if (scroll.Count == 0)
 			{
@@ -56,7 +68,7 @@ public class Multiplayer : MonoBehaviour
 				{	
 					if (Flow.gameList[i].id != -999) 
 					{
-						Debug.Log("coloquei container " + i);
+						Debug.Log("coloquei " + Flow.gameList[i].friend.name);
 						// seta past index na lista para atualizacoes que foram feitas em battle status...
 						Flow.gameList[i].pastIndex = i;
 						CreateGameContainer (Flow.gameList[i], i);
@@ -93,6 +105,8 @@ public class Multiplayer : MonoBehaviour
 	
 	void updatingAutomatically()
 	{
+		if(notInThisPanel) return;
+		
 		updatedAutomatically = true;
 		
 		WWWForm form = new WWWForm();
@@ -102,6 +116,8 @@ public class Multiplayer : MonoBehaviour
 	
 	void OnReceiveGames(string error, IJSonObject data)
 	{
+		if(notInThisPanel) return;
+		
 		if(error != null) Debug.Log(error);
 		else 
 		{
@@ -217,23 +233,26 @@ public class Multiplayer : MonoBehaviour
 					
 					if(data["games"][i]["friendID"].Int32Value == int.Parse(Flow.gameList[h].friend.id))
 					{
+						Debug.Log ("foundGame");
 						if(data["games"][i]["lastUpdate"].DateTimeValue > Flow.gameList[h].lastUpdate)
 						{
 							//eh o mesmo e tah mais atualizado
-							Debug.Log ("foundGame");
+							Debug.Log ("atualizacao chegou!");
 							
 							if(data["games"][i]["whoseMove"].StringValue != Flow.gameList[h].whoseMove && Flow.gameList[h].whoseMove == "their")
 							{
+								Debug.Log ("mudou de their para your! :)");
 								Flow.yourTurnGames++;
 								Flow.theirTurnGames--;
 							}
 							
-							foundGame = true;
+							tempGame.wasUpdated = true;
 							tempGame.friend.picture = Flow.gameList[h].friend.picture;
 							tempGame.pastIndex = Flow.gameList[h].pastIndex;
 							Flow.gameList[h] = tempGame;
 						}
-						else foundGame = true;
+					 	foundGame = true;
+						break;
 					}
 				}
 				
@@ -248,13 +267,13 @@ public class Multiplayer : MonoBehaviour
 				}
 			}
 			
-			foreach(Game g in Flow.gameList) 
-			{
-				Debug.Log("signs nome da pessoa " + g.friend.name+" signs whose move da pessoa: "+ g.whoseMove+" signs atualizacao da pessoa" + g.lastUpdate);
-			}
-			
 			if(data["games"].Count > 0)
 			{
+				foreach(Game g in Flow.gameList) 
+				{
+					Debug.Log("signs nome da pessoa " + g.friend.name+" signs whose move da pessoa: "+ g.whoseMove+" signs atualizacao da pessoa" + g.lastUpdate);
+				}
+			
 				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
 				{
 					Flow.gameList.RemoveAt(0);
@@ -291,66 +310,82 @@ public class Multiplayer : MonoBehaviour
 					Debug.Log("adicionei label theirturn na gamelist");
 					Flow.gameList.Add(g);
 				}
-			}
 			
-			//Debug.Log("yt number: "+Flow.yourTurnGames);
-			//Debug.Log("tt number: "+Flow.theirTurnGames);
 			
-			foreach(Game g in Flow.gameList) 
-			{
-				Debug.Log("before nome da pessoa " + g.friend.name+" before whose move da pessoa: "+ g.whoseMove+" before atualizacao da pessoa" + g.lastUpdate);
-			}
+				//Debug.Log("yt number: "+Flow.yourTurnGames);
+				//Debug.Log("tt number: "+Flow.theirTurnGames);
 			
-			sortList();
-			
-			foreach(Game g in Flow.gameList) 
-			{
-				Debug.Log("nome da pessoa " + g.friend.name+" whose move da pessoa: "+ g.whoseMove+" atualizacao da pessoa" + g.lastUpdate);
-			}
-			
-			for(int j = 0; j < Flow.gameList.Count; j++)
-			{
-				for(int i = 0; i < data["games"].Count; i++)
+				foreach(Game g in Flow.gameList) 
 				{
-					if(Flow.gameList[j].friend.id == data["games"][i]["friendID"].StringValue)
+					Debug.Log("before nome da pessoa " + g.friend.name+" before whose move da pessoa: "+ g.whoseMove+" before atualizacao da pessoa" + g.lastUpdate);
+				}
+				
+				sortList();
+			
+				// verifica se chegou um jogo novo e atualiza o pastIndex dos jogos depois do jogo novo
+				for (int z = 0 ; z < Flow.gameList.Count ; z++)
+				{
+					if(Flow.gameList[z].isNewGame)
 					{
-						if(Flow.gameList[j].isNewGame)
+						Debug.Log("newGame atualizando os index dos jogos abaixo de "+Flow.gameList[z].friend.name);
+						// achou um jogo novo, todos os indices passados de jogos abaixo do jogo novo tem que somar 1
+						for (int q = z+1 ; q < Flow.gameList.Count ; q++)
 						{
-							Debug.Log("nomes new game: "+Flow.gameList[j].friend.name);
-							
-							CreateGameContainer(Flow.gameList[j], j);
-							//quando o jogador já respondeu a um jogo e está desafiando o amigo nesse mesmo jogo, criando um novo turno,
-							//é necessário colocar esse antigo jogo na lista de jogos do Flow (por algum motivo, ele some de lá)
+							Flow.gameList[q].pastIndex++;
 						}
-						else if (Flow.gameList[j].id != -999)
+					}
+					
+					if(Flow.gameList[z].wasUpdated)
+					{
+						Debug.Log("wasUpdated atualizando os index dos jogos abaixo de "+Flow.gameList[z].friend.name);
+						// achou um jogo novo, todos os indices passados de jogos abaixo do jogo novo tem que somar 1
+						for (int q = z+1 ; q < Flow.gameList.Count ; q++)
 						{
-							Debug.Log ("pastIndex: " + Flow.gameList[j].pastIndex);
-							Debug.Log ("gameListIndex: " + j);
-							Debug.Log ("game friend: " + Flow.gameList[j].friend.name);
-							
-							GameObject tempContainer;
-							
-							// seta jogo novo no container com o pastIndex = -1, devemos atualizar depois
-							scroll.GetItem(Flow.gameList[j].pastIndex).transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
-							tempContainer = GameObject.Instantiate(scroll.GetItem(Flow.gameList[j].pastIndex).gameObject) as GameObject;
-							tempContainer.transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
-							
-							scroll.RemoveItem(Flow.gameList[j].pastIndex, true);
-							scroll.InsertItem(tempContainer.GetComponent<UIListItemContainer>(), j);
-							
-							scroll.GetItem(j).transform.GetComponent<Game>().pastIndex = j;
-							
-							foreach (Round r in scroll.GetItem(j).transform.GetComponent<Game>().pastTheirRoundList)
-							{
-								Debug.Log("set update round: "+ r.score);
-							}
+							Flow.gameList[q].pastIndex++;
 						}
 					}
 				}
-			}
 			
-			if(data["games"].Count > 0)
-			{
+				foreach(Game g in Flow.gameList) 
+				{
+					Debug.Log("nome da pessoa " + g.friend.name+" whose move da pessoa: "+ g.whoseMove+" atualizacao da pessoa" + g.lastUpdate);
+				}
+			
+				for(int j = 0; j < Flow.gameList.Count; j++)
+				{
+					if(Flow.gameList[j].isNewGame)
+					{
+						Debug.Log("nomes new game: "+Flow.gameList[j].friend.name);
+						
+						CreateGameContainer(Flow.gameList[j], j);
+						//quando o jogador já respondeu a um jogo e está desafiando o amigo nesse mesmo jogo, criando um novo turno,
+						//é necessário colocar esse antigo jogo na lista de jogos do Flow (por algum motivo, ele some de lá)
+					}
+					else if (Flow.gameList[j].wasUpdated)
+					{
+						Debug.Log ("pastIndex: " + Flow.gameList[j].pastIndex);
+						Debug.Log ("gameListIndex: " + j);
+						Debug.Log ("game friend: " + Flow.gameList[j].friend.name);
+						
+						GameObject tempContainer;
+						
+						// seta jogo novo no container com o pastIndex = -1, devemos atualizar depois
+						scroll.GetItem(Flow.gameList[j].pastIndex).transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
+						tempContainer = GameObject.Instantiate(scroll.GetItem(Flow.gameList[j].pastIndex).gameObject) as GameObject;
+						tempContainer.transform.GetComponent<Game>().SetGame(Flow.gameList[j]);
+						
+						scroll.RemoveItem(Flow.gameList[j].pastIndex, true);
+						scroll.InsertItem(tempContainer.GetComponent<UIListItemContainer>(), j);
+						
+						scroll.GetItem(j).transform.GetComponent<Game>().pastIndex = j;
+						
+						foreach (Round r in scroll.GetItem(j).transform.GetComponent<Game>().pastTheirRoundList)
+						{
+							Debug.Log("set update round: "+ r.score);
+						}
+					}
+				}
+			
 				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
 				{
 					Debug.Log("scroll remove your turn");
@@ -386,22 +421,21 @@ public class Multiplayer : MonoBehaviour
 					if(Flow.yourTurnGames > 0) AddTurnLabel("their",Flow.yourTurnGames+1);
 					else AddTurnLabel("their",0);
 				}
+			
+				SetListPastIndex();
 				
-				
+				if (Flow.gameList.Count > 0)
+				{
+					noGamesYet.Text = "";
+				}
+				else
+				{
+					noGamesYet.Text = "No Games Yet";
+				}
+			
 			}
 			
-			SetListPastIndex();
-			
-			if (Flow.gameList.Count > 0)
-			{
-				noGamesYet.Text = "";
-			}
-			else
-			{
-				noGamesYet.Text = "No Games Yet";
-			}
-			
-			// Recalcula o tempo de espera
+			// Recalcula o tempo de espera somente se a conexao deu certo, caso contrario, mais abaixo chamara a conexao com o mesmo tempo de espera
 			if(updatedAutomatically)
 			{
 				updatedAutomatically = false;
@@ -547,7 +581,8 @@ public class Multiplayer : MonoBehaviour
 			
 			Debug.Log("rodando index... "+i);
 			Flow.gameList[i].pastIndex = i;
-			
+			Flow.gameList[i].isNewGame = false;
+			Flow.gameList[i].wasUpdated = false;
 			
 			if(Flow.gameList[i].id != -999) scroll.GetItem(i).transform.GetComponent<Game>().pastIndex = i;
 		}

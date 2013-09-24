@@ -217,16 +217,16 @@ public class Invite : MonoBehaviour
 	
 	public void EraseFriendsList()
 	{
-		scroll.ClearList(true);
-		playingScroll.ClearList(true);
+		scroll.ClearList(false);
+		playingScroll.ClearList(false);
 	}
 	
 	public void EraseFriendsListAndLoad()
 	{
 		Flow.game_native.startLoading(loadingDialog);
 		
-		scroll.ClearList(true);
-		playingScroll.ClearList(true);
+		scroll.ClearList(false);
+		playingScroll.ClearList(false);
 		
 		multiplayerPanel.AddTempTransitionDelegate(StopLoading);
 	}
