@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CodeTitans.JSon;
 
 public class Game : MonoBehaviour
 {
@@ -29,6 +30,11 @@ public class Game : MonoBehaviour
 	
 	public GameObject yourTurnContainer;
 	public GameObject theirTurnContainer;
+	
+	public GameObject nudgeButton;
+	
+	public SpriteText winsText;
+	public SpriteText losesText;
 	
 	public Game()
 	{
@@ -133,7 +139,11 @@ public class Game : MonoBehaviour
 		pastTheirRoundList = game.pastTheirRoundList;
 		pastWorldName = game.pastWorldName;
 		
-		//Debug.Log("whoseMove: " + whoseMove);
+		winsText.Text = turnsWon.ToString();
+		losesText.Text = turnsLost.ToString();
+				
+		if((DateTime.Now - lastUpdate).Days > 2) nudgeButton.SetActive(true);
+		else nudgeButton.SetActive(false);
 		
 		if(whoseMove=="their")
 		{
@@ -168,6 +178,30 @@ public class Game : MonoBehaviour
 		this.pastMyRoundList = myPastList;
 		this.pastTheirRoundList = theirPastList;
 		this.pastWorldName = pastWorldName;
+	}
+	
+	bool isNudging = false;
+	
+	public void NudgeFriend()
+	{
+		if(isNudging) return;
+		
+		Debug.Log("nudge no amiguinho!");
+		
+		isNudging = true;
+		WWWForm form = new WWWForm();
+		form.AddField("to",friend.id);
+		new GameJsonAuthConnection(Flow.URL_BASE + "login/nudge.php", OnReceiveNudge).connect(form);
+	}
+	
+	public void OnReceiveNudge(string error, IJSonObject data)
+	{
+		isNudging = false;
+		if(error != null) Debug.Log("error nudging.. "+error);
+		else
+		{
+			nudgeButton.SetActive(false);
+		}
 	}
 	
 	public void AnswerGame()

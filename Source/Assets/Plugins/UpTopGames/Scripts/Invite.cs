@@ -26,16 +26,42 @@ public class Invite : MonoBehaviour
 	public GameObject noFriendsText;
 	public GameObject inviteFriendPanel;
 	
+	public GameObject repositoryLists;
+	
 	// Facebook
 	protected GameFacebook fb_account;
 	
 	// Use this for initialization
 	void Start () 
 	{
+		repositoryLists = GameObject.FindWithTag("RepoFLists");
+		
+		scroll = repositoryLists.transform.FindChild("Friend List").transform.GetComponent<UIScrollList>();
+		playingScroll = repositoryLists.transform.FindChild("PlayingList").transform.GetComponent<UIScrollList>();
+		
+		scroll.transform.parent = gameObject.transform;
+		playingScroll.transform.parent = gameObject.transform;
+		
+		scroll.transform.position = new Vector3
+		(
+			65.6814f -31.4336f -0.892828f, //posicao do panelmanager
+			1.373484f -0.9254344f -0.145995f, //posicao idle do invitepanel
+			914.5213f +5.99231f -7.011475f //posicao que vai ficar o scroll
+		);
+		
+		//playingScroll.transform.position = new Vector3(23.74891f,-21.53267f,47.21136f);
+		
+		playingScroll.transform.position = new Vector3
+		(
+			65.6814f -31.4336f -0.892828f, //posicao do panelmanager
+			1.373484f -0.9254344f -0.145995f, //posicao idle do invitepanel
+			914.5213f +5.99231f -7.011475f //posicao que vai ficar o scroll
+		);
+		
 		UIInteractivePanel panel = GetComponent<UIInteractivePanel>();
 		
-		panel.transitions.list[0].AddTransitionStartDelegate(GetFriends);
-		panel.transitions.list[1].AddTransitionStartDelegate(GetFriends);
+		panel.transitions.list[0].AddTransitionStartDelegate(EnteredInvite);
+		panel.transitions.list[1].AddTransitionStartDelegate(EnteredInvite);
 		
 		searchText.SetFocusDelegate(ClearText);
 		searchText.AddValidationDelegate(TextChanged);
@@ -85,11 +111,29 @@ public class Invite : MonoBehaviour
 		*/return text;
 	}
 	
-	public void GetFriends(EZTransition transition)
+	public void GetFriends()
 	{
 		Flow.game_native.startLoading(loadingDialog);
 		GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/friends/list.php", HandleGetFriends);
 		conn.connect(null, 10);
+	}
+	
+	public void EnteredInvite(EZTransition transition)
+	{
+		
+		
+		
+		//-0.8825989
+		//-0.1453629
+		//-6.688721
+		
+		
+		scroll.gameObject.SetActive(true);
+		
+		if(scroll.Count == 0 && playingScroll.Count == 0)
+		{
+			GetFriends();
+		}
 	}
 	
 	// Obtem as informacoes dos amigos do usuario
@@ -126,7 +170,7 @@ public class Invite : MonoBehaviour
 			{
 				playingLetter = data[0]["name"].StringValue.Substring(0,1).ToUpper();
 				GameObject firstPlayingL = GameObject.Instantiate(letterPrefab) as GameObject;
-				firstL.transform.FindChild("Letter").GetComponent<SpriteText>().Text = playingLetter.ToUpper ();
+				firstPlayingL.transform.FindChild("Letter").GetComponent<SpriteText>().Text = playingLetter.ToUpper ();
 				playingScroll.AddItem(firstPlayingL);
 			}
 		}
@@ -215,20 +259,47 @@ public class Invite : MonoBehaviour
 		}
 	}
 	
+	/*public void RemoveFromFriendList()
+	{
+		// retira objetos do scroll sem destrui-los para posteriormente adiciona-los quando voltar a essa cena
+		
+		foreach(UIListItemContainer item in playingScroll)
+		{
+			item.gameObject.tag = "playingScroll";
+		}
+		
+		playingScroll.ClearList(false);
+		
+		foreach(UIListItemContainer item in scroll)
+		{
+			item.gameObject.tag = "allScroll";
+		}
+		
+		scroll.ClearList(false);
+	}*/
+	
 	public void EraseFriendsList()
 	{
-		scroll.ClearList(false);
-		playingScroll.ClearList(false);
+		Debug.Log("EraseFriendsList");
+		
+		scroll.transform.gameObject.SetActive(false);
+		playingScroll.transform.gameObject.SetActive(false);
+		
+		scroll.transform.parent = repositoryLists.transform;
+		playingScroll.transform.parent = repositoryLists.transform;
+		//scroll.ClearList(false);
+		//playingScroll.ClearList(false);
 	}
 	
 	public void EraseFriendsListAndLoad()
 	{
-		Flow.game_native.startLoading(loadingDialog);
+		Debug.Log("EraseFriendsListAndLoad");
+		//Flow.game_native.startLoading(loadingDialog);
 		
-		scroll.ClearList(false);
-		playingScroll.ClearList(false);
+		//scroll.ClearList(false);
+		//playingScroll.ClearList(false);
 		
-		multiplayerPanel.AddTempTransitionDelegate(StopLoading);
+		//multiplayerPanel.AddTempTransitionDelegate(StopLoading);
 	}
 	
 	void StopLoading(UIPanelBase panel, EZTransition transition)
@@ -270,7 +341,7 @@ public class Invite : MonoBehaviour
 		Flow.currentGame.friend.facebook_id = data["facebook_id"].StringValue;
 		
 		Flow.game_native.startLoading(loadingDialog);
-		EraseFriendsList();
+		//EraseFriendsList();
 		
 		Debug.Log(Flow.currentGame.friend.ToString());
 		
@@ -296,9 +367,9 @@ public class Invite : MonoBehaviour
 			return;
 		}
 		
-		EraseFriendsList();
+		//EraseFriendsList();
 
-		GetFriends(nextPanel.transitions.list[0]); //gambiarra: ele n precisa receber parâmetro nenhum, esse aqui é aleatório
+		//GetFriends(nextPanel.transitions.list[0]); //gambiarra: ele n precisa receber parâmetro nenhum, esse aqui é aleatório
 	}
 	
 	void OpenInviteFriendsWindow()
@@ -370,8 +441,8 @@ public class Invite : MonoBehaviour
 		{
 			Flow.game_native.showMessage(messageOkDialog, "Success", "All your friends has been invited!");
 			CloseInviteFriendsWindow();
-			EraseFriendsList();
-			GetFriends(nextPanel.transitions.list[0]); //gambiarra: ele n precisa receber parâmetro nenhum, esse aqui é aleatório
+			//EraseFriendsList();
+			//GetFriends(nextPanel.transitions.list[0]); //gambiarra: ele n precisa receber parâmetro nenhum, esse aqui é aleatório
 			return;
 		}
 		

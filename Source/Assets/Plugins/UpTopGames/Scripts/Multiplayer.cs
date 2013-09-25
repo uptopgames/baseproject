@@ -395,7 +395,7 @@ public class Multiplayer : MonoBehaviour
 				if(oldTheirTurnNumber > 0 && Flow.theirTurnGames == 0)
 				{
 					Debug.Log("scroll remove their turn");
-					if(oldYourTurnNumber > 0) scroll.RemoveItem(oldYourTurnNumber+1,true);
+					if(Flow.yourTurnGames > 0) scroll.RemoveItem(Flow.yourTurnGames+1,true);
 					else scroll.RemoveItem(0, true);
 				}
 				
@@ -519,32 +519,6 @@ public class Multiplayer : MonoBehaviour
 			GameObject tempLabelContainer = GameObject.Instantiate(theirTurnPrefab) as GameObject;
 			scroll.InsertItem(tempLabelContainer.GetComponent<UIListItemContainer>(),index);
 		}
-	}
-	
-	GameObject CreateGameContainer (IJSonObject game, int index)
-	{
-		GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
-		//Debug.Log ("game: " + game);
-		tempGameContainer.GetComponent<Friend>().SetFriend
-		(
-			game["friendID"].ToString(), 
-			game["facebookID"].IsNull ?  "" : game["facebookID"].ToString(),
-			game["username"].ToString(),
-			FriendshipStatus.NONE,
-			game["hasApp"] == "1",
-			loadingDialog,
-			messageOkDialog,
-			messageOkCancelDialog
-		);
-		
-		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].ToString();
-		Flow.gameList[index].friend = tempGameContainer.GetComponent<Friend>();
-		scroll.InsertItem(tempGameContainer.GetComponent<UIListItemContainer>(), index);
-		//Flow.gameList[index].pastIndex = index;
-		tempGameContainer.GetComponent<Game>().SetGame(Flow.gameList[index]);
-		//tempGameContainer.GetComponent<Game>().pastIndex = index;
-		
-		return tempGameContainer;
 	}
 	
 	GameObject CreateGameContainer (Game game, int index)
