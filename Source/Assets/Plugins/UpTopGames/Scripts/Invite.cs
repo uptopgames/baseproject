@@ -33,14 +33,13 @@ public class Invite : MonoBehaviour
 	
 	// lista de amigos novos convidados (atraves do botao de invite e da popup)
 	List<Friend> newFriends = new List<Friend>();
-	List<string> letterList = new List<string>();
 	
 	// Use this for initialization
 	void Start () 
 	{
 		repositoryLists = GameObject.FindWithTag("RepoFLists");
 		
-		scroll = repositoryLists.transform.FindChild("Friend List").transform.GetComponent<UIScrollList>();
+		scroll = repositoryLists.transform.FindChild("FriendList").transform.GetComponent<UIScrollList>();
 		playingScroll = repositoryLists.transform.FindChild("PlayingList").transform.GetComponent<UIScrollList>();
 		
 		scroll.transform.parent = gameObject.transform;
@@ -61,9 +60,9 @@ public class Invite : MonoBehaviour
 			// primeira coluna refere-se a posicao do panel manager no mundo
 			// segunda coluna refere-se a posicao do invite em relacao ao panel maneger
 			// terceira coluna refere-se a posicao do scroll em relacao ao invite panel
-			65.6814f -31.4336f -0.892828f, // x
-			1.373484f -0.9254344f -0.145995f, // y
-			914.5213f +5.99231f -7.011475f // z
+			65.6814f 	-31.4336f 		-0.892828f, 	// x
+			1.373484f 	-0.9254344f 	-0.145995f, 	// y
+			914.5213f 	+5.99231f 		-7.011475f 		// z
 		);
 		
 		UIInteractivePanel panel = GetComponent<UIInteractivePanel>();
@@ -229,6 +228,7 @@ public class Invite : MonoBehaviour
 			friend["name"].ToString(),
 			friend["from_facebook"].BooleanValue? FriendshipStatus.FACEBOOK: FriendshipStatus.STANDALONE,
 			friend["is_playing"].BooleanValue,
+			//null,
 			loadingDialog,
 			messageOkDialog,
 			messageOkCancelDialog);
@@ -316,7 +316,7 @@ public class Invite : MonoBehaviour
 	
 	public void EraseFriendsList()
 	{
-		Debug.Log("EraseFriendsList");
+		//Debug.Log("EraseFriendsList");
 		
 		scroll.transform.gameObject.SetActive(false);
 		playingScroll.transform.gameObject.SetActive(false);
@@ -481,7 +481,7 @@ public class Invite : MonoBehaviour
 					inviteFriendScroll.GetItem(i).transform.FindChild("Right Panel").gameObject.SetActive(true);
 					
 					Friend tempFriend = new Friend();
-					tempFriend = tempFriend.SetFriend(valid["id"].StringValue,valid["facebook_id"].StringValue,valid["name"].StringValue,FriendshipStatus.STANDALONE,valid["is_playing"].BooleanValue,loadingDialog,messageOkDialog,messageOkCancelDialog);
+					tempFriend = tempFriend.SetFriend(valid["id"].StringValue,valid["facebook_id"].StringValue,valid["name"].StringValue,FriendshipStatus.STANDALONE,valid["is_playing"].BooleanValue,/*null,*/loadingDialog,messageOkDialog,messageOkCancelDialog);
 					
 					bool found = false;
 					for(int y = 0 ; y < newFriends.Count ; y++)
@@ -505,11 +505,7 @@ public class Invite : MonoBehaviour
 		{
 			Flow.game_native.showMessage(messageOkDialog, "Success", "All your friends has been invited!");
 			CloseInviteFriendsWindow();
-			
-			AddNewFriendsAndClearList();
-			
-			//EraseFriendsList();
-			//GetFriends(nextPanel.transitions.list[0]); //gambiarra: ele n precisa receber parâmetro nenhum, esse aqui é aleatório
+						
 			return;
 		}
 		
@@ -520,32 +516,29 @@ public class Invite : MonoBehaviour
 	{
 		for(int i = 0 ; i < newFriends.Count ; i++)
 		{
-			Debug.Log("nome do novo amigo: "+newFriends[i].name);
-			
 			if(newFriends[i].is_playing)
 			{
-				string lastLetterPlaying = playingScroll.GetItem(0).Text;
-				
 				bool placeSettledPlaying = false;
 				GameObject tempPlayingObj = CreateFriendContainer(newFriends[i]);
 				int oldPlayingComparison = -1;
 				
+				string lastLetterPlaying;
+				if(playingScroll.Count > 0 ) lastLetterPlaying = playingScroll.GetItem(0).Text;
+				else lastLetterPlaying = "";
+				
 				for(int j = 0 ; j < playingScroll.Count ; j++)
 				{
 					int playingComparison;
-					//bool isPlayingLetter = false;
 					
 					if(!playingScroll.GetItem(j).transform.GetComponent<Friend>()) 
 					{
 						playingComparison = playingScroll.GetItem(j).Text.CompareTo(newFriends[i].name);
-						//isPlayingLetter = true;
-						lastLetterPlaying = playingScroll.GetItem(j).Text;
 					}
 					else playingComparison = playingScroll.GetItem(j).transform.GetComponent<Friend>().name.CompareTo(newFriends[i].name);
 					
 					if(oldPlayingComparison <= 0 && playingComparison == 1)
 					{
-						if(lastLetterPlaying != newFriends[i].name.Substring(0,1))
+						if(lastLetterPlaying.ToUpper() != newFriends[i].name.Substring(0,1).ToUpper())
 						{
 							// tem que adicionar container de letra antes
 							GameObject tempPlayingLetter = GameObject.Instantiate(letterPrefab) as GameObject;
@@ -556,16 +549,18 @@ public class Invite : MonoBehaviour
 						else playingScroll.InsertItem(tempPlayingObj.GetComponent<UIListItemContainer>(),j);
 						
 						placeSettledPlaying = true;
+						break;
 					}
+					
+					if(!playingScroll.GetItem(j).transform.GetComponent<Friend>()) lastLetterPlaying = playingScroll.GetItem(j).Text;
 					
 					oldPlayingComparison = playingComparison;
 				}
 				
 				if(!placeSettledPlaying)
 				{
-					if(lastLetterPlaying != newFriends[i].name.Substring(0,1))
+					if(lastLetterPlaying.ToUpper() != newFriends[i].name.Substring(0,1).ToUpper())
 					{
-						Debug.Log("tenho que adicionar a letra do novo amigo");
 						// tem que adicionar container de letra antes
 						GameObject tempPlayingLetter = GameObject.Instantiate(letterPrefab) as GameObject;
 						tempPlayingLetter.GetComponent<UIListItemContainer>().Text = newFriends[i].name.Substring(0,1).ToUpper ();
@@ -579,7 +574,10 @@ public class Invite : MonoBehaviour
 			bool placeSettled = false;
 			GameObject tempObj = CreateFriendContainer(newFriends[i]);
 			int oldComparison = -1;
-			string lastLetter = ""; // previous letter
+			
+			string lastLetter;
+			if(scroll.Count > 0) lastLetter = scroll.GetItem(0).Text;
+			else lastLetter = "";
 			
 			for(int k = 0 ; k < scroll.Count ; k++)
 			{
@@ -590,14 +588,10 @@ public class Invite : MonoBehaviour
 				}
 				else comparison = scroll.GetItem(k).transform.GetComponent<Friend>().name.CompareTo(newFriends[i].name);
 				
-				Debug.Log("comparando "+k+" oc: "+oldComparison+" c: "+comparison);
 				if(oldComparison <= 0 && comparison == 1)
 				{
-					Debug.Log("lixo "+lastLetter);
-					//Debug.Log("lastL "+lastLetter);
-					if(lastLetter != newFriends[i].name.Substring(0,1))
+					if(lastLetter.ToUpper() != newFriends[i].name.Substring(0,1).ToUpper())
 					{
-						Debug.Log("tenho que adicionar a letra do novo amigo");
 						// tem que adicionar container de letra antes
 						GameObject tempLetter = GameObject.Instantiate(letterPrefab) as GameObject;
 						tempLetter.GetComponent<UIListItemContainer>().Text = newFriends[i].name.Substring(0,1).ToUpper ();
@@ -605,21 +599,20 @@ public class Invite : MonoBehaviour
 						scroll.InsertItem(tempObj.GetComponent<UIListItemContainer>(),k+1);
 					}
 					else scroll.InsertItem(tempObj.GetComponent<UIListItemContainer>(),k);
+					
 					placeSettled = true;
-					
-					//if(!scroll.GetItem(k).transform.GetComponent<Friend>()) pdklajsdreviousL = scroll.GetItem(k).Text;
-					
 					break;
 				}
+				
+				if(!scroll.GetItem(k).transform.GetComponent<Friend>()) lastLetter = scroll.GetItem(k).Text;
 				
 				oldComparison = comparison;
 			}
 			
 			if(!placeSettled)
 			{
-				if(lastLetter != newFriends[i].name.Substring(0,1))
+				if(lastLetter.ToUpper() != newFriends[i].name.Substring(0,1).ToUpper())
 				{
-					Debug.Log("tenho que adicionar a letra do novo amigo");
 					// tem que adicionar container de letra antes
 					GameObject tempLetter = GameObject.Instantiate(letterPrefab) as GameObject;
 					tempLetter.GetComponent<UIListItemContainer>().Text = newFriends[i].name.Substring(0,1).ToUpper ();

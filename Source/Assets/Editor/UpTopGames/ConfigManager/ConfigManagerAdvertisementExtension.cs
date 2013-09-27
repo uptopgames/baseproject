@@ -7,8 +7,10 @@ public static class ConfigManagerAdvertisementExtension
 {
 	public static void DrawInterface(ConfigManager config)
 	{
-		if (!config.gameObject.GetComponent<AdvertisementManager>())
+		if (!config.gameObject.GetComponent<AdvertisementManager>())	
+		{
 			config.gameObject.AddComponent<AdvertisementManager>();
+		}
 		AdvertisementManager ads = config.gameObject.GetComponent<AdvertisementManager>();
 		
 		EditorGUILayout.LabelField("'".Multiply(500), EditorStyles.miniBoldLabel);

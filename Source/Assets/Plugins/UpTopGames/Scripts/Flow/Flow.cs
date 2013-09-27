@@ -72,6 +72,7 @@ public class Flow: MonoBehaviour
 	public static PanelToLoad nextPanel = PanelToLoad.Menu;
 	
 	public static List<Game> gameList = new List<Game>();
+	//public static List<Texture> gamePictures = new List<Texture>();
 	public static int yourTurnGames = 0;
 	public static int theirTurnGames = 0;
 	public static Game currentGame = new Game();

@@ -69,10 +69,12 @@ public class ConfigManager : MonoBehaviour
 	}
 	
 	// Arrays de Settings do Servidor
-	// Utilizados pelo Editor, ao anterar alguma Setting
+	// Utilizados pelo Editor, ao alterar alguma Setting
 	public CachedServerSettings[] serverSettings;
 	public ServerSettings.Serializable newSetting = new ServerSettings.Serializable("", ServerSettings.Type.String);
 	public ServerSettings.Type oldSetting = ServerSettings.Type.String;
+	
+	public ShopInApp[] shopInApps;
 	
 	void Awake ()
 	{
@@ -116,6 +118,7 @@ public class ConfigManager : MonoBehaviour
 			
 		}*/
 		for (int i = 0; i < serverSettings.Length; i++) ServerSettings.Add(serverSettings[i].key, serverSettings[i].setting);
+		//for (int j = 0; j < shopInApps.Length; j++) ConfigManagerShop
 		
 		// Tenta atualizar as Settings pelo servidor
 		ServerSettings.Load();
@@ -187,14 +190,6 @@ public class ConfigManager : MonoBehaviour
 		ConfigManager.manager = config;
 		
 		return ConfigManager.manager;
-	}
-	
-	// Retorna Settings a partir da instancia do ConfigManager
-	public static void GetSettings()
-	{
-		ConfigManager config = ConfigManager.GetConfig();
-		if (config == null || config == default(ConfigManager))
-			return;
 	}
 	
 	// Se for Web (Facebook) e o usuario estiver logado, informar que esta dentro do jogo a cada X segundos, para não spamar o usuario com notificacoes

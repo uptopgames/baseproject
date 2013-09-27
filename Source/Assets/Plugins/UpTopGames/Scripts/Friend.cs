@@ -43,6 +43,9 @@ public class Friend : MonoBehaviour
 	
 	// Indica se ja obteve a foto
 	public bool got_picture;
+	
+	public Texture rawText; 
+	
 	private bool isDownloadingPicture = false;
 	
 	private float imageLoadCounter = 1;
@@ -51,7 +54,7 @@ public class Friend : MonoBehaviour
 	public GameObject messageOkWindow;
 	public GameObject messageOkCancelWindow;
 	
-	public Friend SetFriend(string idNew, string facebook_idNew, string nameNew, FriendshipStatus statusNew, bool is_playingNew,
+	public Friend SetFriend(string idNew, string facebook_idNew, string nameNew, FriendshipStatus statusNew, bool is_playingNew, /*Texture newPicture,*/
 		GameObject loadWindowNew, GameObject messageOkWindowNew, GameObject messageOkCancelWindowNew)
 	{
 		id = idNew;
@@ -59,11 +62,12 @@ public class Friend : MonoBehaviour
 		name = nameNew;
 		status = statusNew;
 		is_playing = is_playingNew;
+		//if(newPicture != null) picture.material.mainTexture = newPicture;
 		loadWindow = loadWindowNew;
 		messageOkWindow = messageOkWindowNew;
 		messageOkCancelWindow = messageOkCancelWindowNew;
 				
-		got_picture = false;
+		//got_picture = false;//picture.material.mainTexture != null;
 		
 		return this;
 	}
@@ -114,17 +118,25 @@ public class Friend : MonoBehaviour
 		
 		if (error != null || conn.error != null || conn.bytes.Length == 0)
 		{
-			Texture2D tempTexture = new Texture2D(1,1);
+			/*Texture2D tempTexture = new Texture2D(1,1);
 			tempTexture.SetPixel(0,0, Color.clear);
 			tempTexture.Apply();
 			
-			picture.material.mainTexture = tempTexture;
+			picture.material.mainTexture = tempTexture;*/
+			
 			return;
 		}
 		
 		got_picture = true;
 		
 		picture.material.mainTexture = conn.texture;
+		
+		if(GetComponent<Game>()) 
+		{
+			Debug.Log("atribuiu no flow");
+			Flow.gameList[GetComponent<Game>().pastIndex].friend.rawText = conn.texture;
+			Flow.gameList[GetComponent<Game>().pastIndex].friend.got_picture = got_picture;
+		}
 	}
 	
 	void ChooseFriend()
@@ -211,8 +223,123 @@ public class Friend : MonoBehaviour
 			return;
 		}
 
-		// Remove o amigo da lista de exibicao
-		gameObject.GetComponent<UIListItemContainer>().GetScrollList().RemoveItem(gameObject.GetComponent<UIListItemContainer>(),false);
+		// Remove o amigo da lista all e da lista playing independentemente se você clicou no delete de uma ou de outra.
+		
+		if(gameObject.GetComponent<UIListItemContainer>().GetScrollList().transform.tag == "FriendList")
+		{
+			UIScrollList playingScroll = gameObject.GetComponent<UIListItemContainer>().GetScrollList().transform.parent.FindChild("PlayingList").GetComponent<UIScrollList>();
+						
+			for(int i = 0 ; i < playingScroll.Count ; i++)
+			{
+				if(playingScroll.GetItem(i).transform.GetComponent<Friend>() && id == playingScroll.GetItem(i).transform.GetComponent<Friend>().id)
+				{
+					// se for 2, soh tem um container e uma letra
+					if(playingScroll.Count != 2)
+					{
+						// se o proximo cara nao tiver o component friend, indica que ele é uma letra
+						if(!playingScroll.GetItem(i+1).transform.GetComponent<Friend>())
+						{
+							// se o cara anterior nao tiver o component friend, indica que ele é uma letra
+							if(!playingScroll.GetItem(i-1).transform.GetComponent<Friend>())
+							{
+								// remove a letra passada pois o container sendo removido é o unico da letra
+								playingScroll.RemoveItem(i-1,true);
+								// o cara passou a ter o indice da letra, remove ele
+								playingScroll.RemoveItem(i-1,true);
+								
+								break;
+							}
+						}
+					}
+					else
+					{
+						// remove letra
+						playingScroll.RemoveItem(0, true);
+						// o cara passou a ter o indice da letra, remove ele
+						playingScroll.RemoveItem(0, true);
+						
+						break;
+					}
+					
+					// remove o container
+					playingScroll.RemoveItem(i,true);
+					break;
+				}
+			}
+		}
+		else
+		{
+			UIScrollList allScroll = gameObject.GetComponent<UIListItemContainer>().GetScrollList().transform.parent.FindChild("FriendList").GetComponent<UIScrollList>();
+			
+			for(int i = 0 ; i < allScroll.Count ; i++)
+			{
+				if(allScroll.GetItem(i).transform.GetComponent<Friend>() && id == allScroll.GetItem(i).transform.GetComponent<Friend>().id)
+				{
+					// se for 2, soh tem um container e uma letra
+					if(allScroll.Count != 2)
+					{
+						// se o proximo cara nao tiver o component friend, indica que ele é uma letra
+						if(!allScroll.GetItem(i+1).transform.GetComponent<Friend>())
+						{
+							// se o cara anterior nao tiver o component friend, indica que ele é uma letra
+							if(!allScroll.GetItem(i-1).transform.GetComponent<Friend>())
+							{
+								// remove a letra passada pois o container sendo removido é o unico da letra
+								allScroll.RemoveItem(i-1,true);
+								// o cara passou a ter o indice da letra, remove ele
+								allScroll.RemoveItem(i-1,true);
+								
+								break;
+							}
+						}
+					}
+					else
+					{
+						// remove a letra
+						allScroll.RemoveItem(0, true);
+						// o cara passou a ter o indice da letra, remove ele
+						allScroll.RemoveItem(0, true);
+						
+						break;
+					}
+					
+					// remove o container
+					allScroll.RemoveItem(i,true);
+					break;
+				}
+			}
+		}
+		
+		// se for 2, soh tem um container e uma letra
+		if(gameObject.GetComponent<UIListItemContainer>().GetScrollList().Count != 2)
+		{
+			// se o proximo cara nao tiver o component friend, indica que ele é uma letra
+			if(!gameObject.GetComponent<UIListItemContainer>().GetScrollList().GetItem(GetComponent<UIListItemContainer>().Index+1).transform.GetComponent<Friend>())
+			{
+				// se o cara anterior nao tiver o component friend, indica que ele é uma letra
+				if(!gameObject.GetComponent<UIListItemContainer>().GetScrollList().GetItem(GetComponent<UIListItemContainer>().Index-1).transform.GetComponent<Friend>())
+				{
+					// remove a letra passada pois o container sendo removido é o unico da letra
+					gameObject.GetComponent<UIListItemContainer>().GetScrollList().RemoveItem(GetComponent<UIListItemContainer>().Index-1,true);
+					// o cara passou a ter o indice da letra, remove ele (MAS NESSE CASO O EZGUI ATUALIZOU O INDEX)
+					gameObject.GetComponent<UIListItemContainer>().GetScrollList().RemoveItem(GetComponent<UIListItemContainer>().Index,true);
+					
+					return;
+				}
+			}
+		}
+		else
+		{
+			// remove a letra
+			gameObject.GetComponent<UIListItemContainer>().GetScrollList().RemoveItem(0, true);
+			// o cara passou a ter o indice da letra, remove ele
+			gameObject.GetComponent<UIListItemContainer>().GetScrollList().RemoveItem(0, true);
+			
+			return;
+		}
+		
+		gameObject.GetComponent<UIListItemContainer>().GetScrollList().RemoveItem(GetComponent<UIListItemContainer>(),false);
+		
 	}
 	
 	public override string ToString()

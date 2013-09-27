@@ -24,6 +24,7 @@ public class ConfigEditor : Editor
  		ConfigManagerBaseSettings.Facebook(config);
 		Draw(config, "Server Settings", ServerSettings_);
 		ConfigManagerAdvertisementExtension.DrawInterface(config);
+		Draw(config, "Shop Settings", ShopSettings);
     }
 	
 	void Initializate(ConfigManager config)
@@ -125,7 +126,19 @@ public class ConfigEditor : Editor
 		if (GUILayout.Button("Delete"))
 			ConfigManagerServerSettingsExtension.DeleteSettings(config, config.deleteServerSetting);
 	}
-
+	
+	void ShopSettings(ConfigManager config)
+	{
+		EditorGUILayout.LabelField("Itens compraveis", EditorStyles.whiteMiniLabel);
+		
+		ConfigManagerShop.Draw(config);
+		
+		if(GUILayout.Button("New Item"))
+		{
+			Debug.Log("yay");
+		}
+	}
+	
 	delegate void RegisterConfig(ConfigManager config);
 	
 	void Break()

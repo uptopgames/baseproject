@@ -109,10 +109,10 @@ public class Game : MonoBehaviour
 	
 	public void SetGame(Game game)
 	{
-		foreach (Round r in game.pastMyRoundList)
+		/*foreach (Round r in game.pastMyRoundList)
 		{
 			Debug.Log("round score: "+r.score);
-		}
+		}*/
 		id = game.id;
 		
 		friend = GetComponent<Friend>().SetFriend(game.friend.id,
@@ -120,6 +120,7 @@ public class Game : MonoBehaviour
 			game.friend.name,
 			FriendshipStatus.NONE,
 			game.friend.is_playing,
+			//game.friend.picture.material.mainTexture,
 			null,
 			null,
 			null);

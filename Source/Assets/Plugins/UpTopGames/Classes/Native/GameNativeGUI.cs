@@ -49,7 +49,6 @@ public class GameNativeGUI
 		messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = okMethod;
 		if(cancelMethod == "")
 		{
-			Debug.Log("sem cancel");
 			messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().scriptWithMethodToInvoke = messageOkCancelDialog.GetComponent<DialogCancel>();
 			messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().methodToInvoke = "BaseCancel";
 		}

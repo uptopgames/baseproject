@@ -13,7 +13,7 @@ public class Multiplayer : MonoBehaviour
 	public GameObject gamePrefab;
 	public GameObject yourTurnPrefab;
 	public GameObject theirTurnPrefab;
-	
+		
 	public bool notInThisPanel = false;
 	
 	public SpriteText noGamesYet;
@@ -71,6 +71,8 @@ public class Multiplayer : MonoBehaviour
 						Debug.Log("coloquei " + Flow.gameList[i].friend.name);
 						// seta past index na lista para atualizacoes que foram feitas em battle status...
 						Flow.gameList[i].pastIndex = i;
+						//scroll.InsertItem(Flow.gameList[i].GetComponent<UIListItemContainer>(), i);
+						Debug.Log("picture flow: "+Flow.gameList[i].friend.rawText.ToString());
 						CreateGameContainer (Flow.gameList[i], i);
 					}
 					else if(Flow.gameList[i].whoseMove == "your")
@@ -84,17 +86,6 @@ public class Multiplayer : MonoBehaviour
 						AddTurnLabel("their", i);
 					}
 				}
-				
-				/*if(Flow.yourTurnGames > 0)
-				{
-					AddTurnLabel("your",0);
-				}
-				
-				if(Flow.theirTurnGames > 0)
-				{
-					if(Flow.yourTurnGames > 0) AddTurnLabel("their",Flow.yourTurnGames+1);
-					else AddTurnLabel("their", 0);
-				}*/
 			}
 		}
 		
@@ -190,12 +181,19 @@ public class Multiplayer : MonoBehaviour
 				bool foundGame = false;
 				
 				Friend tempFriend = new Friend();
+				//GameObject tempObj = CreateGameContainer(data["games"][i]);
+				
+				//tempObj.transform.parent = GameObject.FindWithTag("RepoFLists").transform;
+				
+				//Game tempGame = tempObj.GetComponent<Game>();
+				
 				tempFriend = tempFriend.SetFriend(
 					data["games"][i]["friendID"].StringValue,
 					faceID,
 					data["games"][i]["username"].StringValue,
 					FriendshipStatus.NONE,
 					data["games"][i]["hasApp"].StringValue.ToBool(),
+					//null,
 					loadingDialog,
 					messageOkDialog,
 					messageOkCancelDialog);
@@ -222,14 +220,14 @@ public class Multiplayer : MonoBehaviour
 				
 				for(int h = 0 ; h < Flow.gameList.Count ; h++)
 				{
-					Debug.Log ("temGameFriendName" + h + ": " + tempGame.friend.name);
+					//Debug.Log ("temGameFriendName" + h + ": " + tempGame.friend.name);
 					
 					
-					Debug.Log ("ListfriendId: " + Flow.gameList[h].friend.id);
-					Debug.Log ("gameFriendId: " + data["games"][i]["friendID"]);
-					Debug.Log ("foundGame: " + foundGame);
-					Debug.Log ("gameLastUpdate: " + data["games"][i]["lastUpdate"]);
-					Debug.Log ("lisLastUpdate: " + Flow.gameList[h].lastUpdate);
+					//Debug.Log ("ListfriendId: " + Flow.gameList[h].friend.id);
+					//Debug.Log ("gameFriendId: " + data["games"][i]["friendID"]);
+					//Debug.Log ("foundGame: " + foundGame);
+					//Debug.Log ("gameLastUpdate: " + data["games"][i]["lastUpdate"]);
+					//Debug.Log ("lisLastUpdate: " + Flow.gameList[h].lastUpdate);
 					
 					if(data["games"][i]["friendID"].Int32Value == int.Parse(Flow.gameList[h].friend.id))
 					{
@@ -247,7 +245,9 @@ public class Multiplayer : MonoBehaviour
 							}
 							
 							tempGame.wasUpdated = true;
-							tempGame.friend.picture = Flow.gameList[h].friend.picture;
+							//tempGame.friend.picture = Flow.gameList[h].friend.picture;
+							tempGame.friend.rawText = Flow.gameList[h].friend.rawText;
+							tempGame.friend.got_picture = Flow.gameList[h].friend.got_picture;
 							tempGame.pastIndex = Flow.gameList[h].pastIndex;
 							Flow.gameList[h] = tempGame;
 						}
@@ -269,10 +269,10 @@ public class Multiplayer : MonoBehaviour
 			
 			if(data["games"].Count > 0)
 			{
-				foreach(Game g in Flow.gameList) 
+				/*foreach(Game g in Flow.gameList) 
 				{
 					Debug.Log("signs nome da pessoa " + g.friend.name+" signs whose move da pessoa: "+ g.whoseMove+" signs atualizacao da pessoa" + g.lastUpdate);
-				}
+				}*/
 			
 				if(oldYourTurnNumber > 0 && Flow.yourTurnGames == 0)
 				{
@@ -315,10 +315,10 @@ public class Multiplayer : MonoBehaviour
 				//Debug.Log("yt number: "+Flow.yourTurnGames);
 				//Debug.Log("tt number: "+Flow.theirTurnGames);
 			
-				foreach(Game g in Flow.gameList) 
+				/*foreach(Game g in Flow.gameList) 
 				{
 					Debug.Log("before nome da pessoa " + g.friend.name+" before whose move da pessoa: "+ g.whoseMove+" before atualizacao da pessoa" + g.lastUpdate);
-				}
+				}*/
 				
 				sortList();
 			
@@ -327,7 +327,7 @@ public class Multiplayer : MonoBehaviour
 				{
 					if(Flow.gameList[z].isNewGame)
 					{
-						Debug.Log("newGame atualizando os index dos jogos abaixo de "+Flow.gameList[z].friend.name);
+						//Debug.Log("newGame atualizando os index dos jogos abaixo de "+Flow.gameList[z].friend.name);
 						// achou um jogo novo, todos os indices passados de jogos abaixo do jogo novo tem que somar 1
 						for (int q = z+1 ; q < Flow.gameList.Count ; q++)
 						{
@@ -337,19 +337,21 @@ public class Multiplayer : MonoBehaviour
 					
 					if(Flow.gameList[z].wasUpdated)
 					{
-						Debug.Log("wasUpdated atualizando os index dos jogos abaixo de "+Flow.gameList[z].friend.name);
+						//Debug.Log("wasUpdated atualizando os index dos jogos abaixo de "+Flow.gameList[z].friend.name);
 						// achou um jogo novo, todos os indices passados de jogos abaixo do jogo novo tem que somar 1
 						for (int q = z+1 ; q < Flow.gameList.Count ; q++)
 						{
 							Flow.gameList[q].pastIndex++;
 						}
 					}
+					
+					
 				}
 			
-				foreach(Game g in Flow.gameList) 
+				/*foreach(Game g in Flow.gameList) 
 				{
 					Debug.Log("nome da pessoa " + g.friend.name+" whose move da pessoa: "+ g.whoseMove+" atualizacao da pessoa" + g.lastUpdate);
-				}
+				}*/
 			
 				for(int j = 0; j < Flow.gameList.Count; j++)
 				{
@@ -524,6 +526,7 @@ public class Multiplayer : MonoBehaviour
 	GameObject CreateGameContainer (Game game, int index)
 	{
 		GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
+		
 		//Debug.Log ("game: " + game);
 		tempGameContainer.GetComponent<Friend>().SetFriend
 		(
@@ -532,10 +535,18 @@ public class Multiplayer : MonoBehaviour
 			game.friend.name,
 			FriendshipStatus.NONE,
 			game.friend.is_playing,
+			//game.friend.picture.material.mainTexture,
 			loadingDialog,
 			messageOkDialog,
 			messageOkCancelDialog
 		);
+		if(game.friend.rawText != null)
+		{
+			//Debug.Log("atribuiu a foto");
+			//tempGameContainer.GetComponent<Friend>().picture = game.friend.picture;
+			tempGameContainer.GetComponent<Friend>().picture.material.mainTexture = game.friend.rawText;
+			tempGameContainer.GetComponent<Friend>().got_picture = game.friend.got_picture;
+		}
 		game.friend = tempGameContainer.GetComponent<Friend>();
 		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game.friend.name;
 		
@@ -546,14 +557,94 @@ public class Multiplayer : MonoBehaviour
 		return tempGameContainer;
 	}
 	
+	GameObject CreateGameContainer (IJSonObject game)
+	{
+		string[] scores = new string[Flow.ROUNDS_PER_TURN];
+		string[] times = new string[Flow.ROUNDS_PER_TURN];
+		string[] pastMyScores = new string[Flow.ROUNDS_PER_TURN];
+		string[] pastMyTimes = new string[Flow.ROUNDS_PER_TURN];
+		string[] pastTheirScores = new string[Flow.ROUNDS_PER_TURN];
+		string[] pastTheirTimes = new string[Flow.ROUNDS_PER_TURN];
+		
+		string faceID = "";
+		int lastTurnID = -1;
+		int tempWorldID = -1;
+		string tempWorldName = "";
+		string tempPastWorldName = "";
+		
+		List<Round> tempRoundList = new List<Round>();
+		List<Round> tempPastMyRoundList = new List<Round>();
+		List<Round> tempPastTheirRoundList = new List<Round>();
+		
+		string[] separator = {"|$@@$|"};
+		
+		if(game["turnStatus"].StringValue != "waitingChoice" && game["whoseMove"].StringValue != "their")
+		{
+			Debug.Log("adicionei rounds atuais");
+			if(!game["scores"].IsNull) scores = game["scores"].StringValue.Split(separator,StringSplitOptions.None);
+			if(!game["times"].IsNull) times = game["times"].StringValue.Split(separator,StringSplitOptions.None);
+			
+			for(int j = 0 ; j < Flow.ROUNDS_PER_TURN ; j++)
+			{
+				tempRoundList.Add (new Round (-1, game["turn"].Int32Value, game["friendID"].Int32Value, times[j].ToFloat(),
+					scores[j].ToInt32()));
+			}
+		}
+		if(!game["lastTurn"].IsNull) 
+		{
+			Debug.Log("adicionei os rounds passados");
+			pastMyScores = game["myPastScores"].StringValue.Split(separator,StringSplitOptions.None);
+			pastMyTimes = game["myPastTimes"].StringValue.Split(separator,StringSplitOptions.None);
+			pastTheirScores = game["theirPastScores"].StringValue.Split(separator,StringSplitOptions.None);
+			pastTheirTimes = game["theirPastTimes"].StringValue.Split(separator,StringSplitOptions.None);
+			
+			for(int k = 0 ; k < pastMyScores.Length ; k++)
+			{
+				tempPastMyRoundList.Add(new Round(-1,-1,-1,pastMyTimes[k].ToFloat(),int.Parse(pastMyScores[k])));
+				tempPastTheirRoundList.Add(new Round(-1,-1,-1,pastTheirTimes[k].ToFloat(),int.Parse(pastTheirScores[k])));
+			}
+		}
+			
+		if(!game["facebookID"].IsNull) faceID = game["facebookID"].StringValue;
+		if(!game["lastTurn"].IsNull) lastTurnID = game["lastTurn"].Int32Value;
+		if(!game["world"].IsNull) tempWorldID = game["world"].Int32Value;
+		if(!game["worldName"].IsNull) tempWorldName = game["worldName"].StringValue;
+		if(!game["pastWorldName"].IsNull) tempPastWorldName = game["pastWorldName"].StringValue;
+		
+		GameObject tempGameContainer = GameObject.Instantiate(gamePrefab) as GameObject;
+		//Debug.Log ("game: " + game);
+		tempGameContainer.GetComponent<Friend>().SetFriend
+		(
+			game["friendID"].StringValue,
+			faceID,
+			game["username"].StringValue,
+			FriendshipStatus.NONE,
+			game["hasApp"].StringValue.ToBool(),
+			//null,
+			loadingDialog,
+			messageOkDialog,
+			messageOkCancelDialog
+		);
+		
+		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].StringValue;
+		
+		//scroll.InsertItem(tempGameContainer.GetComponent<UIListItemContainer>(), index);
+		tempGameContainer.GetComponent<Game>().SetGame(game["gameID"].Int32Value,tempGameContainer.GetComponent<Friend>(),game["world"].Int32Value,
+			game["worldName"].StringValue,new List<Round>(),tempRoundList,game["turn"].Int32Value,lastTurnID,game["turnsWon"].Int32Value,
+			game["turnsLost"].Int32Value,game["whoseMove"].StringValue,game["turnStatus"].StringValue,game["lastUpdate"].DateTimeValue,
+			tempPastMyRoundList,tempPastTheirRoundList,tempPastWorldName);
+					
+		return tempGameContainer;
+	}
+				
 	void SetListPastIndex()
 	{
-		for (int i = 0 ; i < Flow.gameList.Count ; i++) Debug.Log("setscroll " + Flow.gameList[i].friend.name+" setscroll: "+ Flow.gameList[i].whoseMove+" setscroll" + Flow.gameList[i].lastUpdate);
+		//for (int i = 0 ; i < Flow.gameList.Count ; i++) Debug.Log("setscroll " + Flow.gameList[i].friend.name+" setscroll: "+ Flow.gameList[i].whoseMove+" setscroll" + Flow.gameList[i].lastUpdate);
 		
 		for (int i = 0 ; i < Flow.gameList.Count ; i++)
 		{
 			
-			Debug.Log("rodando index... "+i);
+			//Debug.Log("rodando index... "+i);
 			Flow.gameList[i].pastIndex = i;
 			Flow.gameList[i].isNewGame = false;
 			Flow.gameList[i].wasUpdated = false;

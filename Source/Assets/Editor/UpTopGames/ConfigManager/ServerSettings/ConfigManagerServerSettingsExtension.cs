@@ -48,8 +48,7 @@ public static class ConfigManagerServerSettingsExtension
 	
 	public static void AddSettings(ConfigManager config, string key, string value, ServerSettings.Type type)
 	{
-		if (key.IsEmpty())
-			return;
+		if (key.IsEmpty()) return;
 		
 		int duplicated = -1;
 		

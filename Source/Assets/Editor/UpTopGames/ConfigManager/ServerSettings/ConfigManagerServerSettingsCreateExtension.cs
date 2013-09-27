@@ -144,8 +144,7 @@ public static class ConfigManagerServerSettingsCreateExtension
 		
 		config.newSetting.type = (ServerSettings.Type)EditorGUILayout.EnumPopup("Type", config.newSetting.type);
 			
-		if (GUILayout.Button("Create"))
-			ConfigManagerServerSettingsExtension.AddSettings(config, config.serverSettingKey, config.newSetting.value, config.newSetting.type);
+		if (GUILayout.Button("Create")) ConfigManagerServerSettingsExtension.AddSettings(config, config.serverSettingKey, config.newSetting.value, config.newSetting.type);
 		
 		ConfigManagerServerSettingsUIExtension.SetSpace();
 	}
