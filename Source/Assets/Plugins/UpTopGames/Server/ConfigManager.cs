@@ -35,10 +35,7 @@ public class ConfigManager : MonoBehaviour
 		isSingleGame = false,
 		showAds = false,
 		showSavePrefs = false,
-		showServerSettings = false,
-		showInApps = false,
-		showShopItems = false,
-		showShopFeatures = false;
+		showServerSettings = false;
 	
 	public string
 		appName = "", appProtocol = "", firstScene = "", androidKey = "", androidKeyFull = "", androidKeyCustom1 = "", androidKeyCustom2 = "", androidKeyCustom3 = "",
@@ -78,11 +75,9 @@ public class ConfigManager : MonoBehaviour
 	public ServerSettings.Type oldSetting = ServerSettings.Type.String;
 	
 	public ShopInApp[] shopInApps;
-	public ShopItem[] shopItems;
-	public ShopFeature[] shopFeatures;
 	
 	void Awake ()
-	{	
+	{
 		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
 		GameObject[] configs = GameObject.FindGameObjectsWithTag("#Config#");
 		foreach(GameObject g in configs)
@@ -122,9 +117,6 @@ public class ConfigManager : MonoBehaviour
 			
 			
 		}*/
-		
-		Shop.RefreshShop();
-		
 		for (int i = 0; i < serverSettings.Length; i++) ServerSettings.Add(serverSettings[i].key, serverSettings[i].setting);
 		//for (int j = 0; j < shopInApps.Length; j++) ConfigManagerShop
 		
