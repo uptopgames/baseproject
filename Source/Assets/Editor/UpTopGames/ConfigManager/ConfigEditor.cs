@@ -129,14 +129,65 @@ public class ConfigEditor : Editor
 	
 	void ShopSettings(ConfigManager config)
 	{
-		EditorGUILayout.LabelField("Itens compraveis", EditorStyles.whiteMiniLabel);
 		
-		ConfigManagerShop.Draw(config);
+		EditorGUILayout.LabelField("Game In Apps", EditorStyles.miniBoldLabel);
 		
-		if(GUILayout.Button("New Item"))
+		if (GUILayout.Button(!config.showInApps ? "Open InApps" : "Close InApps")) config.showInApps = !config.showInApps;
+		
+		if (!config.showInApps)
 		{
-			Debug.Log("yay");
+			EditorGUILayout.LabelField("Mostra InApps", EditorStyles.whiteMiniLabel);
 		}
+		else
+		{
+			ConfigManagerShop.DrawInApps(config);
+			
+			EditorGUILayout.Space();
+			
+			if(GUILayout.Button("New InApp"))
+			{
+				ShopInApp inapp = new ShopInApp();
+				
+				config.shopInApps.Add(inapp,ref config.shopInApps);
+			}
+		}
+			
+		EditorGUILayout.LabelField("Game Items", EditorStyles.miniBoldLabel);
+		
+		if (GUILayout.Button(!config.showShopItems ? "Open Shop Items" : "Close Shop Items")) config.showShopItems = !config.showShopItems;
+		
+		if (!config.showShopItems)
+		{
+			EditorGUILayout.LabelField("Mostra Itens comprados com coins", EditorStyles.whiteMiniLabel);
+		}
+		else
+		{
+			ConfigManagerShop.DrawShopItems(config);
+			
+			EditorGUILayout.Space();
+			
+			if(GUILayout.Button("New Shop Item"))
+			{
+				ShopItem shopItem = new ShopItem();
+				
+				config.shopItems.Add(shopItem,ref config.shopItems);
+			}
+		}
+		
+		EditorGUILayout.LabelField("Game Features", EditorStyles.miniBoldLabel);
+		
+		if (GUILayout.Button(!config.showShopFeatures ? "Open Shop Features" : "Close Shop Features")) config.showShopFeatures = !config.showShopFeatures;
+		
+		if (!config.showShopFeatures)
+		{
+			EditorGUILayout.LabelField("Mostra Features", EditorStyles.whiteMiniLabel);
+		}
+		else
+		{
+			ConfigManagerShop.DrawFeatures(config);			
+		}
+		
+		
 	}
 	
 	delegate void RegisterConfig(ConfigManager config);
