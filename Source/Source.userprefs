@@ -1,18 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsCreateExtension.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Plugins/UpTopGames/Scripts/Login.cs">
     <Files>
       <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigManagerBaseSettings.cs" Line="21" Column="35" />
       <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigManagerAdvertisementExtension.cs" Line="10" Column="63" />
-      <File FileName="Assets/Plugins/UpTopGames/Scripts/Shop.cs" Line="15" Column="21" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ServerSettings/ServerSettings.cs" Line="54" Column="21" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ServerSettings/ServerSettingsManager.cs" Line="6" Column="14" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsListExtension.cs" Line="9" Column="2" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigManagerShop.cs" Line="8" Column="1" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigEditor.cs" Line="134" Column="34" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ConfigManager.cs" Line="120" Column="68" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsExtension.cs" Line="49" Column="32" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsCreateExtension.cs" Line="147" Column="72" />
+      <File FileName="Assets/Plugins/UpTopGames/Server/ServerSettings/ServerSettings.cs" Line="59" Column="14" />
+      <File FileName="Assets/Plugins/UpTopGames/Server/ServerSettings/ServerSettingsManager.cs" Line="17" Column="14" />
+      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsListExtension.cs" Line="14" Column="5" />
+      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigManagerShop.cs" Line="55" Column="105" />
+      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigEditor.cs" Line="179" Column="48" />
+      <File FileName="Assets/Plugins/UpTopGames/Server/ConfigManager.cs" Line="82" Column="21" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/Shop.cs" Line="118" Column="70" />
+      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsExtension.cs" Line="74" Column="4" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/Flow/Flow.cs" Line="180" Column="30" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/Login.cs" Line="182" Column="11" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
