@@ -72,7 +72,7 @@ public class Login : MonoBehaviour
 			return;
 		}
 		
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		
 		// Criar o codigo de autenticacao
 		authentication = System.Guid.NewGuid().ToString();
@@ -130,12 +130,12 @@ public class Login : MonoBehaviour
 			yield return new WaitForSeconds(1);
 		}
 		
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 		
 		if (max_attempts == 0 || conn.error != null)
 		{
 			Debug.LogError("Server error: " + conn.error);
-			Flow.game_native.showMessage(messageOkDialog, "Error", GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE);
+			Flow.game_native.showMessage("Error", GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE);
 			
 			yield break;
 		}
@@ -146,7 +146,7 @@ public class Login : MonoBehaviour
 		if (data == null || data.Contains("error"))
 		{
 			Debug.LogError("Json error: " + conn.text);
-			Flow.game_native.showMessage(messageOkDialog, "Error", GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE);
+			Flow.game_native.showMessage("Error", GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE);
 			
 			yield break;
 		}
@@ -177,13 +177,13 @@ public class Login : MonoBehaviour
 		{
 			//screen_status = ScreenStatus.not_logged;
 			Debug.Log("error, inform email");
-			if (email.IsEmpty()) Flow.game_native.showMessage(messageOkDialog, "Error", "Please inform an e-mail.");
+			if (email.IsEmpty()) Flow.game_native.showMessage("Error", "Please inform an e-mail.");
 			
 			return;
 		}
 		
 		// Up Top Fix Me
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		
 		//GameConnection conn = new GameConnection(components.url_login, connectionResult);
 		GameConnection conn = new GameConnection(Flow.URL_BASE + "login/", connectionResult);
@@ -240,7 +240,7 @@ public class Login : MonoBehaviour
 		// Verifica se houve erro
 		if (error == null && json.Contains("error")) error = json["error"].ToString();
 		
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 		
 		// Trata o erro
 		if (error != null)
@@ -251,7 +251,7 @@ public class Login : MonoBehaviour
 				case "invalid_email": error = "Invalid e-mail. Please try another account."; break;
 				default: error = GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE; break;
 			}
-			Flow.game_native.showMessage(messageOkDialog, "Error", error);
+			Flow.game_native.showMessage("Error", error);
 			
 			return;
 		}
@@ -282,7 +282,7 @@ public class Login : MonoBehaviour
 		if (json["new_account"].ToString() != "0")
 		{						
 			messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = "BringInInvite";
-			Flow.game_native.showMessage(messageOkDialog,"Hello!", "Hi! You've registered with us! We've emailed you your password.");
+			Flow.game_native.showMessage("Hello!", "Hi! You've registered with us! We've emailed you your password.");
 			return;
 		}
 		

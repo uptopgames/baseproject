@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5f8a3ba3335354e019704bfe52805ba7
+guid: f81db0e7e2511405dbdd8f0fea31ecd5
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -20,7 +20,7 @@ TextureImporter:
   grayScaleToAlpha: 0
   generateCubemap: 0
   seamlessCubemap: 0
-  textureFormat: -1
+  textureFormat: 5
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
@@ -32,12 +32,16 @@ TextureImporter:
   compressionQuality: 50
   textureType: 5
   buildTargetSettings:
+  - buildTarget: Web
+    maxTextureSize: 1024
+    textureFormat: 5
+    compressionQuality: 50
   - buildTarget: iPhone
     maxTextureSize: 1024
     textureFormat: 4
     compressionQuality: 50
   - buildTarget: Android
     maxTextureSize: 1024
-    textureFormat: 36
+    textureFormat: 4
     compressionQuality: 50
   userData: 

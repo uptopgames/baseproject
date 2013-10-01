@@ -45,11 +45,11 @@ public class GamePlay : MonoBehaviour
 			
 	void HandleEndGame(string error, IJSonObject data)
 	{
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 		
 		if(error!=null)
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Error", error);
+			Flow.game_native.showMessage("Error", error);
 			return;
 		}
 		
@@ -83,7 +83,7 @@ public class GamePlay : MonoBehaviour
 		
 		if(rounds>=Flow.ROUNDS_PER_TURN)
 		{
-			Flow.game_native.startLoading(loadingDialog);
+			Flow.game_native.startLoading();
 			Debug.Log("endGame");
 			EndGame();
 		}

@@ -488,7 +488,7 @@ public class Multiplayer : MonoBehaviour
 		else
 		{
 			fb_account = new GameFacebook(HandleLinkFacebook);
-			Flow.game_native.startLoading(loadingDialog);
+			Flow.game_native.startLoading();
 			fb_account.link();
 		}
 	}
@@ -498,11 +498,11 @@ public class Multiplayer : MonoBehaviour
 	{
 		Debug.Log(data);
 		
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 
 		if (error != null)
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Error", error);
+			Flow.game_native.showMessage("Error", error);
 			return;
 		}
 		

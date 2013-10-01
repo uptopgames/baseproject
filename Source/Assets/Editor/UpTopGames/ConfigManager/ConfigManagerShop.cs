@@ -14,6 +14,7 @@ public static class ConfigManagerShop
 			GUILayout.Label("InApp");
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
+			config.shopInApps[i].type = (ShopInAppType) EditorGUILayout.EnumPopup("In App Type", config.shopInApps[i].type);
 			config.shopInApps[i].isPackOfCoins = EditorGUILayout.Toggle("Is Pack of Coins",config.shopInApps[i].isPackOfCoins);
 			
 			if(config.shopInApps[i].isPackOfCoins)
@@ -24,13 +25,14 @@ public static class ConfigManagerShop
 			{
 				config.shopInApps[i].goodCount = EditorGUILayout.IntField("Goods Delivered",config.shopInApps[i].goodCount);
 			}
-			
+			config.shopInApps[i].id = EditorGUILayout.IntField("Server ID", config.shopInApps[i].id);
 			config.shopInApps[i].name = EditorGUILayout.TextField("InApp Name", config.shopInApps[i].name);
 			config.shopInApps[i].dolarPrice = EditorGUILayout.FloatField("Dolar price",config.shopInApps[i].dolarPrice);
 			config.shopInApps[i].appleBundle = EditorGUILayout.TextField("Apple Bundle", config.shopInApps[i].appleBundle);
 			config.shopInApps[i].androidBundle = EditorGUILayout.TextField("Android Bundle", config.shopInApps[i].androidBundle);
 			config.shopInApps[i].description = EditorGUILayout.TextField("Description", config.shopInApps[i].description);
 			config.shopInApps[i].image = (Texture) EditorGUILayout.ObjectField("Image",config.shopInApps[i].image,typeof(Texture));
+			
 			
 			if(GUILayout.Button("Delete InApp"))
 			{
@@ -50,7 +52,8 @@ public static class ConfigManagerShop
 			GUILayout.Label("Shop Item");
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
-			config.shopItems[i].id = EditorGUILayout.IntField("ID",config.shopItems[i].id);
+			config.shopItems[i].type = (ShopItemType) EditorGUILayout.EnumPopup("Item Type", config.shopItems[i].type);
+			config.shopItems[i].id = EditorGUILayout.TextField("ID",config.shopItems[i].id);
 			config.shopItems[i].name = EditorGUILayout.TextField("Item Name", config.shopItems[i].name);
 			config.shopItems[i].coinPrice = EditorGUILayout.IntField("Coin price",config.shopItems[i].coinPrice);
 			config.shopItems[i].description = EditorGUILayout.TextField("Description", config.shopItems[i].description);
@@ -67,40 +70,15 @@ public static class ConfigManagerShop
 	
 	public static void DrawFeatures(ConfigManager config)
 	{
-		if(config.shopFeatures.Length == 0)
-		{
-			ShopFeature like = new ShopFeature();
-			like.type = FeatureType.Like;
-			
-			ShopFeature share = new ShopFeature();
-			like.type = FeatureType.Share;
-			
-			ShopFeature rate = new ShopFeature();
-			like.type = FeatureType.Rate;
-			
-			ShopFeature video = new ShopFeature();
-			like.type = FeatureType.Video;
-			
-			ShopFeature widget = new ShopFeature();
-			like.type = FeatureType.Widget;
-			
-			ShopFeature invite = new ShopFeature();
-			like.type = FeatureType.Invite;
-			
-			config.shopFeatures.Add(like, ref config.shopFeatures);
-			config.shopFeatures.Add(share, ref config.shopFeatures);
-			config.shopFeatures.Add(rate, ref config.shopFeatures);
-			config.shopFeatures.Add(video, ref config.shopFeatures);
-			config.shopFeatures.Add(invite, ref config.shopFeatures);
-			config.shopFeatures.Add(widget, ref config.shopFeatures);
-		}
+		if(config.shopFeatures == null) config.shopFeatures = new ShopFeatures();
 		
-		for(int i = 0 ; i < config.shopFeatures.Length ; i++)
-		{
-			config.shopFeatures[i].type = (FeatureType) EditorGUILayout.EnumPopup("Type", config.shopFeatures[i].type);
-			config.shopFeatures[i].coins = EditorGUILayout.IntField("Coins", config.shopFeatures[i].coins);
-			EditorGUILayout.LabelField("-".Multiply(500));
-			//config.shopFeatures[i].image = (Texture) EditorGUILayout.ObjectField("Image", config.shopFeatures[i].image, typeof(Texture));
-		}
+		config.shopFeatures.coinsInvite = EditorGUILayout.IntField("Invite Coins", config.shopFeatures.coinsInvite);
+		config.shopFeatures.coinsLike = EditorGUILayout.IntField("Like Coins", config.shopFeatures.coinsLike);
+		config.shopFeatures.coinsRate = EditorGUILayout.IntField("Rate Coins", config.shopFeatures.coinsRate);
+		config.shopFeatures.coinsShare = EditorGUILayout.IntField("Share Coins", config.shopFeatures.coinsShare);
+		config.shopFeatures.coinsVideo = EditorGUILayout.IntField("Video Coins", config.shopFeatures.coinsVideo);
+		config.shopFeatures.coinsWidget = EditorGUILayout.IntField("Widget Coins", config.shopFeatures.coinsWidget);
+		EditorGUILayout.LabelField("-".Multiply(500));
+		//config.shopFeatures[i].image = (Texture) EditorGUILayout.ObjectField("Image", config.shopFeatures[i].image, typeof(Texture));
 	}
 }

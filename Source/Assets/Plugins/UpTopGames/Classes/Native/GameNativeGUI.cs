@@ -18,9 +18,9 @@ public class GameNativeGUI
 	{
 	}
 	
-	public void showMessage(GameObject messageOkDialog, string title = "", string message = "", string button = "")
+	public void showMessage(string title = "", string message = "", string button = "")
 	{
-		base.showMessage(messageOkDialog, title, message, button);
+		base.showMessage(title, message, button);
 	}
 	
 	public bool openAuthUrlInline(string url)
@@ -40,35 +40,35 @@ public class GameNativeGUI
 		return base.openUrlInline(url);
 	}
 	
-	public void showMessageOkCancel(GameObject messageOkCancelDialog, MonoBehaviour classScript, string okMethod, Action<string> nativeMethod, string cancelMethod = "", 
+	public void showMessageOkCancel(MonoBehaviour classScript, string okMethod, Action<string> nativeMethod, string cancelMethod = "", 
 		string title = "", string message = "", string okButton = "", string cancelButton = "")
 	{
 		
 #if UNITY_EDITOR || UNITY_WEBPLAYER
-		messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().scriptWithMethodToInvoke = classScript;
-		messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = okMethod;
+		Flow.messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().scriptWithMethodToInvoke = classScript;
+		Flow.messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = okMethod;
 		if(cancelMethod == "")
 		{
-			messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().scriptWithMethodToInvoke = messageOkCancelDialog.GetComponent<DialogCancel>();
-			messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().methodToInvoke = "BaseCancel";
+			Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().scriptWithMethodToInvoke = Flow.messageOkCancelDialog.GetComponent<DialogCancel>();
+			Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().methodToInvoke = "BaseCancel";
 		}
 		else
 		{
-			messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().scriptWithMethodToInvoke = classScript;
-			messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().methodToInvoke = cancelMethod;
+			Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().scriptWithMethodToInvoke = classScript;
+			Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").GetComponent<UIButton>().methodToInvoke = cancelMethod;
 		}
 #else
 		base.addActionShowMessage(nativeMethod);		
 #endif
 		
-		base.showMessageOkCancel(messageOkCancelDialog, title, message, okButton, cancelButton);
+		base.showMessageOkCancel(title, message, okButton, cancelButton);
 	}
 	
-	public void startLoading(GameObject loadingDialog, string title=null, string message=null)
+	public void startLoading(string title=null, string message=null)
 	{
 		//if (title == null) title = LOADING_TITLE;
 		//if (message == null) message = LOADING_MESSAGE;
 		
-		loadingMessage(loadingDialog, title, message);
+		loadingMessage(title, message);
 	}
 }

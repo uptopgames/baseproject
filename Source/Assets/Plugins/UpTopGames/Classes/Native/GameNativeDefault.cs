@@ -38,24 +38,24 @@ public class GameNativeDefault: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com um botao
-	public override void showMessage(GameObject messageOkDialog, string title = "", string message = "", string button = "")
+	public override void showMessage(string title = "", string message = "", string button = "")
 	{
 		if(!title.IsEmpty())
 		{
-			messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+			Flow.messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
 		}
 		
 		if(!message.IsEmpty())
 		{
-			messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+			Flow.messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		if(!button.IsEmpty())
 		{
-			 messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
+			 Flow.messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
 		}
 		
-		messageOkDialog.SetActive(true);
+		Flow.messageOkDialog.SetActive(true);
 		//GameGUI.setMessageWindow(new GameMessageWindow(title, message, button));
 	}
 	
@@ -82,30 +82,29 @@ public class GameNativeDefault: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com dois botoes
-	public override void showMessageOkCancel(GameObject messageOkCancelDialog,
-		string title = "", string message = "", string okButton = "", string cancelButton = "")
+	public override void showMessageOkCancel(string title = "", string message = "", string okButton = "", string cancelButton = "")
 	{
 		if(!title.IsEmpty())
 		{
-			messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+			Flow.messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
 		}
 		
 		if(!message.IsEmpty())
 		{
-			messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+			Flow.messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		if(!okButton.IsEmpty())
 		{
-			 messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = okButton;
+			 Flow.messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = okButton;
 		}
 		
 		if(!cancelButton.IsEmpty())
 		{
-			 messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text = cancelButton;
+			 Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text = cancelButton;
 		}
 		
-		messageOkCancelDialog.SetActive(true);
+		Flow.messageOkCancelDialog.SetActive(true);
 		//GameGUI.setMessageWindow(new GameTwoButtonWindow(title, message, ok_button, cancel_button));
 	}
 	
@@ -116,27 +115,27 @@ public class GameNativeDefault: GameNativeBase
 	}
 	
 	// Inicia a tela de loading
-	public override void loadingMessage(GameObject loadingDialog, string title = "", string message = "")
+	public override void loadingMessage(string title = "", string message = "")
 	{
 		if(!title.IsEmpty())
 		{
-			loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+			Flow.loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
 		}
 		
 		if(!message.IsEmpty())
 		{
-			loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+			Flow.loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
-		loadingDialog.SetActive(true);
+		Flow.loadingDialog.SetActive(true);
 		
 		//GameGUI.startLoading(new GameLoadingWindow(title, message));
 	}
 	
 	// Termina a tela de loading
-	public override void stopLoading(GameObject loadingDialog)
+	public override void stopLoading()
 	{
-		loadingDialog.SetActive(false);
+		Flow.loadingDialog.SetActive(false);
 		//GameGUI.stopLoading();
 	}
 	

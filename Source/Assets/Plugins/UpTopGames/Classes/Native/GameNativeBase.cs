@@ -44,20 +44,19 @@ public abstract class GameNativeBase: MonoBehaviour
 	public abstract void removeActionPhotoChosen(Action<string, Texture2D> action);
 	
 	// Mostra uma mensagem na tela com um botao
-	public abstract void showMessage(GameObject messageOkDialog, string title, string message, string button);
+	public abstract void showMessage(string title, string message, string button);
 	
 	// Mostra uma mensagem na tela com dois botoes
-	public abstract void showMessageOkCancel(GameObject messageOkCancelDialog,
-		string title, string message, string ok_button, string cancel_button);
+	public abstract void showMessageOkCancel(string title, string message, string ok_button, string cancel_button);
 	
 	// Abre a tela para o usuario escolher uma foto
 	public abstract void cameraRoll(float x, float y, string photo_name);
 	
 	// Inicia a tela de loading
-	public abstract void loadingMessage(GameObject loadingDialog, string title, string message);
+	public abstract void loadingMessage(string title, string message);
 	
 	// Termina a tela de loading
-	public abstract void stopLoading(GameObject loadingDialog);
+	public abstract void stopLoading();
 	
 	// Abre uma URL com o navegador dentro do proprio aplicativo
 	public abstract bool openUrlInline(string url);

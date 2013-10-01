@@ -122,7 +122,7 @@ public class Invite : MonoBehaviour
 	
 	public void GetFriends()
 	{
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/friends/list.php", HandleGetFriends);
 		conn.connect(null, 10);
 	}
@@ -143,7 +143,7 @@ public class Invite : MonoBehaviour
 		Debug.Log(data);
 		int counter = (int) counter_o;
 		
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 		
 		if (error != null || data == null)
 		{
@@ -154,7 +154,7 @@ public class Invite : MonoBehaviour
 				return;
 			}
 			
-			Flow.game_native.showMessage(messageOkDialog, "Error", error);
+			Flow.game_native.showMessage("Error", error);
 			return;
 		}
 		
@@ -340,12 +340,12 @@ public class Invite : MonoBehaviour
 	
 	void StopLoading(UIPanelBase panel, EZTransition transition)
 	{
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 	}
 	
 	void ChooseRandomFriend()
 	{	
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		
 		(new GameJsonAuthConnection(Flow.URL_BASE + "login/friends/random.php", HandleChooseRandom)).connect();
 	}
@@ -354,7 +354,7 @@ public class Invite : MonoBehaviour
 	{
 		Debug.Log(data);
 		
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 		
 		if (error != null || data.IsEmpty()) return;	
 		
@@ -363,7 +363,7 @@ public class Invite : MonoBehaviour
 		
 		if(fail == "no more users")
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Random fail","You'll have to invite a friend!");
+			Flow.game_native.showMessage("Random fail","You'll have to invite a friend!");
 			return;
 		}
 		
@@ -376,7 +376,7 @@ public class Invite : MonoBehaviour
 		Flow.currentGame.friend.name = data["user_name"].StringValue;
 		Flow.currentGame.friend.facebook_id = data["facebook_id"].StringValue;
 		
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		//EraseFriendsList();
 		
 		Debug.Log(Flow.currentGame.friend.ToString());
@@ -386,7 +386,7 @@ public class Invite : MonoBehaviour
 	
 	void LinkWithFacebook()
 	{
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		fb_account.link();
 	}
 
@@ -395,11 +395,11 @@ public class Invite : MonoBehaviour
 	{
 		Debug.Log(data);
 		
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 
 		if (error != null)
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Error", error);
+			Flow.game_native.showMessage("Error", error);
 			return;
 		}
 		
@@ -444,24 +444,24 @@ public class Invite : MonoBehaviour
 			form.AddField("emails[" + i + "]", inviteFriendScroll.GetItem(i).transform.FindChild("TextField").GetComponent<UITextField>().Text);
 		}
 		
-		Flow.game_native.startLoading(loadingDialog);
+		Flow.game_native.startLoading();
 		conn.connect(form);
 	}
 	
 	private void HandleInviteFriends(string error, IJSonObject data)
 	{
 		Debug.Log("inviteNew: "+data);
-		Flow.game_native.stopLoading(loadingDialog);
+		Flow.game_native.stopLoading();
 		
 		if (error != null)
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Error", error);
+			Flow.game_native.showMessage("Error", error);
 			return;
 		}
 		
 		if (data == null)
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Error", GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE);
+			Flow.game_native.showMessage("Error", GameJsonAuthConnection.DEFAULT_ERROR_MESSAGE);
 			return;
 		}
 		
@@ -503,13 +503,13 @@ public class Invite : MonoBehaviour
 		
 		if (allRight)
 		{
-			Flow.game_native.showMessage(messageOkDialog, "Success", "All your friends has been invited!");
+			Flow.game_native.showMessage("Success", "All your friends has been invited!");
 			CloseInviteFriendsWindow();
 						
 			return;
 		}
 		
-		Flow.game_native.showMessage(messageOkDialog, "Error", "Some e-mails are not valid.");
+		Flow.game_native.showMessage("Error", "Some e-mails are not valid.");
 	}
 	
 	void AddNewFriendsAndClearList()

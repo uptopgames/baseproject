@@ -57,22 +57,21 @@ public class ConfigEditor : Editor
 		EditorGUILayout.LabelField("Protocolo do App (ex: utgbase://)", EditorStyles.whiteMiniLabel);
 		
         EditorGUILayout.Space();
+		
+		config.headerObject = EditorGUILayout.ObjectField("Header", config.headerObject, typeof(GameObject), false) as GameObject;
+		
+		EditorGUILayout.LabelField("Objeto Header", EditorStyles.whiteMiniLabel);
+		
 		EditorGUILayout.Space();
+				
+		config.loading = (GameObject) EditorGUILayout.ObjectField("Loading Dialog", config.loading, typeof(GameObject));
+		config.messageOk = (GameObject) EditorGUILayout.ObjectField("Message Ok Dialog", config.messageOk, typeof(GameObject));
+		config.messageOkCancel = (GameObject) EditorGUILayout.ObjectField("Message Ok Cancel Dialog", config.messageOkCancel, typeof(GameObject));
 		
-		config.firstSceneObject = EditorGUILayout.ObjectField("First Scene", config.firstSceneObject, typeof(UnityEngine.Object), false);
-		if (config.firstSceneObject != null)
-			config.firstScene = config.firstSceneObject.name;
-		EditorGUILayout.LabelField("Primeira scene do jogo (selecionar *.unity3d)", EditorStyles.whiteMiniLabel);
+		EditorGUILayout.LabelField("Janelas padrao", EditorStyles.whiteMiniLabel);
 		
-		config.headerObject = EditorGUILayout.ObjectField("Header Component", config.headerObject, typeof(UnityEngine.Object), false);
+		config.appInitialCoins = EditorGUILayout.IntField("Initial Coins Number", config.appInitialCoins);
 		
-		if (config.headerObject != null && config.headerObject.name != null)
-			config.headerComponent = config.headerObject.name;
-		else config.headerComponent = null;
-		EditorGUILayout.LabelField("Component do Header (ex: GameHeader.cs)", EditorStyles.whiteMiniLabel);
-		
-        config.isSingleGame = EditorGUILayout.Toggle("Offline Game", config.isSingleGame);
-		EditorGUILayout.LabelField("Se existe uma scene antes do Login", EditorStyles.whiteMiniLabel);
 	}
 	
 	void RuntimeSettings(ConfigManager config)
@@ -184,10 +183,21 @@ public class ConfigEditor : Editor
 		}
 		else
 		{
-			ConfigManagerShop.DrawFeatures(config);			
+			ConfigManagerShop.DrawFeatures(config);
 		}
 		
+		if(GUILayout.Button("Download Shop Info From Server"))
+		{
+			Debug.Log("oi");
+			config.GetComponent<ShopManager>().RefreshShop(false);
+		}
 		
+		if(GUILayout.Button("Delete All"))
+		{
+			config.shopInApps = new ShopInApp[]{};
+			config.shopFeatures = new ShopFeatures();
+			config.shopItems = new ShopItem[]{};
+		}
 	}
 	
 	delegate void RegisterConfig(ConfigManager config);

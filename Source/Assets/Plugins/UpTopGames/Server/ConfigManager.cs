@@ -32,7 +32,6 @@ public class ConfigManager : MonoBehaviour
 		facebookDelayTime = 10f, cameraScale = 320f;
 	
 	public bool
-		isSingleGame = false,
 		showAds = false,
 		showSavePrefs = false,
 		showServerSettings = false,
@@ -41,9 +40,9 @@ public class ConfigManager : MonoBehaviour
 		showShopFeatures = false;
 	
 	public string
-		appName = "", appProtocol = "", firstScene = "", androidKey = "", androidKeyFull = "", androidKeyCustom1 = "", androidKeyCustom2 = "", androidKeyCustom3 = "",
+		appName = "", appProtocol = "", androidKey = "", androidKeyFull = "", androidKeyCustom1 = "", androidKeyCustom2 = "", androidKeyCustom3 = "",
 		facebookId = "", facebookSecret = "", facebookCanvas = "", facebookPageId = "",
-		serverSettingKey = "", deleteServerSetting = "", headerComponent = "",
+		serverSettingKey = "", deleteServerSetting = "",
 		
 		androidFreeBundle = "", androidPayBundle = "", androidCustom1Bundle = "", androidCustom2Bundle = "", androidCustom3Bundle = "",
 		appleFreeBundle = "", applePayBundle = "", appleCustom1Bundle = "", appleCustom2Bundle = "", appleCustom3Bundle = "",
@@ -61,7 +60,7 @@ public class ConfigManager : MonoBehaviour
     public enum ShopType { StartByCode, StartOnLoadGame };
     public ShopType shopType = ShopType.StartByCode;
 	
-	public UnityEngine.Object headerObject = new UnityEngine.Object(), firstSceneObject = new UnityEngine.Object();
+	public GameObject headerObject;
 	
 	// Classe de Settings do Servidor
 	[System.Serializable]
@@ -77,14 +76,20 @@ public class ConfigManager : MonoBehaviour
 	public ServerSettings.Serializable newSetting = new ServerSettings.Serializable("", ServerSettings.Type.String);
 	public ServerSettings.Type oldSetting = ServerSettings.Type.String;
 	
+	public int appInitialCoins;
+	
 	public ShopInApp[] shopInApps;
 	public ShopItem[] shopItems;
-	public ShopFeature[] shopFeatures;
+	public ShopFeatures shopFeatures;
+	
+	public GameObject loading;
+	public GameObject messageOk;
+	public GameObject messageOkCancel;
 	
 	void Awake ()
 	{	
 		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
-		GameObject[] configs = GameObject.FindGameObjectsWithTag("#Config#");
+		GameObject[] configs = GameObject.FindGameObjectsWithTag(API);
 		foreach(GameObject g in configs)
 		{
 			if(gameObject != g)
@@ -94,9 +99,14 @@ public class ConfigManager : MonoBehaviour
 			}
 		}
 		
-		// Seta a prefab #Configuration# para nao ser destruida na troca de cenas
+		// Seta a prefab #Config# para nao ser destruida na troca de cenas
 		DontDestroyOnLoad(gameObject);
 		Flow.config = gameObject;
+		Flow.loadingDialog = loading;
+		Flow.messageOkDialog = messageOk;
+		Flow.messageOkCancelDialog = messageOkCancel;
+		Flow.shopManager = GetComponent<ShopManager>();
+		Flow.header = headerObject.GetComponent<Header>();
 	}
 	
 	// Use this for initialization
@@ -108,6 +118,16 @@ public class ConfigManager : MonoBehaviour
 		if(Info.IsWeb())
 		{
 			if(gameObject.GetComponent(typeof(GamePersistentConnection))) gameObject.AddComponent<GamePersistentConnection>();
+		}
+		
+		if(Save.HasKey(PlayerPrefsKeys.COINS.ToString()))
+		{
+			Flow.header.coins = Save.GetInt(PlayerPrefsKeys.COINS.ToString());
+		}
+		else
+		{
+			Save.Set(PlayerPrefsKeys.COINS.ToString(), appInitialCoins);
+			Flow.header.coins = appInitialCoins;
 		}
 		
         // Inicia o shop
@@ -123,7 +143,7 @@ public class ConfigManager : MonoBehaviour
 			
 		}*/
 		
-		Shop.RefreshShop();
+		GetComponent<ShopManager>().RefreshShop();
 		
 		for (int i = 0; i < serverSettings.Length; i++) ServerSettings.Add(serverSettings[i].key, serverSettings[i].setting);
 		//for (int j = 0; j < shopInApps.Length; j++) ConfigManagerShop
@@ -164,7 +184,7 @@ public class ConfigManager : MonoBehaviour
 		//Sound.SetVolume(0.5f);
 		
 		// Se nao for um jogo offline (jogo aonde existe uma scene antes do Login)
-		if (!Info.offlineGame)
+		/*if (!Info.offlineGame)
 		{
 			// Verifica se o usuario ja esta logado
 			if (PlayerPrefs.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
@@ -175,7 +195,7 @@ public class ConfigManager : MonoBehaviour
 				//Scene.Splash.Load(Info.firstScene);
 				return;
 			}
-		}
+		}*/
 		
 		// Redireciona para o usuario scene de Login
 		//if (!Info.offlineGame) Scene.Login.SplashLoad(Info.firstScene);
@@ -251,9 +271,8 @@ public class ConfigManager : MonoBehaviour
 		}
 		
 		// Pega a ultima versao obrigatoria (force update) e a ultima versao em geral
-		float
-			last = data.Get("last").GetFloat("version"),
-			update = data.Get("update").GetFloat("version");
+		float last = data.Get("last").GetFloat("version");
+		float update = data.Get("update").GetFloat("version");
 		
 		// Se a versao do usuario for menor que a versao obrigatoria, força usuario a atualizar
 		if (appVersion < update)
@@ -264,41 +283,38 @@ public class ConfigManager : MonoBehaviour
 			return;
 		}
 		else
+		{
 			isUpdatedVersion = true;
-		
+		}
 		// Se a versao do usuario for menor que a ultima versao, apenas perguntar se o usuario deseja atualizar
 		if (appVersion < last)
 		{
 			string description = data.Get("update").GetString("description");
 			
 			// Up Top Fix Me
-			//game_native.showMessageOkCancel(appName,(description != null && description != "") ? description: MESSAGE_VERSION_OLD,BUTTON_UPDATE_YES, BUTTON_UPDATE_NO);
+			Flow.game_native.showMessageOkCancel(this, "ConfirmCheck", NativeCallback, "", appName,(description != null && description != "") ? description: MESSAGE_VERSION_OLD,BUTTON_UPDATE_YES, BUTTON_UPDATE_NO);
 		}
 	}
 	
 	// Callback nativo chamado ao apertar algum botao das PopUps
 	void NativeCallback(string button)
 	{
-		if (!checkingVersion)
-			return;
+		if(button == BUTTON_UPDATE_YES) ConfirmCheck();
+	}
+	
+	void ConfirmCheck()
+	{
+		if (!checkingVersion) return;
 		
-		if (button == BUTTON_UPDATE_YES || button == BUTTON_UPDATE_NO)
-		{
-			checkingVersion = false;
-			
-	        if (button == BUTTON_UPDATE_YES)
-			{
-				//Mobile.AppUrl(Info.bundle, Info.appleId, true);
+		checkingVersion = false;
+		 
+		//Mobile.AppUrl(Info.bundle, Info.appleId, true);
 #if UNITY_IPHONE
-				Application.OpenURL ("itms-apps: //ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware&id=" + Info.appleId);
+		Application.OpenURL ("itms-apps: //ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware&id=" + Info.appleId);
 #elif UNITY_ANDROID
-				Application.OpenURL ("market://details?id=" + Info.bundle);
+		Application.OpenURL ("market://details?id=" + Info.bundle);
 #endif
-			
-			}
-			
-			
-		}
+		
 	}
 	
 	// Callback nativo das PopUps, utilizado para checagens de versionamento

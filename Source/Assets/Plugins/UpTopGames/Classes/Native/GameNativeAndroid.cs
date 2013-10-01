@@ -56,23 +56,23 @@ public class GameNativeAndroid: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com um botao
-	public override void showMessage(GameObject messageOkDialog, string title = "", string message = "", string button = "")
+	public override void showMessage(string title = "", string message = "", string button = "")
 	{
 		if(title.IsEmpty())
 		{
-			title = messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
+			title = Flow.messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
 		}
 		
 		if(message.IsEmpty())
 		{
-			message = messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
+			message = Flow.messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
 		}
 		
 		if(button.IsEmpty())
 		{
 			try
 			{
-				button = messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text;
+				button = Flow.messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text;
 			}
 			catch
 			{
@@ -84,24 +84,23 @@ public class GameNativeAndroid: GameNativeBase
 	}
 	
 	// Mostra uma mensagem na tela com dois botoes
-	public override void showMessageOkCancel(GameObject messageOkCancelDialog,
-		string title = "", string message = "", string okButton = "", string cancelButton = "")
+	public override void showMessageOkCancel(string title = "", string message = "", string okButton = "", string cancelButton = "")
 	{
 		if(title.IsEmpty())
 		{
-			title = messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
+			title = Flow.messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
 		}
 		
 		if(message.IsEmpty())
 		{
-			message = messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
+			message = Flow.messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
 		}
 		
 		if(okButton.IsEmpty())
 		{
 			try
 			{
-				okButton = messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text;
+				okButton = Flow.messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text;
 			}
 			catch
 			{
@@ -113,7 +112,7 @@ public class GameNativeAndroid: GameNativeBase
 		{
 			try
 			{
-				cancelButton = messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text;
+				cancelButton = Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text;
 			}
 			catch
 			{
@@ -148,22 +147,22 @@ public class GameNativeAndroid: GameNativeBase
 	}
 	
 	// Mostra o loading com uma mensagem
-	public override void loadingMessage(GameObject loadingDialog, string title = "", string message = "")
+	public override void loadingMessage(string title = "", string message = "")
 	{
 		if(title.IsEmpty())
 		{
-			title = loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
+			title = Flow.loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text;
 		}
 		if(message.IsEmpty())
 		{
-			message = loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
+			message = Flow.loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text;
 		}
 		
 		EtceteraAndroid.showProgressDialog(title, message);
 	}
 	
 	// Termina a tela de loading
-	public override void stopLoading(GameObject loadingDialog)
+	public override void stopLoading()
 	{
 		EtceteraAndroid.hideProgressDialog();
 	}

@@ -339,30 +339,6 @@ public class Info
 		}
 	}
 	
-	public static string firstScene
-	{
-		get
-		{
-        	return manager.firstScene;
-		}
-    }
-	
-	public static string headerComponent
-	{
-		get
-		{
-        	return manager.headerComponent;
-		}
-    }
-	
-	public static bool offlineGame
-	{
-		get
-		{
-        	return manager.isSingleGame;
-		}
-    }
-	
 	public static string facebookId
 	{
 		get 

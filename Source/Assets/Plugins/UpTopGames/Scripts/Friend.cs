@@ -189,7 +189,7 @@ public class Friend : MonoBehaviour
 	
 	public void DeleteFriend()
 	{
-		Flow.game_native.showMessageOkCancel(messageOkCancelWindow, this, "ConfirmDeletion" , ConfirmDeletionDelegate, "", "Are you sure?",
+		Flow.game_native.showMessageOkCancel(this, "ConfirmDeletion" , ConfirmDeletionDelegate, "", "Are you sure?",
 			"This is going to delete \"" + name + "\" from your list.");
 	}
 	
@@ -203,7 +203,7 @@ public class Friend : MonoBehaviour
 		Debug.Log("deletando");
 		messageOkCancelWindow.SetActive(false);
 		
-		Flow.game_native.startLoading(loadWindow);
+		Flow.game_native.startLoading();
 		
 		GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/friends/delete.php", handleDeleteFriendConnection);
 
@@ -215,11 +215,11 @@ public class Friend : MonoBehaviour
 	
 	void handleDeleteFriendConnection(string error, IJSonObject data)
 	{
-		Flow.game_native.stopLoading(loadWindow);
+		Flow.game_native.stopLoading();
 
 		if (error != null)
 		{
-			Flow.game_native.showMessage(messageOkWindow,"Error", error);
+			Flow.game_native.showMessage("Error", error);
 			return;
 		}
 

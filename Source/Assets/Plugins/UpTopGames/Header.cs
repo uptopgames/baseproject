@@ -55,6 +55,43 @@ using System.Collections;
 
 public class Header : MonoBehaviour
 {
+	private int _coins;
+	public int coins
+	{
+		get
+		{
+			if(_coins == null) _coins = 0;
+			return _coins;
+		}
+		set
+		{
+			_coins = value;
+			coinsLabel.Text = _coins.ToString();
+		}
+	}
+	public SpriteText coinsLabel;
+	
+	public void Awake()
+	{
+		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
+		GameObject[] configs = GameObject.FindGameObjectsWithTag("Header");
+		foreach(GameObject g in configs)
+		{
+			if(gameObject != g)
+			{
+				GameObject.Destroy(gameObject);
+				return;
+			}
+		}
+		
+		// Seta a prefab #Config# para nao ser destruida na troca de cenas
+		DontDestroyOnLoad(gameObject);
+	}
+	
+}
+
+/*public class Header : MonoBehaviour
+{
 	// Atualiza os coins do usuario logado (se estiver logado)
 	// Pode ser utilizada de qualquer lugar
 	//
@@ -181,4 +218,4 @@ public class Header : MonoBehaviour
 		if (!Save.GetString(PlayerPrefsKeys.TOKEN.ToString()).IsEmpty()) Header.UpdateCoins();
 		else new KTimer(1f, HandleUpdateCoins);
 	}
-}
+}*/

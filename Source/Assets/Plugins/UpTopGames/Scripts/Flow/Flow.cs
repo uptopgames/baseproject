@@ -23,7 +23,8 @@ public enum PlayerPrefsKeys
 	DATE_DAY = 12,
 	DATE_MONTH = 13,
 	DATE_YEAR = 14,
-	APP_ID = 15
+	APP_ID = 15,
+	COINS = 16
 }
 
 public enum PanelToLoad
@@ -49,6 +50,74 @@ public class Flow: MonoBehaviour
 	public static string URL_BASE = "http://uptopgames.com/";
 #endif
 	
+	private static Header _header;
+	public static Header header
+	{
+		get
+		{
+			if(_header == null)
+			{
+				_header = Flow.config.GetComponent<ConfigManager>().headerObject.GetComponent<Header>();
+			}
+			return _header;
+		}
+		set
+		{
+			_header = value;
+		}
+	}
+	
+	private static GameObject _loadingDialog;
+	public static GameObject loadingDialog
+	{
+		get
+		{
+			if(_loadingDialog == null)
+			{
+				_loadingDialog = Flow.config.GetComponent<ConfigManager>().loading;
+			}
+			return _loadingDialog;
+		}
+		set
+		{
+			_loadingDialog = value;
+		}
+	}
+	
+	private static GameObject _messageOkDialog;
+	public static GameObject messageOkDialog
+	{
+		get
+		{
+			if(_messageOkDialog == null)
+			{
+				_messageOkDialog = Flow.config.GetComponent<ConfigManager>().messageOk;
+			}
+			return _messageOkDialog;
+		}
+		set
+		{
+			_messageOkDialog = value;
+		}
+	}
+	
+	private static GameObject _messageOkCancelDialog;
+	public static GameObject messageOkCancelDialog
+	{
+		get
+		{
+			if(_messageOkCancelDialog == null)
+			{
+				_messageOkCancelDialog = Flow.config.GetComponent<ConfigManager>().messageOkCancel;
+			}
+			return _messageOkCancelDialog;
+		}
+		set
+		{
+			_messageOkCancelDialog = value;
+		}
+	}
+	
 	private static GameObject _config;
 	public static GameObject config
 	{
@@ -56,7 +125,7 @@ public class Flow: MonoBehaviour
 		{
 			if(_config == null)
 			{
-				_config = GameObject.FindGameObjectWithTag("#Config#");
+				_config = GameObject.FindGameObjectWithTag(ConfigManager.API);
 			}
 			return _config;
 		}
@@ -65,6 +134,25 @@ public class Flow: MonoBehaviour
 			_config = value;
 		}
 	}
+	
+	public static ShopManager _shopManager;
+	public static ShopManager shopManager
+	{
+		get
+		{
+			if(_shopManager == null)
+			{
+				_shopManager = config.GetComponent<ShopManager>();
+			}
+			return _shopManager;
+		}
+		set
+		{
+			_shopManager = value;
+		}
+	}
+	
+	
 	
 	//variáveis que estavam dentro de Game
 	public static string[] availableMaps = { "usa", "brazil", "uk", "southafrica", "world", "china", "france", "australia" };
@@ -160,7 +248,7 @@ public class Flow: MonoBehaviour
 		
 		Save.SaveAll();
 		
-		Header.coins = 0;
+		// Zerar coins
 	}
 }
 
