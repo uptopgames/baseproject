@@ -58,7 +58,7 @@ public class ConfigEditor : Editor
 		
         EditorGUILayout.Space();
 		
-		config.headerObject = EditorGUILayout.ObjectField("Header", config.headerObject, typeof(GameObject), false) as GameObject;
+		config.headerObject = (GameObject) EditorGUILayout.ObjectField("Header", config.headerObject, typeof(GameObject));
 		
 		EditorGUILayout.LabelField("Objeto Header", EditorStyles.whiteMiniLabel);
 		

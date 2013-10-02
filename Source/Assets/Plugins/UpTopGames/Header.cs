@@ -65,11 +65,13 @@ public class Header : MonoBehaviour
 		}
 		set
 		{
+			Debug.Log("seta para "+value);
 			_coins = value;
-			coinsLabel.Text = _coins.ToString();
+			shopButton.Text = _coins.ToString();
+			
 		}
 	}
-	public SpriteText coinsLabel;
+	public UIButton shopButton;
 	
 	public void Awake()
 	{
@@ -88,6 +90,31 @@ public class Header : MonoBehaviour
 		DontDestroyOnLoad(gameObject);
 	}
 	
+	public void Start()
+	{
+		
+	}
+	
+	public void CompraTeste()
+	{
+		ShopItem item1 = Flow.shopManager.GetShopItem("consumable_1");
+		ShopItem item2 = Flow.shopManager.GetShopItem("consumable_2");
+		
+		item1.count = 1;
+		item2.count = 1;
+		
+		Flow.shopManager.BuyItem(testecallback, item1, item2);
+	}
+	
+	public void testecallback(ShopResultStatus status, string[] ids)
+	{
+		Debug.Log(status.ToString());
+		foreach (string id in ids)
+		{
+			Debug.Log(id);
+		}
+	}
+
 }
 
 /*public class Header : MonoBehaviour

@@ -49,7 +49,7 @@ public class ShopManager : MonoBehaviour
 		});
 	}
 	
-	public void RequestNonConsumableProduct(ShopInApp inapp, ShopInAppsDelegate callback)
+	public void RequestNonConsumableProduct(ShopInApp inapp, ShopDelegate callback)
 	{
 		Flow.game_native.startLoading();
 		
@@ -68,26 +68,32 @@ public class ShopManager : MonoBehaviour
 			
 			if(didSucceed)
 			{
-				callback(ShopResultStatus.Success, inapp);
+				if(inapp.type == ShopInAppType.NonConsumable && inapp.appleBundle.ToLower().Contains("noads"))
+				{
+					Save.Set(PlayerPrefsKeys.NOADS.ToString(), true);
+					Save.SaveAll();
+				}
+				
+				callback(ShopResultStatus.Success, id);
 			}
 			else
 			{
-				callback(ShopResultStatus.Failed, inapp);
+				callback(ShopResultStatus.Failed, id);
 			}
 			
 		});
 		
 	}
 	
-	public void RestoreTransactions(ShopInAppsDelegate callback)
+	public void RestoreTransactions(ShopDelegate callback)
 	{
 		IAP.restoreCompletedTransactions(productID =>
 		{
-			callback(ShopResultStatus.Success, GetInApp(productID));
+			callback(ShopResultStatus.Success, productID);
 		});
 	}	
 	
-	public void RequestConsumableProduct(ShopInApp inapp, ShopInAppsDelegate callback)
+	public void RequestConsumableProduct(ShopInApp inapp, ShopDelegate callback)
 	{
 		Flow.game_native.startLoading();
 #if UNITY_ANDROID
@@ -105,7 +111,15 @@ public class ShopManager : MonoBehaviour
 			
 			if(didSucceed)
 			{
-				callback(ShopResultStatus.Success, inapp);
+				if(inapp.isPackOfCoins)
+				{
+					int coinStock = Save.GetInt(PlayerPrefsKeys.COINS.ToString());
+					coinStock += inapp.coinsCount;
+					Save.Set(PlayerPrefsKeys.COINS.ToString(),coinStock);
+					Save.SaveAll();
+				}
+				
+				callback(ShopResultStatus.Success, id);
 				
 				/*Debug.Log("Sucesso na compra de "+id);
 				int currentCoins = PlayerPrefs.GetInt(PlayerPrefsKeys.Coins.ToString());
@@ -130,7 +144,7 @@ public class ShopManager : MonoBehaviour
 			}
 			else
 			{
-				callback(ShopResultStatus.Failed, inapp);
+				callback(ShopResultStatus.Failed, id);
 				
 				/*Debug.Log("Falha na compra de "+id);
 				purchaseDialog.Show();
@@ -172,9 +186,28 @@ public class ShopManager : MonoBehaviour
 		return inapp;
 	}
 	
-	public void BuyItem(ShopItemsDelegate callback, params ShopItem[] ids)
+	public void BuyItem(ShopDelegate callback, params ShopItem[] ids)
 	{
-		Flow.game_native.startLoading();
+		List<string> pIds = new List<string>();
+		bool hasSomeItem = false;
+		foreach(ShopItem item in ids)
+		{
+			pIds.Add(item.id);
+			if(Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
+			{
+				// ja tem o item
+				hasSomeItem = true;
+			}
+		}
+		
+		if(hasSomeItem)
+		{
+			Flow.game_native.showMessage("Already has item","You already have this item.");
+			callback(ShopResultStatus.Failed, pIds.ToArray());
+			return;
+		}
+		
+		//Flow.game_native.startLoading();
 		
 		ShopItem sum = new ShopItem();
 		
@@ -182,56 +215,95 @@ public class ShopManager : MonoBehaviour
 		{
 			if(si.forFree == false)
 			{
+				Debug.Log("pelo item "+si.id+" isso: "+si.coinPrice*si.count);
 				sum.coinPrice += si.coinPrice*si.count;
 			}
 		}
 		
-		
-		if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+		/*if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
 		{
 			// esta logado
-			GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
-			WWWForm form = new WWWForm();
-			
-			for(int i = 0 ; i < ids.Length ; i++)
-			{
-				form.AddField("items["+i+"]['id']", ids[i].id);
-				form.AddField("items["+i+"]['count']", ids[i].count);
-				form.AddField("items["+i+"]['free']", ids[i].forFree);
-			}
-			
-			conn.connect(form);
-		}
-		else	
-		{
-			// nao esta logado
-			
 			if(sum.coinPrice > Flow.header.coins)
 			{
-				// nao tem coins
-				int difference = sum.coinPrice - Flow.header.coins;
-				foreach(ShopInApp pack in coinPacks)
-				{
-					if(pack.coinsCount >= difference)
-					{
-						coinPackToOffer = pack;
-						break;
-					}
-				}
-				delegateToCallAfterOffer = callback;
-				
-				
-				Flow.game_native.showMessageOkCancel(this, "DontHaveCoinsButChoseToBuy", DontHaveCoinsNative, "DontHaveCoins", "Not enough coins", "You don't have enough coins. Wanna buy some?", "Buy!", "Don't buy");
-				
-				
+				// nao tem coins, compra pacote
+				OfferCoinPackAndBuyItem(callback, sum.coinPrice, ids);
 			}
 			else
 			{
-				// tem coins
-				Flow.header.coins -= sum.coinPrice;
+				// tem coins, compra online
+				GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
+				WWWForm form = new WWWForm();
 				
-				callback(ShopResultStatus.Success, ids);
+				for(int i = 0 ; i < ids.Length ; i++)
+				{
+					form.AddField("items["+i+"]['id']", ids[i].id);
+					form.AddField("items["+i+"]['count']", ids[i].count);
+					form.AddField("items["+i+"]['free']", ids[i].forFree.ToString());
+					form.AddField("coins", Flow.header.coins);
+				}
 				
+				object[] state = { callback, ids };
+				conn.connect(form, state);
+			}
+		}
+		else	
+		{*/
+			
+		if(sum.coinPrice > Flow.header.coins)
+		{
+			// nao tem coins
+			OfferCoinPackAndBuyItem(callback, sum.coinPrice, ids);
+		}
+		else
+		{
+			Debug.Log("tem coins, soma eh: "+sum.coinPrice);
+			// tem coins
+			Flow.header.coins -= sum.coinPrice;
+			Debug.Log(Flow.header.transform.name+"    ashdauidsuidhaiushduiuhisdai");
+			
+			List<string> tList = new List<string>();
+			foreach(ShopItem item in ids)
+			{
+				Debug.Log(item.id);
+				tList.Add(item.id);
+				
+				if(Save.HasKey(item.id) && item.type == ShopItemType.Consumable)
+				{
+					int userStock = Save.GetInt(item.id);
+					userStock += item.count;
+					Debug.Log("tem item, eh consumivel");
+				}
+				else if(!Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
+				{
+					Save.Set(item.id,1);
+					Debug.Log("nao tem item, eh nao consumivel");
+				}
+				else
+				{
+					Save.Set(item.id, item.count);
+					Debug.Log("nao tem item, eh consumivel");
+				}
+				
+				Save.SaveAll();
+			}
+			
+			callback(ShopResultStatus.Success, tList.ToArray());
+			
+			if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+			{
+				// se a compra deu sucesso e o cara esta logado, registrar no server
+				GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
+				WWWForm form = new WWWForm();
+				
+				for(int i = 0 ; i < ids.Length ; i++)
+				{
+					form.AddField("items["+i+"]['id']", ids[i].id);
+					form.AddField("items["+i+"]['count']", Save.GetInt(ids[i].id));
+					form.AddField("items["+i+"]['free']", ids[i].forFree.ToString());
+					form.AddField("coins", Flow.header.coins);
+				}
+				
+				conn.connect(form);
 			}
 		}
 		
@@ -259,10 +331,116 @@ public class ShopManager : MonoBehaviour
 		}
 	}
 	
-	public ShopInApp coinPackToOffer;
-	public ShopInAppsDelegate delegateToCallAfterOffer;
+	public void OfferCoinPackAndBuyItem(ShopDelegate callback, int sum, params ShopItem[] ids)
+	{
+		// nao tem coins
+		int difference = sum - Flow.header.coins;
+		ShopInApp coinPackToOffer = new ShopInApp();
+		foreach(ShopInApp pack in coinPacks)
+		{
+			if(pack.coinsCount >= difference)
+			{
+				coinPackToOffer = pack;
+				break;
+			}
+		}
+#if UNITY_ANDROID && !UNITY_EDITOR
+		string packBundle = coinPackToOffer.androidBundle;
+#elif UNITY_IPHONE && !UNITY_EDITOR
+		string packBundle = coinPackToOffer.appleBundle;
+#else
+		string packBundle;
+		Flow.game_native.showMessage("Not Enough Coins", "You don't have enough coins to buy this item");
+		
+		return;
+#endif
+		List<string> tList = new List<string>();
+		
+		IAP.purchaseConsumableProduct(packBundle, purchased =>
+		{
+			if(purchased)
+			{
+				//if(!Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+				//{
+					// comprou o pacote, nao ta logado, agora pode comprar o item
+				Flow.header.coins -= sum;
+				
+				foreach(ShopItem item in ids)
+				{
+					tList.Add(item.id);
+					
+					if(Save.HasKey(item.id) && item.type == ShopItemType.Consumable)
+					{
+						int userStock = Save.GetInt(item.id);
+						userStock += item.count;
+					}
+					else if(!Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
+					{
+						Save.Set(item.id,1);
+					}
+					else
+					{
+						Save.Set(item.id, item.count);
+					}
+					Save.SaveAll();
+				}
+				
+				callback(ShopResultStatus.Success, tList.ToArray());
+				
+				if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+				{
+					// se a compra deu sucesso e o cara esta logado, registrar no server
+					GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
+					WWWForm form = new WWWForm();
+					
+					for(int i = 0 ; i < ids.Length ; i++)
+					{
+						form.AddField("items["+i+"]['id']", ids[i].id);
+						form.AddField("items["+i+"]['count']", Save.GetInt(ids[i].id));
+						form.AddField("coins", Flow.header.coins);
+					}
+					
+					conn.connect(form);
+				}
+				
+				//}
+				/*else
+				{
+					// conecta para comprar o item
+					GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
+					WWWForm form = new WWWForm();
+					
+					for(int i = 0 ; i < ids.Length ; i++)
+					{
+						form.AddField("items["+i+"]['id']", ids[i].id);
+						form.AddField("items["+i+"]['count']", ids[i].count);
+						form.AddField("items["+i+"]['free']", ids[i].forFree.ToString());
+						form.AddField("coins", Flow.header.coins);
+					}
+					
+					object[] state = { callback, ids };
+					conn.connect(form, state);
+					
+				}*/
+			}
+			else
+			{
+				
+				// nao tem coins para comprar o item
+				foreach(ShopItem item in ids) tList.Add(item.id);
+				Flow.game_native.showMessage("Not Enough Coins", "You don't have enough coins to buy this item");
+				callback(ShopResultStatus.Failed, tList.ToArray());
+			}		
+		});
+		
+		//Flow.game_native.showMessageOkCancel(this, "DontHaveCoinsButChoseToBuy", DontHaveCoinsNative, "DontHaveCoins", "Not enough coins", "You don't have enough coins. Wanna buy some?", "Buy!", "Don't buy");			
+	}
+				
+				
+	//public ShopInApp coinPackToOffer;
+	//public ShopInAppsDelegate delegateToCallAfterOffer;
 	
-	public void DontHaveCoinsButChoseToBuy()
+	/*public void DontHaveCoinsButChoseToBuy()
 	{
 		if(coinPackToOffer == null || delegateToCallAfterOffer) return;
 		
@@ -286,7 +464,7 @@ public class ShopManager : MonoBehaviour
 		{
 			delegateToCallAfterOffer(ShopResultStatus.Failed);
 		}
-	}
+	}*/
 	
 	public void BuyingConfirmation(string error, IJSonObject data)
 	{

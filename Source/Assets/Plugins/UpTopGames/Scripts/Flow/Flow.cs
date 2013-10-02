@@ -24,7 +24,8 @@ public enum PlayerPrefsKeys
 	DATE_MONTH = 13,
 	DATE_YEAR = 14,
 	APP_ID = 15,
-	COINS = 16
+	COINS = 16,
+	NOADS = 17
 }
 
 public enum PanelToLoad
@@ -66,7 +67,7 @@ public class Flow: MonoBehaviour
 			_header = value;
 		}
 	}
-	
+		
 	private static GameObject _loadingDialog;
 	public static GameObject loadingDialog
 	{
@@ -135,7 +136,7 @@ public class Flow: MonoBehaviour
 		}
 	}
 	
-	public static ShopManager _shopManager;
+	private static ShopManager _shopManager;
 	public static ShopManager shopManager
 	{
 		get
