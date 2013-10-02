@@ -13,7 +13,7 @@ public class Login : MonoBehaviour
 	
 	public SpriteText passwordText;
 	public UITextField passwordField, emailTextfield;
-	public GameObject messageOkDialog;
+	//public GameObject messageOkDialog;
 	
 	private string authentication;
 	
@@ -281,7 +281,7 @@ public class Login : MonoBehaviour
 		// Verifica se e uma conta nova
 		if (json["new_account"].ToString() != "0")
 		{						
-			messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = "BringInInvite";
+			//messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = "BringInInvite";
 			Flow.game_native.showMessage("Hello!", "Hi! You've registered with us! We've emailed you your password.");
 			return;
 		}
@@ -306,15 +306,9 @@ public class Login : MonoBehaviour
 		passwordDialog.SetActive(false);
 	}
 	
-	void ClickedOkMessageDialog()
-	{
-		messageOkDialog.SetActive(false);
-	}
-	
 	void BringInInvite()
 	{
-		messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = "ClickedOkMessageDialog";
-		ClickedOkMessageDialog();
+		//messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").GetComponent<UIButton>().methodToInvoke = "ClickedOkMessageDialog";
 		
 		// TO DO: Chamar método que carrega a lista de invite antes de chamar o painel de invite.
 		

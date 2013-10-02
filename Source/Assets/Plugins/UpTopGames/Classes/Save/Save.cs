@@ -20,6 +20,7 @@ public class Save
 			return Save._manager;
 		}
 	}
+	//public static SaveManager manager;
 	
     public static bool SaveAll()
     {

@@ -18,6 +18,12 @@ public class MessageOkDialog : MonoBehaviour
 		
 		// Seta a prefab #Config# para nao ser destruida na troca de cenas
 		DontDestroyOnLoad(gameObject);
-		Flow.messageOkDialog = gameObject;
+		gameObject.SetActive(false);
+		//Flow.messageOkDialog = gameObject;
+	}
+	
+	void ClickedOkMessageDialog()
+	{
+		gameObject.SetActive(false);
 	}
 }

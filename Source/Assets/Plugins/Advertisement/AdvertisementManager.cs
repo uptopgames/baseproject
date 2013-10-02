@@ -136,7 +136,7 @@ public class AdvertisementManager : MonoBehaviour, IRevMobListener
 		video,
 		widget;
 	
-	void Awake()
+	void Start()
 	{		
 		//DontDestroyOnLoad(gameObject);
 

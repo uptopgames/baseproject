@@ -18,6 +18,7 @@ public class LoadingDialog : MonoBehaviour
 		
 		// Seta a prefab #Config# para nao ser destruida na troca de cenas
 		DontDestroyOnLoad(gameObject);
-		Flow.loadingDialog = gameObject;
+		gameObject.SetActive(false);
+		//Flow.loadingDialog = gameObject;
 	}
 }

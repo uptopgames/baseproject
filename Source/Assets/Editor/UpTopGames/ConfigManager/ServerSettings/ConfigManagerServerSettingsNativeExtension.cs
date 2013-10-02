@@ -6,10 +6,10 @@ using System.IO;
 public class ConfigManagerServerSettingsNativeExtension
 {
 	private static string
-		manifestSamplePath = "Editor/KazzAPI/Sample/Manifest.xml",
+		manifestSamplePath = "Editor/UpTopGames/BaseFiles/Manifest.xml",
 		manifestFinishPath = "Plugins/Android/AndroidManifest.xml",
 			
-		pushwooshSamplePath = "Editor/KazzAPI/Sample/Pushwoosh.xml",
+		pushwooshSamplePath = "Editor/UpTopGames/BaseFiles/Pushwoosh.xml",
 		pushwooshFinishPath = "Plugins/PushWoosh/iOS/Pushwoosh/Info.xml";
 	
 	public static void Setup()

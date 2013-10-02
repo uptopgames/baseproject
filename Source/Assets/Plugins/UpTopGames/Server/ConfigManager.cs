@@ -101,12 +101,11 @@ public class ConfigManager : MonoBehaviour
 		
 		// Seta a prefab #Config# para nao ser destruida na troca de cenas
 		DontDestroyOnLoad(gameObject);
-		Flow.config = gameObject;
+		/*Flow.config = gameObject;
 		Flow.loadingDialog = loading;
 		Flow.messageOkDialog = messageOk;
 		Flow.messageOkCancelDialog = messageOkCancel;
-		Flow.shopManager = GetComponent<ShopManager>();
-		Flow.header = headerObject.GetComponent<Header>();
+		Flow.shopManager = GetComponent<ShopManager>();*/
 	}
 	
 	// Use this for initialization
@@ -119,6 +118,9 @@ public class ConfigManager : MonoBehaviour
 		{
 			if(gameObject.GetComponent(typeof(GamePersistentConnection))) gameObject.AddComponent<GamePersistentConnection>();
 		}
+		
+		Debug.Log(Flow.header.coins);
+		Debug.Log(appInitialCoins);
 		
 		if(Save.HasKey(PlayerPrefsKeys.COINS.ToString()))
 		{
@@ -146,7 +148,7 @@ public class ConfigManager : MonoBehaviour
 			
 		}*/
 		
-		GetComponent<ShopManager>().RefreshShop();
+		Flow.shopManager.RefreshShop();
 		
 		for (int i = 0; i < serverSettings.Length; i++) ServerSettings.Add(serverSettings[i].key, serverSettings[i].setting);
 		//for (int j = 0; j < shopInApps.Length; j++) ConfigManagerShop
@@ -155,7 +157,7 @@ public class ConfigManager : MonoBehaviour
 		ServerSettings.Load();
 		// Fix crash da Shop forçando fetch do RevMob (interstitial)
 #if !UNITY_WEBPLAYER
-		Advertisement.Interstitial.Fetch();
+		//Advertisement.Interstitial.Fetch();
 #endif
 		// Nao abre outras conexoes, caso seja executado pelo Editor (sem ir pela primeira scene)
 		if (Application.loadedLevelName != "Init") return;

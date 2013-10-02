@@ -88,6 +88,7 @@ public class Header : MonoBehaviour
 		
 		// Seta a prefab #Config# para nao ser destruida na troca de cenas
 		DontDestroyOnLoad(gameObject);
+		Debug.Log("setou o header");
 	}
 	
 	public void Start()

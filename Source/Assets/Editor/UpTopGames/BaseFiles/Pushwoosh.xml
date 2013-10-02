@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<Info>
+    <AppCode>#PUSH.ID#</AppCode>
+	<URLTypes>#APP.PROTOCOL#</URLTypes>
+</Info>

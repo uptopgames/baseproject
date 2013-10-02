@@ -297,9 +297,8 @@ public class ShopManager : MonoBehaviour
 				
 				for(int i = 0 ; i < ids.Length ; i++)
 				{
-					form.AddField("items["+i+"]['id']", ids[i].id);
-					form.AddField("items["+i+"]['count']", Save.GetInt(ids[i].id));
-					form.AddField("items["+i+"]['free']", ids[i].forFree.ToString());
+					form.AddField("items["+i+"][id]", ids[i].id);
+					form.AddField("items["+i+"][count]", Save.GetInt(ids[i].id));
 					form.AddField("coins", Flow.header.coins);
 				}
 				
@@ -395,8 +394,8 @@ public class ShopManager : MonoBehaviour
 					
 					for(int i = 0 ; i < ids.Length ; i++)
 					{
-						form.AddField("items["+i+"]['id']", ids[i].id);
-						form.AddField("items["+i+"]['count']", Save.GetInt(ids[i].id));
+						form.AddField("items["+i+"][id]", ids[i].id);
+						form.AddField("items["+i+"][count]", Save.GetInt(ids[i].id));
 						form.AddField("coins", Flow.header.coins);
 					}
 					
@@ -412,9 +411,8 @@ public class ShopManager : MonoBehaviour
 					
 					for(int i = 0 ; i < ids.Length ; i++)
 					{
-						form.AddField("items["+i+"]['id']", ids[i].id);
-						form.AddField("items["+i+"]['count']", ids[i].count);
-						form.AddField("items["+i+"]['free']", ids[i].forFree.ToString());
+						form.AddField("items["+i+"][id]", ids[i].id);
+						form.AddField("items["+i+"][count]", ids[i].count);
 						form.AddField("coins", Flow.header.coins);
 					}
 					

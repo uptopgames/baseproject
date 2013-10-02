@@ -51,6 +51,8 @@ public class Flow: MonoBehaviour
 	public static string URL_BASE = "http://uptopgames.com/";
 #endif
 	
+	
+	
 	private static Header _header;
 	public static Header header
 	{
@@ -58,15 +60,13 @@ public class Flow: MonoBehaviour
 		{
 			if(_header == null)
 			{
-				_header = Flow.config.GetComponent<ConfigManager>().headerObject.GetComponent<Header>();
+				_header = GameObject.FindWithTag("Header").GetComponent<Header>();
 			}
 			return _header;
 		}
-		set
-		{
-			_header = value;
-		}
 	}
+	
+	//public static Header header;
 		
 	private static GameObject _loadingDialog;
 	public static GameObject loadingDialog
@@ -75,13 +75,9 @@ public class Flow: MonoBehaviour
 		{
 			if(_loadingDialog == null)
 			{
-				_loadingDialog = Flow.config.GetComponent<ConfigManager>().loading;
+				_loadingDialog = config.GetComponent<ConfigManager>().loading;
 			}
 			return _loadingDialog;
-		}
-		set
-		{
-			_loadingDialog = value;
 		}
 	}
 	
@@ -92,13 +88,9 @@ public class Flow: MonoBehaviour
 		{
 			if(_messageOkDialog == null)
 			{
-				_messageOkDialog = Flow.config.GetComponent<ConfigManager>().messageOk;
+				_messageOkDialog = config.GetComponent<ConfigManager>().messageOk;
 			}
 			return _messageOkDialog;
-		}
-		set
-		{
-			_messageOkDialog = value;
 		}
 	}
 	
@@ -109,13 +101,9 @@ public class Flow: MonoBehaviour
 		{
 			if(_messageOkCancelDialog == null)
 			{
-				_messageOkCancelDialog = Flow.config.GetComponent<ConfigManager>().messageOkCancel;
+				_messageOkCancelDialog = config.GetComponent<ConfigManager>().messageOkCancel;
 			}
 			return _messageOkCancelDialog;
-		}
-		set
-		{
-			_messageOkCancelDialog = value;
 		}
 	}
 	
@@ -130,10 +118,6 @@ public class Flow: MonoBehaviour
 			}
 			return _config;
 		}
-		set
-		{
-			_config = value;
-		}
 	}
 	
 	private static ShopManager _shopManager;
@@ -147,13 +131,13 @@ public class Flow: MonoBehaviour
 			}
 			return _shopManager;
 		}
-		set
-		{
-			_shopManager = value;
-		}
 	}
 	
-	
+	//public static GameObject config;
+	//public static GameObject messageOkCancelDialog;
+	//public static GameObject messageOkDialog;
+	//public static GameObject loadingDialog;
+	//public static ShopManager shopManager;
 	
 	//variáveis que estavam dentro de Game
 	public static string[] availableMaps = { "usa", "brazil", "uk", "southafrica", "world", "china", "france", "australia" };

@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public abstract class GameNativeBase: MonoBehaviour
+public abstract class GameNativeBase
 {
 	// Mensagens padrao das telas de loading
 	//public static string LOADING_TITLE = "Loading";
