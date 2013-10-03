@@ -60,7 +60,7 @@ public class Flow: MonoBehaviour
 		{
 			if(_header == null)
 			{
-				_header = GameObject.FindWithTag("Header").GetComponent<Header>();
+				_header = config.GetComponent<ConfigManager>().headerObject.GetComponent<Header>();
 			}
 			return _header;
 		}

@@ -192,11 +192,9 @@ public class Multiplayer : MonoBehaviour
 					faceID,
 					data["games"][i]["username"].StringValue,
 					FriendshipStatus.NONE,
-					data["games"][i]["hasApp"].StringValue.ToBool(),
+					data["games"][i]["hasApp"].StringValue.ToBool()
 					//null,
-					loadingDialog,
-					messageOkDialog,
-					messageOkCancelDialog);
+					);
 					
 				Game tempGame =  new Game
 				(
@@ -534,11 +532,8 @@ public class Multiplayer : MonoBehaviour
 			game.friend.facebook_id,
 			game.friend.name,
 			FriendshipStatus.NONE,
-			game.friend.is_playing,
+			game.friend.is_playing
 			//game.friend.picture.material.mainTexture,
-			loadingDialog,
-			messageOkDialog,
-			messageOkCancelDialog
 		);
 		if(game.friend.rawText != null)
 		{
@@ -619,11 +614,8 @@ public class Multiplayer : MonoBehaviour
 			faceID,
 			game["username"].StringValue,
 			FriendshipStatus.NONE,
-			game["hasApp"].StringValue.ToBool(),
+			game["hasApp"].StringValue.ToBool()
 			//null,
-			loadingDialog,
-			messageOkDialog,
-			messageOkCancelDialog
 		);
 		
 		tempGameContainer.transform.FindChild("Name").GetComponent<SpriteText>().Text = game["username"].StringValue;

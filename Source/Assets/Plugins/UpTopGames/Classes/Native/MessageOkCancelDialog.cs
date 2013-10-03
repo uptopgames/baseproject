@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MessageOkCancelDialog : MonoBehaviour 
 {
-	void Awake ()
+	/*void Awake ()
 	{	
 		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
 		GameObject[] configs = GameObject.FindGameObjectsWithTag("MessageOkCancelDialog");
@@ -20,5 +20,5 @@ public class MessageOkCancelDialog : MonoBehaviour
 		DontDestroyOnLoad(gameObject);
 		gameObject.SetActive(false);
 		//Flow.messageOkCancelDialog = gameObject;
-	}
+	}*/
 }

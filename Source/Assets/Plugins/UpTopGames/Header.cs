@@ -73,7 +73,7 @@ public class Header : MonoBehaviour
 	}
 	public UIButton shopButton;
 	
-	public void Awake()
+	/*public void Awake()
 	{
 		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
 		GameObject[] configs = GameObject.FindGameObjectsWithTag("Header");
@@ -89,7 +89,7 @@ public class Header : MonoBehaviour
 		// Seta a prefab #Config# para nao ser destruida na troca de cenas
 		DontDestroyOnLoad(gameObject);
 		Debug.Log("setou o header");
-	}
+	}*/
 	
 	public void Start()
 	{

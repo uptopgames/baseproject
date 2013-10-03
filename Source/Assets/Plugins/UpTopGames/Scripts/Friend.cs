@@ -54,8 +54,7 @@ public class Friend : MonoBehaviour
 	public GameObject messageOkWindow;
 	public GameObject messageOkCancelWindow;
 	
-	public Friend SetFriend(string idNew, string facebook_idNew, string nameNew, FriendshipStatus statusNew, bool is_playingNew, /*Texture newPicture,*/
-		GameObject loadWindowNew, GameObject messageOkWindowNew, GameObject messageOkCancelWindowNew)
+	public Friend SetFriend(string idNew, string facebook_idNew, string nameNew, FriendshipStatus statusNew, bool is_playingNew /*Texture newPicture,*/)
 	{
 		id = idNew;
 		facebook_id = facebook_idNew;
@@ -63,9 +62,6 @@ public class Friend : MonoBehaviour
 		status = statusNew;
 		is_playing = is_playingNew;
 		//if(newPicture != null) picture.material.mainTexture = newPicture;
-		loadWindow = loadWindowNew;
-		messageOkWindow = messageOkWindowNew;
-		messageOkCancelWindow = messageOkCancelWindowNew;
 				
 		//got_picture = false;//picture.material.mainTexture != null;
 		

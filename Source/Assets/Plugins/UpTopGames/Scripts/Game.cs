@@ -119,11 +119,9 @@ public class Game : MonoBehaviour
 			game.friend.facebook_id,
 			game.friend.name,
 			FriendshipStatus.NONE,
-			game.friend.is_playing,
+			game.friend.is_playing
 			//game.friend.picture.material.mainTexture,
-			null,
-			null,
-			null);
+			);
 		
 		worldID = game.worldID;
 		worldName = game.worldName;

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MessageOkDialog : MonoBehaviour 
 {
-	void Awake ()
+	/*void Awake ()
 	{	
 		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
 		GameObject[] configs = GameObject.FindGameObjectsWithTag("MessageOkDialog");
@@ -20,7 +20,7 @@ public class MessageOkDialog : MonoBehaviour
 		DontDestroyOnLoad(gameObject);
 		gameObject.SetActive(false);
 		//Flow.messageOkDialog = gameObject;
-	}
+	}*/
 	
 	void ClickedOkMessageDialog()
 	{

@@ -41,9 +41,15 @@ public class ShopManager : MonoBehaviour
 		
 		string[] androidProductIDs = androidList.ToArray();
 		string[] iosProductIds = appleList.ToArray();
-
+		
+		foreach(string a in iosProductIds) Debug.Log("produto: "+a);
+		
 		IAP.requestProductData(iosProductIds,androidProductIDs, productList => 
-		{	
+		{
+			foreach(IAPProduct prod in productList)
+			{
+				Debug.Log("IAP: "+prod.productId);
+			}
 			Debug.Log("product list received"); 
 			//Utils.logObject(productList);
 		});
@@ -220,35 +226,6 @@ public class ShopManager : MonoBehaviour
 			}
 		}
 		
-		/*if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
-		{
-			// esta logado
-			if(sum.coinPrice > Flow.header.coins)
-			{
-				// nao tem coins, compra pacote
-				OfferCoinPackAndBuyItem(callback, sum.coinPrice, ids);
-			}
-			else
-			{
-				// tem coins, compra online
-				GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
-				WWWForm form = new WWWForm();
-				
-				for(int i = 0 ; i < ids.Length ; i++)
-				{
-					form.AddField("items["+i+"]['id']", ids[i].id);
-					form.AddField("items["+i+"]['count']", ids[i].count);
-					form.AddField("items["+i+"]['free']", ids[i].forFree.ToString());
-					form.AddField("coins", Flow.header.coins);
-				}
-				
-				object[] state = { callback, ids };
-				conn.connect(form, state);
-			}
-		}
-		else	
-		{*/
-			
 		if(sum.coinPrice > Flow.header.coins)
 		{
 			// nao tem coins
@@ -259,7 +236,6 @@ public class ShopManager : MonoBehaviour
 			Debug.Log("tem coins, soma eh: "+sum.coinPrice);
 			// tem coins
 			Flow.header.coins -= sum.coinPrice;
-			Debug.Log(Flow.header.transform.name+"    ashdauidsuidhaiushduiuhisdai");
 			
 			List<string> tList = new List<string>();
 			foreach(ShopItem item in ids)
@@ -271,6 +247,7 @@ public class ShopManager : MonoBehaviour
 				{
 					int userStock = Save.GetInt(item.id);
 					userStock += item.count;
+					Save.Set(item.id,userStock);
 					Debug.Log("tem item, eh consumivel");
 				}
 				else if(!Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
@@ -283,9 +260,10 @@ public class ShopManager : MonoBehaviour
 					Save.Set(item.id, item.count);
 					Debug.Log("nao tem item, eh consumivel");
 				}
-				
-				Save.SaveAll();
 			}
+			
+			Save.Set(PlayerPrefsKeys.COINS.ToString(),Flow.header.coins);
+			Save.SaveAll();
 			
 			callback(ShopResultStatus.Success, tList.ToArray());
 			
@@ -337,8 +315,10 @@ public class ShopManager : MonoBehaviour
 		ShopInApp coinPackToOffer = new ShopInApp();
 		foreach(ShopInApp pack in coinPacks)
 		{
+			Debug.Log(pack.coinsCount);
 			if(pack.coinsCount >= difference)
 			{
+				Debug.Log("coinpack selecionado: "+ pack.appleBundle);
 				coinPackToOffer = pack;
 				break;
 			}
@@ -347,6 +327,7 @@ public class ShopManager : MonoBehaviour
 		string packBundle = coinPackToOffer.androidBundle;
 #elif UNITY_IPHONE && !UNITY_EDITOR
 		string packBundle = coinPackToOffer.appleBundle;
+		Debug.Log("caiu no iOS e o packBundle: "+ coinPackToOffer.appleBundle);
 #else
 		string packBundle;
 		Flow.game_native.showMessage("Not Enough Coins", "You don't have enough coins to buy this item");
@@ -355,13 +336,18 @@ public class ShopManager : MonoBehaviour
 #endif
 		List<string> tList = new List<string>();
 		
+		Flow.game_native.startLoading();
+		
 		IAP.purchaseConsumableProduct(packBundle, purchased =>
 		{
+			Flow.game_native.stopLoading();
 			if(purchased)
 			{
 				//if(!Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
 				//{
 					// comprou o pacote, nao ta logado, agora pode comprar o item
+				
+				Flow.header.coins += coinPackToOffer.coinsCount;
 				Flow.header.coins -= sum;
 				
 				foreach(ShopItem item in ids)
@@ -372,6 +358,7 @@ public class ShopManager : MonoBehaviour
 					{
 						int userStock = Save.GetInt(item.id);
 						userStock += item.count;
+						Save.Set (item.id,userStock);
 					}
 					else if(!Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
 					{
@@ -381,8 +368,11 @@ public class ShopManager : MonoBehaviour
 					{
 						Save.Set(item.id, item.count);
 					}
-					Save.SaveAll();
+					
 				}
+				
+				Save.Set(PlayerPrefsKeys.COINS.ToString(),Flow.header.coins);
+				Save.SaveAll();
 				
 				callback(ShopResultStatus.Success, tList.ToArray());
 				
@@ -513,6 +503,7 @@ public class ShopManager : MonoBehaviour
 				tempInApp.isPackOfCoins = inapp["coins"].Int32Value > 0;
 				tempInApp.type = inapp["type"].StringValue == "Consumable"? ShopInAppType.Consumable : ShopInAppType.NonConsumable;
 				tempInApp.goodCount = inapp["goodCount"].Int32Value;
+				tempInApp.coinsCount = inapp["coins"].Int32Value;
 				
 				//Debug.Log(tempInApp.name);
 				
