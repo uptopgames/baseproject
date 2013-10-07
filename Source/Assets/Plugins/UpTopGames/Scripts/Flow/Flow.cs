@@ -25,7 +25,9 @@ public enum PlayerPrefsKeys
 	DATE_YEAR = 14,
 	APP_ID = 15,
 	COINS = 16,
-	NOADS = 17
+	NOADS = 17,
+	VOLUME = 18,
+	PUSHNOTIFICATIONS = 19
 }
 
 public enum PanelToLoad
@@ -173,9 +175,7 @@ public class Flow: MonoBehaviour
 	public static int currentScore;
 	public static int MAX_LEVEL_NUMBER = 10;
 	public const int ROUNDS_PER_TURN = 3;
-	
-	public static float soundVolume = 0.5f;
-	
+		
 	public static void getPlayerPhoto(string error, WWW data)
     {
         Flow.isDownloadingPlayerPhoto = false;
@@ -183,10 +183,10 @@ public class Flow: MonoBehaviour
         {
             if (error.IndexOf("404") >= 0)
             {
-				Texture2D tx = new Texture2D(1,1);
-				tx.SetPixel(0,0,Color.clear);
-				tx.Apply();
-                Flow.playerPhoto = tx;
+				//Texture2D tx = new Texture2D(1,1);
+				//tx.SetPixel(0,0,Color.clear);
+				//tx.Apply();
+                //Flow.playerPhoto = tx;
             }
         }
         else
@@ -204,6 +204,8 @@ public class Flow: MonoBehaviour
 		lastUpdate = new DateTime(1970,1,1);
 		Game.Reset();
 		gameList = new List<Game>();
+		yourTurnGames = 0;
+		theirTurnGames = 0;
 	}
 	
 	public static void OnLogoutFromServer()
@@ -211,6 +213,7 @@ public class Flow: MonoBehaviour
 		// Deletar aqui todas as suas keys do Save que devem ser deletadas quando um usuario da logout
 		
 		Debug.Log("Execute flow! (OnLogoutFromServer)");
+		Flow.config.GetComponent<ConfigManager>().OnLogoutFromServer();
 		Flow.Reset();
 		
 		Debug.Log("ct"+localThemes.Count);

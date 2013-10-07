@@ -129,7 +129,7 @@ public class Friend : MonoBehaviour
 		
 		if(GetComponent<Game>()) 
 		{
-			Debug.Log("atribuiu no flow");
+			//Debug.Log("atribuiu no flow");
 			Flow.gameList[GetComponent<Game>().pastIndex].friend.rawText = conn.texture;
 			Flow.gameList[GetComponent<Game>().pastIndex].friend.got_picture = got_picture;
 		}

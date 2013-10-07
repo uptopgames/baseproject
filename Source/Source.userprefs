@@ -1,23 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../../../../Documents/gogogoat-unity/Assets/Scripts/InAppPurchase.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Plugins/UpTopGames/Scripts/Options.cs">
     <Files>
-      <File FileName="../../../../Documents/gogogoat-unity/Assets/Scripts/InAppPurchase.cs" Line="124" Column="25" />
-      <File FileName="Assets/Plugins/UpTopGames/Scripts/Flow/Flow.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Server/ConfigManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Classes/Save/Save.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Classes/Native/GameNativeBase.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Classes/Native/GameNativeDefault.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Classes/Shop/ShopManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Connection/GamePersistentConnection.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Header.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/AccountSettings.cs" Line="368" Column="34" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/Flow/Flow.cs" Line="30" Column="24" />
       <File FileName="Assets/Plugins/UpTopGames/Scripts/Login.cs" Line="1" Column="1" />
       <File FileName="Assets/Plugins/UpTopGames/Scripts/Invite.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/UpTopGames/Server/ConfigManager.cs" Line="167" Column="124" />
       <File FileName="Assets/Plugins/UpTopGames/Scripts/Friend.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Scripts/Game.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/UpTopGames/Scripts/Multiplayer.cs" Line="1" Column="1" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ConfigEditor.cs" Line="1" Column="1" />
-      <File FileName="Assets/Editor/UpTopGames/ConfigManager/ServerSettings/ConfigManagerServerSettingsNativeExtension.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/Flow/UpdateOffline.cs" Line="44" Column="4" />
+      <File FileName="Assets/Plugins/UpTopGames/Scripts/Options.cs" Line="48" Column="7" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

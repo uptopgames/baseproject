@@ -1,34 +1,89 @@
 using UnityEngine;
 using System.Collections;
+using CodeTitans.JSon;
 
 public class Options : MonoBehaviour 
-{
-	public SpriteText pushNotificationText;
-	
+{	
 	public UISlider soundVolumeSlider;
+	
+	public UIStateToggleBtn pushNotifications;
 	
 	// Use this for initialization
 	void Start ()
 	{
+		GetComponent<UIInteractivePanel>().transitions.list[0].AddTransitionStartDelegate(OptionsLoad);
 		soundVolumeSlider.SetValueChangedDelegate(ChangeVolume);
+		
 	}
 	
-	void ChangeVolume(IUIObject obj)
+	void OptionsLoad(EZTransition transition)
 	{
-		Flow.soundVolume = soundVolumeSlider.Value;
-		Debug.Log(Flow.soundVolume);
+		soundVolumeSlider.Value = Save.GetFloat(PlayerPrefsKeys.VOLUME.ToString());
+		if(Save.GetString(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString()) == "On") pushNotifications.SetState(0);
+		else pushNotifications.SetState(1);
+	}
+	
+	void ChangeVolume(IUIObject volumeSlider)
+	{
+		Save.Set(PlayerPrefsKeys.VOLUME.ToString(), soundVolumeSlider.Value, true);
 	}
 	
 	void ChangePushNotificationStatus()
 	{
-		// Fix Me Up Top
-		
-		if (Save.GetString ("pushNotifications") == null)
+		if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
 		{
-			Save.Set ("pushNotifications","off");
-			
+			if(Save.GetString (PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString()) == "Off")
+			{
+				WWWForm form = new WWWForm();
+				form.AddField("action","enable");
+				new GameJsonAuthConnection(Flow.URL_BASE+"login/push.php",HandlePushNotifications).connect(form);
+			}
+			else
+			{
+				WWWForm form = new WWWForm();
+				form.AddField("action","disable");
+				new GameJsonAuthConnection(Flow.URL_BASE+"login/push.php",HandlePushNotifications).connect(form);
+			}
 		}
-		
+		else
+		{
+			Flow.game_native.showMessage("Login", "You must login to perform this change");
+		}
+	}
+	
+	void HandlePushNotifications(string error, IJSonObject data)
+	{
+		if(error != null)
+		{
+			Flow.game_native.showMessage("Error", error);
+		}
+		else
+		{
+			Flow.game_native.showMessage("Push Notifications",data.StringValue);
+			
+			if(data.StringValue == "Push notifications enabled!") 
+			{
+				pushNotifications.SetState(0);
+				Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(),"On");
+			}
+			else if(data.StringValue == "Push notifications disabled!") 
+			{
+				pushNotifications.SetState(1);
+				Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(), "Off");
+			}
+		}
+	}
+	
+	void AccountSettings()
+	{
+		if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+		{
+			UIPanelManager.instance.BringIn("AccountSettingsScenePanel", UIPanelManager.MENU_DIRECTION.Forwards);
+		}
+		else
+		{
+			UIPanelManager.instance.BringIn("LoginScenePanel",UIPanelManager.MENU_DIRECTION.Forwards);
+		}
 	}
 	
 	

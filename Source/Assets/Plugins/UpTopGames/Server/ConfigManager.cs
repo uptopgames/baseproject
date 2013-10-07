@@ -86,6 +86,9 @@ public class ConfigManager : MonoBehaviour
 	public GameObject messageOk;
 	public GameObject messageOkCancel;
 	
+	public UIScrollList inviteAllScroll;
+	public UIScrollList invitePlayingScroll;
+	
 	void Awake ()
 	{	
 		// Checa para nao criar outro quando entrar em uma cena que tenha o prefab de config
@@ -119,8 +122,8 @@ public class ConfigManager : MonoBehaviour
 			if(gameObject.GetComponent(typeof(GamePersistentConnection))) gameObject.AddComponent<GamePersistentConnection>();
 		}
 		
-		Debug.Log(Flow.header.coins);
-		Debug.Log(appInitialCoins);
+		//Debug.Log(Flow.header.coins);
+		//Debug.Log(appInitialCoins);
 		
 		if(Save.HasKey(PlayerPrefsKeys.COINS.ToString()))
 		{
@@ -159,6 +162,10 @@ public class ConfigManager : MonoBehaviour
 #if !UNITY_WEBPLAYER
 		//Advertisement.Interstitial.Fetch();
 #endif
+		
+		if(!Save.HasKey(PlayerPrefsKeys.VOLUME.ToString())) Save.Set(PlayerPrefsKeys.VOLUME.ToString(), 0.5f, true);
+		if(!Save.HasKey(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString())) Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(), "On", true);
+		
 		// Nao abre outras conexoes, caso seja executado pelo Editor (sem ir pela primeira scene)
 		if (Application.loadedLevelName != "Init") return;
 		
@@ -187,6 +194,8 @@ public class ConfigManager : MonoBehaviour
 		// Seta o som inicial para 50%
 		// Up Top Fix Me
 		//Sound.SetVolume(0.5f);
+		
+		
 		
 		// Se nao for um jogo offline (jogo aonde existe uma scene antes do Login)
 		/*if (!Info.offlineGame)
@@ -383,9 +392,12 @@ public class ConfigManager : MonoBehaviour
 	};
 	
 	// Ao deslogar o usuario do jogo, remover as informacoes (somente o necessario) salvas no SavePrefs
-	void OnLogoutFromServer()
+	public void OnLogoutFromServer()
 	{
 		foreach(PlayerPrefsKeys key in saveKeys) Save.Delete(key.ToString());
+		
+		inviteAllScroll.ClearList(true);
+		invitePlayingScroll.ClearList(true);
 		
 		Save.SaveAll();
 	}

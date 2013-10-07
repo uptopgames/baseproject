@@ -13,7 +13,7 @@ public abstract class GameNativeBase
 	public string default_cancel_button = "Cancel";
 	
 	// Tamanho da foto
-	public const int PHOTO_WIDTH = 512;
+	public const int PHOTO_WIDTH = 200;
 	public const int PHOTO_HEIGHT = PHOTO_WIDTH;
 	
 	// Nome da foto

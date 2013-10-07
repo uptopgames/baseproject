@@ -17,7 +17,7 @@ public class Invite : MonoBehaviour
 	
 	public UIScrollList inviteFriendScroll;
 	
-	public UITextField searchText;
+	//public UITextField searchText;
 	
 	public GameObject findFriendsPanel;
 	public GameObject noFriendsText;
@@ -33,11 +33,9 @@ public class Invite : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () 
-	{
-		repositoryLists = GameObject.FindWithTag("RepoFLists");
-		
-		scroll = repositoryLists.transform.FindChild("FriendList").transform.GetComponent<UIScrollList>();
-		playingScroll = repositoryLists.transform.FindChild("PlayingList").transform.GetComponent<UIScrollList>();
+	{		
+		scroll = Flow.config.GetComponent<ConfigManager>().inviteAllScroll;
+		playingScroll = Flow.config.GetComponent<ConfigManager>().invitePlayingScroll;
 		
 		scroll.transform.parent = gameObject.transform;
 		playingScroll.transform.parent = gameObject.transform;
@@ -47,9 +45,9 @@ public class Invite : MonoBehaviour
 			// primeira coluna refere-se a posicao do panel manager no mundo
 			// segunda coluna refere-se a posicao do invite em relacao ao panel maneger
 			// terceira coluna refere-se a posicao do scroll em relacao ao invite panel
-			65.6814f -31.4336f -0.892828f, // x
-			1.373484f -0.9254344f -0.3f, // y
-			914.5213f +5.99231f -7.011475f // z
+			-31.4336f 		+65.6814f		-0.7232132f, // x
+			-0.9254344f 	+1.373484f  	+0.7468368f, // y
+			914.5213f 		+5.99231f		-7.011475f // z
 		);
 				
 		playingScroll.transform.position = new Vector3
@@ -57,9 +55,9 @@ public class Invite : MonoBehaviour
 			// primeira coluna refere-se a posicao do panel manager no mundo
 			// segunda coluna refere-se a posicao do invite em relacao ao panel maneger
 			// terceira coluna refere-se a posicao do scroll em relacao ao invite panel
-			65.6814f 	-31.4336f 		-0.892828f, 	// x
-			1.373484f 	-0.9254344f 	-0.3f, 	// y
-			914.5213f 	+5.99231f 		-7.011475f 		// z
+			-31.4336f 		+65.6814f 		-0.7232132f, 	// x
+			-0.9254344f		+1.373484f 	 	+0.7468368f, 	// y
+			914.5213f 		+5.99231f 		-7.011475f 		// z
 		);
 		
 		UIInteractivePanel panel = GetComponent<UIInteractivePanel>();
@@ -67,8 +65,10 @@ public class Invite : MonoBehaviour
 		panel.transitions.list[0].AddTransitionStartDelegate(EnteredInvite);
 		panel.transitions.list[1].AddTransitionStartDelegate(EnteredInvite);
 		
-		searchText.SetFocusDelegate(ClearText);
-		searchText.AddValidationDelegate(TextChanged);
+		inviteFriendPanel.GetComponent<UIInteractivePanel>().transitions.list[2].AddTransitionEndDelegate(SetInviteFriendsInactive);
+		
+		//searchText.SetFocusDelegate(ClearText);
+		//searchText.AddValidationDelegate(TextChanged);
 		
 		ChangedAllPlaying();
 		
@@ -83,14 +83,14 @@ public class Invite : MonoBehaviour
 		}
 	}
 	
-	string TextChanged(UITextField field, string text, ref int insertion)
+	/*string TextChanged(UITextField field, string text, ref int insertion)
 	{
 		Debug.Log("TO DO: FAZER O SEARCH");
 		///Debug.Log(text);
 		
 		//Debug.Log(scroll.Count);
 		
-		/*for(int i = 0 ; i < removedScroll.Count ; i++)
+		for(int i = 0 ; i < removedScroll.Count ; i++)
 		{
 			if(removedScroll.GetItem(i).transform.FindChild("Name").GetComponent<SpriteText>().Text.Contains(text)) 
 			{
@@ -114,8 +114,8 @@ public class Invite : MonoBehaviour
 		}
 		
 		
-		*/return text;
-	}
+		return text;
+	}*/
 	
 	public void GetFriends()
 	{
@@ -211,11 +211,11 @@ public class Invite : MonoBehaviour
 		}
 	}
 	
-	void ClearText(UITextField field)
+	/*void ClearText(UITextField field)
 	{
 		Debug.Log("vaaaaaai");
 		field.Text = "";
-	}
+	}*/
 	
 	GameObject CreateFriendContainer(IJSonObject friend)
 	{
@@ -405,6 +405,8 @@ public class Invite : MonoBehaviour
 	{
 		inviteFriendPanel.SetActive(true);
 		
+		inviteFriendPanel.GetComponent<UIInteractivePanel>().StartTransition(UIPanelManager.SHOW_MODE.BringInForward);
+		
 		GameObject t = GameObject.Instantiate(inviteFriendPrefab) as GameObject;
 		t.transform.FindChild("TextField").GetComponent<UITextField>().AddFocusDelegate(CreateInviteFriendsContainer);
 		inviteFriendScroll.AddItem(t);
@@ -414,6 +416,12 @@ public class Invite : MonoBehaviour
 	{
 		AddNewFriendsAndClearList();
 		inviteFriendScroll.ClearList(true);
+		
+		inviteFriendPanel.GetComponent<UIInteractivePanel>().StartTransition(UIPanelManager.SHOW_MODE.DismissForward);
+	}
+	
+	void SetInviteFriendsInactive(EZTransition transition)
+	{
 		inviteFriendPanel.SetActive(false);
 	}
 	

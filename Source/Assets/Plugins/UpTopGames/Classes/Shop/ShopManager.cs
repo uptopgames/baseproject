@@ -42,14 +42,14 @@ public class ShopManager : MonoBehaviour
 		string[] androidProductIDs = androidList.ToArray();
 		string[] iosProductIds = appleList.ToArray();
 		
-		foreach(string a in iosProductIds) Debug.Log("produto: "+a);
+		//foreach(string a in iosProductIds) Debug.Log("produto: "+a);
 		
 		IAP.requestProductData(iosProductIds,androidProductIDs, productList => 
 		{
-			foreach(IAPProduct prod in productList)
+			/*foreach(IAPProduct prod in productList)
 			{
 				Debug.Log("IAP: "+prod.productId);
-			}
+			}*/
 			Debug.Log("product list received"); 
 			//Utils.logObject(productList);
 		});

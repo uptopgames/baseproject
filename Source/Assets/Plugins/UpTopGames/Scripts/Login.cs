@@ -23,6 +23,8 @@ public class Login : MonoBehaviour
 	
 	public SpriteText emailText;
 	
+	public UIScrollList gamesScroll;
+	
 	// Use this for initialization
 	void Start ()
 	{
@@ -157,12 +159,34 @@ public class Login : MonoBehaviour
 		Save.Set(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString(), data["fbtoken"].ToString(), true);
 		Save.Set(PlayerPrefsKeys.NAME.ToString(), data["username"].ToString(),true);
 		Save.Set(PlayerPrefsKeys.ID.ToString(), data["user_id"].ToString(),true);
+		if(!data["email"].IsNull) Save.Set(PlayerPrefsKeys.EMAIL.ToString(), data["email"].ToString(), true);
+		if(!data["first_name"].IsNull) Save.Set(PlayerPrefsKeys.FIRST_NAME.ToString(), data["first_name"].ToString(), true);
+		if(!data["last_name"].IsNull) Save.Set(PlayerPrefsKeys.LAST_NAME.ToString(), data["last_name"].ToString(), true);
+		if(!data["location"].IsNull) Save.Set(PlayerPrefsKeys.LOCATION.ToString(), data["location"].ToString(), true);
+		if(!data["gender"].IsNull) Save.Set(PlayerPrefsKeys.GENDER.ToString(), data["gender"].ToString(), true);
+		
+		if(!data["birthday"].IsNull)
+		{
+			string day, month, year;
+			string[] separator = {"-"};
+			string[] birthday = data["birthday"].StringValue.Split(separator,System.StringSplitOptions.None);
+			
+			day = birthday[2];
+			month = birthday[1];
+			year = birthday[0];
+			
+			Save.Set(PlayerPrefsKeys.DATE_DAY.ToString(), day,true);
+			Save.Set(PlayerPrefsKeys.DATE_MONTH.ToString(), month,true);
+			Save.Set(PlayerPrefsKeys.DATE_YEAR.ToString(), year,true);
+		}
 		
 		// Atualiza token da FacebookAPI
 		if (Save.HasKey(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString())) {
 			FacebookAPI facebook = new FacebookAPI();
 			facebook.SetToken(Save.GetString(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()));
 		}
+		
+		Save.SaveAll();
 		
 		CheckLogin();
 	}
@@ -264,20 +288,43 @@ public class Login : MonoBehaviour
 			return;
 		}
 		
+		Debug.Log(json);
+		
 		GameToken.save(json);
-		Save.Set(PlayerPrefsKeys.EMAIL.ToString(), email);
-		Save.Set(PlayerPrefsKeys.PASSWORD.ToString(), password);
+		Save.Set(PlayerPrefsKeys.EMAIL.ToString(), email,true);
+		Save.Set(PlayerPrefsKeys.PASSWORD.ToString(), password, true);
 		
 		Save.Set(PlayerPrefsKeys.NAME.ToString(), json["username"].ToString(),true);
 		Save.Set(PlayerPrefsKeys.ID.ToString(), json["user_id"].ToString(),true);
 		
+		if(!json["first_name"].IsNull) Save.Set(PlayerPrefsKeys.FIRST_NAME.ToString(), json["first_name"].ToString(), true);
+		if(!json["last_name"].IsNull) Save.Set(PlayerPrefsKeys.LAST_NAME.ToString(), json["last_name"].ToString(), true);
+		if(!json["location"].IsNull) Save.Set(PlayerPrefsKeys.LOCATION.ToString(), json["location"].ToString(), true);
+		if(!json["gender"].IsNull) Save.Set(PlayerPrefsKeys.GENDER.ToString(), json["gender"].ToString(), true);
+		if(!json["birthday"].IsNull)
+		{
+			string day, month, year;
+			string[] separator = {"-"};
+			string[] birthday = json["birthday"].StringValue.Split(separator,System.StringSplitOptions.None);
+			
+			day = birthday[2];
+			month = birthday[1];
+			year = birthday[0];
+			
+			Save.Set(PlayerPrefsKeys.DATE_DAY.ToString(), day,true);
+			Save.Set(PlayerPrefsKeys.DATE_MONTH.ToString(), month,true);
+			Save.Set(PlayerPrefsKeys.DATE_YEAR.ToString(), year,true);
+		}
+		
+		
+		
 		// Verifica se possui Facebook
 		if (json.Contains("fbtoken") && json.Contains("facebook_id"))
 		{
-			Save.Set(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString(), json["fbtoken"].ToString());
-			Save.Set(PlayerPrefsKeys.FACEBOOK_ID.ToString(), json["facebook_id"].ToString());
+			Save.Set(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString(), json["fbtoken"].ToString(), true);
+			Save.Set(PlayerPrefsKeys.FACEBOOK_ID.ToString(), json["facebook_id"].ToString(), true);
 		}
-		
+				
 		// Verifica se e uma conta nova
 		if (json["new_account"].ToString() != "0")
 		{						
@@ -292,6 +339,8 @@ public class Login : MonoBehaviour
 			FacebookAPI facebook = new FacebookAPI();
 			facebook.SetToken(Save.GetString(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()));
 		}
+		
+		
 		
 		// Redireciona a proxima cena
 		

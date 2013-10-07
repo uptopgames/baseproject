@@ -76,6 +76,22 @@ public class GameBrowserConnection: MonoBehaviour
 		Save.Set(PlayerPrefsKeys.NAME.ToString(), json["username"].ToString());
 		Save.Set(PlayerPrefsKeys.ID.ToString(), json["user_id"].ToString());
 		
+		Save.Set(PlayerPrefsKeys.FIRST_NAME.ToString(), json["first_name"].ToString());
+		Save.Set(PlayerPrefsKeys.LAST_NAME.ToString(), json["last_name"].ToString());
+		Save.Set(PlayerPrefsKeys.LOCATION.ToString(), json["location"].ToString());
+		if(!json["gender"].IsNull) Save.Set(PlayerPrefsKeys.GENDER.ToString(), json["gender"].ToString());
+		string day, month, year;
+		string[] separator = {"-"};
+		string[] birthday = json["birthday"].StringValue.Split(separator,System.StringSplitOptions.None);
+		
+		day = birthday[2];
+		month = birthday[1];
+		year = birthday[0];
+		
+		Save.Set(PlayerPrefsKeys.DATE_DAY.ToString(), day);
+		Save.Set(PlayerPrefsKeys.DATE_MONTH.ToString(), month);
+		Save.Set(PlayerPrefsKeys.DATE_YEAR.ToString(), year);
+		
 		Debug.Log(json);
 		
 		// Se a conta nao for nova, redireciona a cena
