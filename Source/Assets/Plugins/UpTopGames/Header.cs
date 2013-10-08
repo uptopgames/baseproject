@@ -65,7 +65,7 @@ public class Header : MonoBehaviour
 		}
 		set
 		{
-			Debug.Log("seta para "+value);
+			//Debug.Log("seta para "+value);
 			_coins = value;
 			shopButton.Text = _coins.ToString();
 			

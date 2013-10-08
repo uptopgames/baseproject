@@ -468,7 +468,7 @@ public class ShopManager : MonoBehaviour
 		
 	public void RefreshShop(bool refreshPrime=true)
 	{
-		Debug.Log("RefreshShop");
+		//Debug.Log("RefreshShop");
 		GameJsonConnection conn = new GameJsonConnection(Flow.URL_BASE + "login/shop/refresh.php", OnRefreshShop);
 		WWWForm form = new WWWForm();
 		form.AddField("app_id", Info.appId.ToString());
@@ -513,6 +513,7 @@ public class ShopManager : MonoBehaviour
 				{	
 					if(Flow.config.GetComponent<ConfigManager>().shopInApps[i].appleBundle == tempInApp.appleBundle || Flow.config.GetComponent<ConfigManager>().shopInApps[i].androidBundle == tempInApp.androidBundle)
 					{
+						tempInApp.image = Flow.config.GetComponent<ConfigManager>().shopInApps[i].image;
 						Flow.config.GetComponent<ConfigManager>().shopInApps[i] = tempInApp;
 						
 						foundInApp = true;
@@ -530,8 +531,7 @@ public class ShopManager : MonoBehaviour
 						return a.id.CompareTo(b.id);	
 			});
 			
-			bool foundItem = false;
-			
+			bool hasToRefreshGoodsScroll = false;
 			foreach(IJSonObject item in items.ArrayItems)
 			{
 				ShopItem tempItem = new ShopItem();
@@ -544,19 +544,27 @@ public class ShopManager : MonoBehaviour
 				tempItem.description = item["description"].StringValue;
 				tempItem.hide = item["hide"].Int32Value == 1;
 				
+				//Debug.Log("item: "+tempItem.name);
+				
+				bool foundItem = false;
+				
 				for(int i = 0 ; i < Flow.config.GetComponent<ConfigManager>().shopItems.Length ; i++)
 				{
 					if(Flow.config.GetComponent<ConfigManager>().shopItems[i].id == tempItem.id)
 					{
+						tempItem.image = Flow.config.GetComponent<ConfigManager>().shopItems[i].image;
 						Flow.config.GetComponent<ConfigManager>().shopItems[i] = tempItem;
 						
 						foundItem = true;
+						hasToRefreshGoodsScroll = true;
 						break;
 					}
 				}
 				
 				if(!foundItem)
 				{
+					//Debug.Log("adicionando "+tempItem.name);
+					hasToRefreshGoodsScroll = true;
 					Flow.config.GetComponent<ConfigManager>().shopItems.Add(tempItem, ref Flow.config.GetComponent<ConfigManager>().shopItems);
 				}
 				
@@ -572,6 +580,8 @@ public class ShopManager : MonoBehaviour
 			Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsShare = features["share"].Int32Value;
 			Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsVideo = features["video"].Int32Value;
 			Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsWidget = features["widget"].Int32Value;
+			
+			if(hasToRefreshGoodsScroll) UIPanelManager.instance.transform.FindChild("ShopScenePanel").GetComponent<Shop>().RefreshItemsScroll();
 			
 		}
 		

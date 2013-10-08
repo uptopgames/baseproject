@@ -128,14 +128,14 @@ public class ConfigManager : MonoBehaviour
 		if(Save.HasKey(PlayerPrefsKeys.COINS.ToString()))
 		{
 			Flow.header.coins = Save.GetInt(PlayerPrefsKeys.COINS.ToString());
-			Debug.Log("tem coins "+Flow.header.coins);
+			//Debug.Log("tem coins "+Flow.header.coins);
 		}
 		else
 		{
 			Save.Set(PlayerPrefsKeys.COINS.ToString(), appInitialCoins);
 			Flow.header.coins = appInitialCoins;
 			Save.SaveAll();
-			Debug.Log("nao tem coins "+Flow.header.coins);
+			//Debug.Log("nao tem coins "+Flow.header.coins);
 		}
 		
         // Inicia o shop
