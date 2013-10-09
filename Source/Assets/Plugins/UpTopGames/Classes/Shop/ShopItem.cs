@@ -11,8 +11,10 @@ public class ShopItem
 	public string name;
 	public int coinPrice;
 	public Texture image;
-	public bool hide;
+	//public bool hide;
 	public string description;
-	public int count;
+	public ShopItem[] itemsWithin;
 	public bool forFree = false;
+	public int arraySize;
+	public int count;
 }

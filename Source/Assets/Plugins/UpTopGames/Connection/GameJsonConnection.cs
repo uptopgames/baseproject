@@ -25,32 +25,72 @@ public class GameJsonConnection: GameBaseConnection<IJSonObject>
 	public override IEnumerator startConnection(WWWForm form=null, object state=null)
 	{
 		WWW conn = setUpConnection(form);
-		yield return conn;
+		Debug.Log("before");
 		
-		// Verifica se houve erro
-		if (conn.error != null)
+		if(!Application.isPlaying)
 		{
-			sendToCallback(conn.error, ExtensionJSon.Empty(), state);
-			
-			yield break;
+			ContinuationManager.Add(() => conn.isDone, () =>
+			{
+				// Verifica se houve erro
+			    if (!string.IsNullOrEmpty(conn.error)) 
+				{
+					//Debug.Log("WWW failed: " + conn.error);
+					sendToCallback(conn.error, ExtensionJSon.Empty(), state);
+				}
+				
+				JSonReader reader = new JSonReader();
+				IJSonObject data = null;
+				
+				bool er = false;
+				// Faz o parse da resposta
+				try
+				{
+					data = reader.ReadAsJSonObject(conn.text);
+				}
+				catch (JSonReaderException)
+				{
+					Debug.LogError("Error parsing Json: " + conn.text);
+					sendToCallback("Error parsing json", null, state);
+					er = true;
+				}
+				
+				if(!er) sendToCallback(null, data, state);
+				
+				
+			   // Debug.Log("WWW result : " + conn.text);
+			});
 		}
-		
-		JSonReader reader = new JSonReader();
-		IJSonObject data = null;
-		
-		// Faz o parse da resposta
-		try
+		else
 		{
-			data = reader.ReadAsJSonObject(conn.text);
-		}
-		catch (JSonReaderException)
-		{
-			Debug.LogError("Error parsing Json: " + conn.text);
-			sendToCallback("Error parsing json", null, state);
+			yield return conn;
+		
+			Debug.Log("after");
 			
-			yield break;
-		}	
-		
-		sendToCallback(null, data, state);
+			// Verifica se houve erro
+			if (conn.error != null)
+			{
+				sendToCallback(conn.error, ExtensionJSon.Empty(), state);
+				
+				yield break;
+			}
+			
+			JSonReader reader = new JSonReader();
+			IJSonObject data = null;
+			
+			// Faz o parse da resposta
+			try
+			{
+				data = reader.ReadAsJSonObject(conn.text);
+			}
+			catch (JSonReaderException)
+			{
+				Debug.LogError("Error parsing Json: " + conn.text);
+				sendToCallback("Error parsing json", null, state);
+				
+				yield break;
+			}	
+			
+			sendToCallback(null, data, state);
+		}
 	}
 }

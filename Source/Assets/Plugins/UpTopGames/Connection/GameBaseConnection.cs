@@ -69,6 +69,7 @@ public abstract class GameBaseConnection<T>
 	{
 		// Se necessário, inicializa Prefab GamePersistentConnection
 		//Initializate.Prefab(); 
+		Debug.Log("lalala");
 		Flow.config.GetComponent<ConfigManager>().StartCoroutine(startConnection(form, state));
 		return null;
 	}

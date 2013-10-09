@@ -5,7 +5,7 @@ using CodeTitans.JSon;
 using System;
 
 public enum ShopResultStatus { Success, Failed };
-public delegate void ShopDelegate(ShopResultStatus status, params string[] products);
+public delegate void ShopDelegate(ShopResultStatus status, string product);
 
 public class ShopManager : MonoBehaviour 
 {
@@ -13,19 +13,23 @@ public class ShopManager : MonoBehaviour
 	ShopItem[] itemList;
 	ShopFeatures features;
 	
-	// Use this for initialization
-	void Start () 
+	public void PurchaseInApp(string id, ShopDelegate callback)
 	{
-
+		ShopInApp inapp = GetInApp(id);
+		
+		if(inapp.type == ShopInAppType.Consumable) RequestConsumableProduct(inapp, callback);
+		else RequestNonConsumableProduct(inapp, callback);
 	}
 	
-	
-	void Init()
+	void Start()
 	{
 		inappsList = GetComponent<ConfigManager>().shopInApps;
 		itemList = GetComponent<ConfigManager>().shopItems;
 		features = GetComponent<ConfigManager>().shopFeatures;
-		
+	}
+	
+	void Init()
+	{
 		string androidKey = Info.androidKey;
 		IAP.init (androidKey);	
 		Debug.Log("Started IAP");
@@ -55,7 +59,7 @@ public class ShopManager : MonoBehaviour
 		});
 	}
 	
-	public void RequestNonConsumableProduct(ShopInApp inapp, ShopDelegate callback)
+	void RequestNonConsumableProduct(ShopInApp inapp, ShopDelegate callback)
 	{
 		Flow.game_native.startLoading();
 		
@@ -99,7 +103,7 @@ public class ShopManager : MonoBehaviour
 		});
 	}	
 	
-	public void RequestConsumableProduct(ShopInApp inapp, ShopDelegate callback)
+	void RequestConsumableProduct(ShopInApp inapp, ShopDelegate callback)
 	{
 		Flow.game_native.startLoading();
 #if UNITY_ANDROID
@@ -167,6 +171,7 @@ public class ShopManager : MonoBehaviour
 	public ShopItem GetShopItem(string id)
 	{
 		ShopItem item = new ShopItem();
+				
 		for (int i = 0 ; i < itemList.Length ; i++)
 		{
 			if(itemList[i].id == id)
@@ -192,72 +197,52 @@ public class ShopManager : MonoBehaviour
 		return inapp;
 	}
 	
-	public void BuyItem(ShopDelegate callback, params ShopItem[] ids)
+	public void BuyItem(ShopDelegate callback, ShopItem item)
 	{
-		List<string> pIds = new List<string>();
-		bool hasSomeItem = false;
-		foreach(ShopItem item in ids)
+		foreach(ShopItem itemWithin in item.itemsWithin)
 		{
-			pIds.Add(item.id);
-			if(Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
+			if(Save.HasKey(itemWithin.id) && itemWithin.type == ShopItemType.NonConsumable)
 			{
 				// ja tem o item
-				hasSomeItem = true;
+				Flow.game_native.showMessage("Already has item","You already have this item.");
+				callback(ShopResultStatus.Failed, item.id);
+				return;
 			}
+			//else if(itemWithin.forFree
 		}
-		
-		if(hasSomeItem)
-		{
-			Flow.game_native.showMessage("Already has item","You already have this item.");
-			callback(ShopResultStatus.Failed, pIds.ToArray());
-			return;
-		}
-		
+			
 		//Flow.game_native.startLoading();
 		
-		ShopItem sum = new ShopItem();
-		
-		foreach (ShopItem si in ids)
-		{
-			if(si.forFree == false)
-			{
-				Debug.Log("pelo item "+si.id+" isso: "+si.coinPrice*si.count);
-				sum.coinPrice += si.coinPrice*si.count;
-			}
-		}
-		
-		if(sum.coinPrice > Flow.header.coins)
+		if(item.coinPrice > Flow.header.coins)
 		{
 			// nao tem coins
-			OfferCoinPackAndBuyItem(callback, sum.coinPrice, ids);
+			OfferCoinPackAndBuyItem(callback, item);
 		}
 		else
 		{
-			Debug.Log("tem coins, soma eh: "+sum.coinPrice);
+			Debug.Log("tem coins, soma eh: "+item.coinPrice);
 			// tem coins
-			Flow.header.coins -= sum.coinPrice;
+			Flow.header.coins -= item.coinPrice;
 			
-			List<string> tList = new List<string>();
-			foreach(ShopItem item in ids)
+			foreach(ShopItem iw in item.itemsWithin)
 			{
-				Debug.Log(item.id);
-				tList.Add(item.id);
+				Debug.Log(iw.id);
 				
-				if(Save.HasKey(item.id) && item.type == ShopItemType.Consumable)
+				if(Save.HasKey(iw.id) && iw.type == ShopItemType.Consumable)
 				{
-					int userStock = Save.GetInt(item.id);
-					userStock += item.count;
-					Save.Set(item.id,userStock);
+					int userStock = Save.GetInt(iw.id);
+					userStock += iw.count;
+					Save.Set(iw.id,userStock);
 					Debug.Log("tem item, eh consumivel");
 				}
-				else if(!Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
+				else if(!Save.HasKey(iw.id) && item.type == ShopItemType.NonConsumable)
 				{
-					Save.Set(item.id,1);
+					Save.Set(iw.id,1);
 					Debug.Log("nao tem item, eh nao consumivel");
 				}
 				else
 				{
-					Save.Set(item.id, item.count);
+					Save.Set(iw.id, iw.count);
 					Debug.Log("nao tem item, eh consumivel");
 				}
 			}
@@ -265,7 +250,7 @@ public class ShopManager : MonoBehaviour
 			Save.Set(PlayerPrefsKeys.COINS.ToString(),Flow.header.coins);
 			Save.SaveAll();
 			
-			callback(ShopResultStatus.Success, tList.ToArray());
+			callback(ShopResultStatus.Success, item.id);
 			
 			if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
 			{
@@ -273,10 +258,10 @@ public class ShopManager : MonoBehaviour
 				GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
 				WWWForm form = new WWWForm();
 				
-				for(int i = 0 ; i < ids.Length ; i++)
+				for(int i = 0 ; i < item.itemsWithin.Length ; i++)
 				{
-					form.AddField("items["+i+"][id]", ids[i].id);
-					form.AddField("items["+i+"][count]", Save.GetInt(ids[i].id));
+					form.AddField("items["+i+"][id]", item.itemsWithin[i].id);
+					form.AddField("items["+i+"][count]", Save.GetInt(item.itemsWithin[i].id));
 					form.AddField("coins", Flow.header.coins);
 				}
 				
@@ -308,10 +293,10 @@ public class ShopManager : MonoBehaviour
 		}
 	}
 	
-	public void OfferCoinPackAndBuyItem(ShopDelegate callback, int sum, params ShopItem[] ids)
+	public void OfferCoinPackAndBuyItem(ShopDelegate callback, ShopItem item)
 	{
 		// nao tem coins
-		int difference = sum - Flow.header.coins;
+		int difference = item.coinPrice - Flow.header.coins;
 		ShopInApp coinPackToOffer = new ShopInApp();
 		foreach(ShopInApp pack in coinPacks)
 		{
@@ -334,7 +319,7 @@ public class ShopManager : MonoBehaviour
 		
 		return;
 #endif
-		List<string> tList = new List<string>();
+		//List<string> tList = new List<string>();
 		
 		Flow.game_native.startLoading();
 		
@@ -343,30 +328,26 @@ public class ShopManager : MonoBehaviour
 			Flow.game_native.stopLoading();
 			if(purchased)
 			{
-				//if(!Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
-				//{
-					// comprou o pacote, nao ta logado, agora pode comprar o item
-				
 				Flow.header.coins += coinPackToOffer.coinsCount;
-				Flow.header.coins -= sum;
+				Flow.header.coins -= item.coinPrice;
 				
-				foreach(ShopItem item in ids)
+				foreach(ShopItem iw in item.itemsWithin)
 				{
-					tList.Add(item.id);
+					//tList.Add(item.id);
 					
-					if(Save.HasKey(item.id) && item.type == ShopItemType.Consumable)
+					if(Save.HasKey(iw.id) && iw.type == ShopItemType.Consumable)
 					{
-						int userStock = Save.GetInt(item.id);
-						userStock += item.count;
-						Save.Set (item.id,userStock);
+						int userStock = Save.GetInt(iw.id);
+						userStock += iw.count;
+						Save.Set (iw.id,userStock);
 					}
-					else if(!Save.HasKey(item.id) && item.type == ShopItemType.NonConsumable)
+					else if(!Save.HasKey(iw.id) && iw.type == ShopItemType.NonConsumable)
 					{
-						Save.Set(item.id,1);
+						Save.Set(iw.id,1);
 					}
 					else
 					{
-						Save.Set(item.id, item.count);
+						Save.Set(iw.id, iw.count);
 					}
 					
 				}
@@ -374,7 +355,7 @@ public class ShopManager : MonoBehaviour
 				Save.Set(PlayerPrefsKeys.COINS.ToString(),Flow.header.coins);
 				Save.SaveAll();
 				
-				callback(ShopResultStatus.Success, tList.ToArray());
+				callback(ShopResultStatus.Success, item.id);
 				
 				if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
 				{
@@ -382,77 +363,26 @@ public class ShopManager : MonoBehaviour
 					GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
 					WWWForm form = new WWWForm();
 					
-					for(int i = 0 ; i < ids.Length ; i++)
+					for(int i = 0 ; i < item.itemsWithin.Length ; i++)
 					{
-						form.AddField("items["+i+"][id]", ids[i].id);
-						form.AddField("items["+i+"][count]", Save.GetInt(ids[i].id));
+						form.AddField("items["+i+"][id]", item.itemsWithin[i].id);
+						form.AddField("items["+i+"][count]", Save.GetInt(item.itemsWithin[i].id));
 						form.AddField("coins", Flow.header.coins);
 					}
 					
 					conn.connect(form);
 				}
-				
-				//}
-				/*else
-				{
-					// conecta para comprar o item
-					GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
-					WWWForm form = new WWWForm();
-					
-					for(int i = 0 ; i < ids.Length ; i++)
-					{
-						form.AddField("items["+i+"][id]", ids[i].id);
-						form.AddField("items["+i+"][count]", ids[i].count);
-						form.AddField("coins", Flow.header.coins);
-					}
-					
-					object[] state = { callback, ids };
-					conn.connect(form, state);
-					
-				}*/
 			}
 			else
 			{
 				
 				// nao tem coins para comprar o item
-				foreach(ShopItem item in ids) tList.Add(item.id);
 				Flow.game_native.showMessage("Not Enough Coins", "You don't have enough coins to buy this item");
-				callback(ShopResultStatus.Failed, tList.ToArray());
+				callback(ShopResultStatus.Failed, item.id);
 			}		
 		});
 		
-		//Flow.game_native.showMessageOkCancel(this, "DontHaveCoinsButChoseToBuy", DontHaveCoinsNative, "DontHaveCoins", "Not enough coins", "You don't have enough coins. Wanna buy some?", "Buy!", "Don't buy");			
 	}
-				
-				
-	//public ShopInApp coinPackToOffer;
-	//public ShopInAppsDelegate delegateToCallAfterOffer;
-	
-	/*public void DontHaveCoinsButChoseToBuy()
-	{
-		if(coinPackToOffer == null || delegateToCallAfterOffer) return;
-		
-		RequestConsumableProduct(coinPackToOffer, delegateToCallAfterOffer);
-		delegateToCallAfterOffer = null;
-		coinPackToOffer = null;
-	}
-	
-	public void DontHaveCoins()
-	{
-		Flow.messageOkCancelDialog.SetActive(false);
-		delegateToCallAfterOffer(ShopResultStatus.Failed);
-		delegateToCallAfterOffer = null;
-		coinPackToOffer = null;
-	}
-	
-	public void DontHaveCoinsNative(string button)
-	{
-		if(button == "Buy!") DontHaveCoinsButChoseToBuy();
-		else if(button == "Don't buy")
-		{
-			delegateToCallAfterOffer(ShopResultStatus.Failed);
-		}
-	}*/
 	
 	public void BuyingConfirmation(string error, IJSonObject data)
 	{
@@ -540,9 +470,33 @@ public class ShopManager : MonoBehaviour
 				tempItem.name = item["name"].StringValue;
 				tempItem.coinPrice = item["price"].Int32Value;
 				tempItem.type = item["type"].StringValue == "Item"? ShopItemType.NonConsumable : ShopItemType.Consumable;
-				tempItem.count = item["count"].Int32Value;
+				
+				string[] ids = {};
+				string[] counts = {};
+				
+				try
+				{
+					ids = item["itemsWithin"].StringValue.Split(',');
+					counts = item["itemsCount"].StringValue.Split(',');
+				}
+				catch
+				{
+					ids = new string[]{ item["itemsWithin"].StringValue };
+					counts = new string[]{ item["itemsCount"].StringValue };
+				}
+				
+				List<ShopItem> tempIWList = new List<ShopItem>();
+				for(int i = 0 ; i < ids.Length ; i++)
+				{
+					ShopItem iw = GetShopItem(ids[i]);
+					iw.count = int.Parse(counts[i]);
+				}
+				
+				tempItem.arraySize = tempIWList.Count;
+				tempItem.itemsWithin = tempIWList.ToArray();
+				
 				tempItem.description = item["description"].StringValue;
-				tempItem.hide = item["hide"].Int32Value == 1;
+				//tempItem.hide = item["hide"].Int32Value == 1;
 				
 				//Debug.Log("item: "+tempItem.name);
 				
@@ -581,7 +535,7 @@ public class ShopManager : MonoBehaviour
 			Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsVideo = features["video"].Int32Value;
 			Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsWidget = features["widget"].Int32Value;
 			
-			if(hasToRefreshGoodsScroll) UIPanelManager.instance.transform.FindChild("ShopScenePanel").GetComponent<Shop>().RefreshItemsScroll();
+			if(refreshPrime && hasToRefreshGoodsScroll) UIPanelManager.instance.transform.FindChild("ShopScenePanel").GetComponent<Shop>().RefreshItemsScroll();
 			
 		}
 		

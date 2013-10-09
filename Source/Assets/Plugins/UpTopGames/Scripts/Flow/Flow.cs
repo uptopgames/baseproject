@@ -27,7 +27,13 @@ public enum PlayerPrefsKeys
 	COINS = 16,
 	NOADS = 17,
 	VOLUME = 18,
-	PUSHNOTIFICATIONS = 19
+	PUSHNOTIFICATIONS = 19,
+	LIKE = 20,
+	SHARE = 21,
+	RATE = 22,
+	VIDEO = 23,
+	WIDGET = 24,
+	INVITE = 25
 }
 
 public enum PanelToLoad

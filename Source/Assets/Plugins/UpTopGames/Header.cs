@@ -90,31 +90,6 @@ public class Header : MonoBehaviour
 		DontDestroyOnLoad(gameObject);
 		Debug.Log("setou o header");
 	}*/
-	
-	public void Start()
-	{
-		
-	}
-	
-	public void CompraTeste()
-	{
-		ShopItem item1 = Flow.shopManager.GetShopItem("consumable_1");
-		ShopItem item2 = Flow.shopManager.GetShopItem("consumable_2");
-		
-		item1.count = 1;
-		item2.count = 1;
-		
-		Flow.shopManager.BuyItem(testecallback, item1, item2);
-	}
-	
-	public void testecallback(ShopResultStatus status, string[] ids)
-	{
-		Debug.Log(status.ToString());
-		foreach (string id in ids)
-		{
-			Debug.Log(id);
-		}
-	}
 
 }
 

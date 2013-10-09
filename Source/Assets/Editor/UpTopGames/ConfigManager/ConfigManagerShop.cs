@@ -5,6 +5,9 @@ using System;
 
 public static class ConfigManagerShop
 {
+	//public static SerializedObject requester;
+	//public static SerializedProperty itemsWithin;
+	
 	public static void DrawInApps(ConfigManager config)
 	{
 		for(int i = 0 ; i < config.shopInApps.Length ; i++)
@@ -58,6 +61,32 @@ public static class ConfigManagerShop
 			config.shopItems[i].coinPrice = EditorGUILayout.IntField("Coin price",config.shopItems[i].coinPrice);
 			config.shopItems[i].description = EditorGUILayout.TextField("Description", config.shopItems[i].description);
 			config.shopItems[i].image = (Texture) EditorGUILayout.ObjectField("Image",config.shopItems[i].image,typeof(Texture));
+					
+			config.shopItems[i].arraySize = EditorGUILayout.IntField("Items Inside Pack",config.shopItems[i].arraySize);
+			
+			if(config.shopItems[i].itemsWithin.Length < config.shopItems[i].arraySize)
+			{
+				for(int m = 0 ; m <= (config.shopItems[i].arraySize - config.shopItems[i].itemsWithin.Length) ; m++)
+				{
+					config.shopItems[i].itemsWithin.Add(new ShopItem(), ref config.shopItems[i].itemsWithin);
+				}
+			}
+			else if(config.shopItems[i].itemsWithin.Length > config.shopItems[i].arraySize)
+			{
+				
+				for(int m = 0 ; m <= (config.shopItems[i].itemsWithin.Length - config.shopItems[i].arraySize) ; m++)
+				{
+					config.shopItems[i].itemsWithin.Remove(config.shopItems[i].itemsWithin.Length-1, ref config.shopItems[i].itemsWithin);
+				}
+			}
+			
+			foreach(ShopItem iw in config.shopItems[i].itemsWithin)
+			{
+				iw.id = EditorGUILayout.TextField("ID", iw.id);
+				iw.forFree = EditorGUILayout.Toggle("For Free",iw.forFree);
+				iw.count = EditorGUILayout.IntField("Count",iw.count);
+				EditorGUILayout.Separator();
+			}
 			
 			if(GUILayout.Button("Delete Shop Item"))
 			{
@@ -67,7 +96,7 @@ public static class ConfigManagerShop
 			EditorGUILayout.LabelField("-".Multiply(500));
 		}
 	}
-	
+
 	public static void DrawFeatures(ConfigManager config)
 	{
 		if(config.shopFeatures == null) config.shopFeatures = new ShopFeatures();
