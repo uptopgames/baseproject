@@ -230,7 +230,8 @@ public class AccountSettings : MonoBehaviour
 			changed = true;
 			Debug.Log("year != 2");
 		}
-		
+		Debug.Log("Save: "+Save.GetString(PlayerPrefsKeys.GENDER));
+		Debug.Log("Toggle: "+maleFemaleToggle.StateName);
 		if(Save.HasKey(PlayerPrefsKeys.GENDER.ToString()) && maleFemaleToggle.StateName != Save.GetString(PlayerPrefsKeys.GENDER.ToString()))
 		{
 			changed = true;
@@ -265,12 +266,12 @@ public class AccountSettings : MonoBehaviour
 			
 			GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/settings/set.php", HandleSaveOnServer, messages);
 			WWWForm form = new WWWForm();
-			form.AddField("month", monthField.Text);
-			form.AddField("day", dayField.Text);
-			form.AddField("year", yearField.Text);
-			form.AddField("location", countryField.Text);
-			form.AddField("first_name", firstNameField.Text);
-			form.AddField("last_name", lastNameField.Text);
+			if(monthField.Text != monthPlaceholder) form.AddField("month", monthField.Text);
+			if(dayField.Text != dayPlaceholder) form.AddField("day", dayField.Text);
+			if(yearField.Text != yearPlaceholder) form.AddField("year", yearField.Text);
+			if(countryField.Text != locationPlaceholder) form.AddField("location", countryField.Text);
+			if(firstNameField.Text != firstNamePlaceholder) form.AddField("first_name", firstNameField.Text);
+			if(lastNameField.Text != lastNamePlaceholder) form.AddField("last_name", lastNameField.Text);
 			form.AddField("gender", maleFemaleToggle.StateName);
 			if(Flow.playerPhoto != null && photoChanged) form.AddBinaryData("photo", Flow.playerPhoto.EncodeToPNG(), PHOTO_NAME, "image/png");
 			
@@ -289,6 +290,13 @@ public class AccountSettings : MonoBehaviour
 		if (error != null)
 		{
 			Flow.game_native.showMessage("Error", error);
+			dayField.Text = dayPlaceholder;
+			monthField.Text = monthPlaceholder;
+			yearField.Text = yearPlaceholder;
+			Save.Set (PlayerPrefsKeys.DATE_DAY.ToString(), dayField.Text, true);
+			Save.Set (PlayerPrefsKeys.DATE_MONTH.ToString(), monthField.Text, true);
+			Save.Set (PlayerPrefsKeys.DATE_YEAR.ToString(), yearField.Text, true);
+			
 			return;
 		}
 		

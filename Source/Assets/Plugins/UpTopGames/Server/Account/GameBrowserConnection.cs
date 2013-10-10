@@ -106,7 +106,7 @@ public class GameBrowserConnection: MonoBehaviour
 			Application.ExternalEval("inviteFriends()");
 		}
 		
-		ConfigManager.offlineUpdater.updateOfflineInApps();
+		ConfigManager.offlineUpdater.UpdateOfflineItems();
 	}
 	
 	// Convida os amigos a partir do canvas

@@ -165,8 +165,8 @@ public class ConfigManager : MonoBehaviour
 		//Advertisement.Interstitial.Fetch();
 #endif
 		
-		if(!Save.HasKey(PlayerPrefsKeys.VOLUME.ToString())) Save.Set(PlayerPrefsKeys.VOLUME.ToString(), 0.5f, true);
-		if(!Save.HasKey(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString())) Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(), "On", true);
+		if(!Save.HasKey(PlayerPrefsKeys.VOLUME)) Save.Set(PlayerPrefsKeys.VOLUME, 0.5f, true);
+		if(!Save.HasKey(PlayerPrefsKeys.PUSHNOTIFICATIONS)) Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS, "On", true);
 		
 		// Nao abre outras conexoes, caso seja executado pelo Editor (sem ir pela primeira scene)
 		if (Application.loadedLevelName != "Init") return;
@@ -366,7 +366,7 @@ public class ConfigManager : MonoBehaviour
 	}
 	
 	// Informacoes default salvas no SavePrefs que deletadas automaticamente, ao deslogar o usuario do jogo
-	private PlayerPrefsKeys[] saveKeys = new PlayerPrefsKeys[]
+	private string[] saveKeys = new string[]
 	{
 		// Keys global de token
 		// Ao deslogar, todos os Tokens se tornam invalidos
@@ -396,7 +396,7 @@ public class ConfigManager : MonoBehaviour
 	// Ao deslogar o usuario do jogo, remover as informacoes (somente o necessario) salvas no SavePrefs
 	public void OnLogoutFromServer()
 	{
-		foreach(PlayerPrefsKeys key in saveKeys) Save.Delete(key.ToString());
+		foreach(string key in saveKeys) Save.Delete(key.ToString());
 		
 		inviteAllScroll.ClearList(true);
 		invitePlayingScroll.ClearList(true);

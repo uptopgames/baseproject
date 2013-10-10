@@ -6,7 +6,10 @@ public class Options : MonoBehaviour
 {	
 	public UISlider soundVolumeSlider;
 	
-	public UIStateToggleBtn pushNotifications;
+	//public UIStateToggleBtn pushNotifications;
+	public UIButton pushOn;
+	public UIButton pushOff;
+	
 	
 	// Use this for initialization
 	void Start ()
@@ -19,8 +22,16 @@ public class Options : MonoBehaviour
 	void OptionsLoad(EZTransition transition)
 	{
 		soundVolumeSlider.Value = Save.GetFloat(PlayerPrefsKeys.VOLUME.ToString());
-		if(Save.GetString(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString()) == "On") pushNotifications.SetState(0);
-		else pushNotifications.SetState(1);
+		if(Save.GetString(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString()) == "On") 
+		{
+			pushOn.gameObject.SetActive(true);
+			pushOff.gameObject.SetActive(false);
+		}
+		else 
+		{
+			pushOff.gameObject.SetActive(true);
+			pushOn.gameObject.SetActive(false);
+		}
 	}
 	
 	void ChangeVolume(IUIObject volumeSlider)
@@ -63,13 +74,15 @@ public class Options : MonoBehaviour
 			
 			if(data.StringValue == "Push notifications enabled!") 
 			{
-				pushNotifications.SetState(0);
-				Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(),"On");
+				pushOn.gameObject.SetActive(true);
+				pushOff.gameObject.SetActive(false);
+				Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(),"On", true);
 			}
 			else if(data.StringValue == "Push notifications disabled!") 
 			{
-				pushNotifications.SetState(1);
-				Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(), "Off");
+				pushOn.gameObject.SetActive(false);
+				pushOff.gameObject.SetActive(true);
+				Save.Set(PlayerPrefsKeys.PUSHNOTIFICATIONS.ToString(), "Off", true);
 			}
 		}
 	}

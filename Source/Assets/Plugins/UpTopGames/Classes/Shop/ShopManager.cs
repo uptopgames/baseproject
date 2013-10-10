@@ -30,6 +30,10 @@ public class ShopManager : MonoBehaviour
 	
 	void Init()
 	{
+		inappsList = GetComponent<ConfigManager>().shopInApps;
+		itemList = GetComponent<ConfigManager>().shopItems;
+		features = GetComponent<ConfigManager>().shopFeatures;
+		
 		string androidKey = Info.androidKey;
 		IAP.init (androidKey);	
 		Debug.Log("Started IAP");
@@ -80,7 +84,7 @@ public class ShopManager : MonoBehaviour
 			{
 				if(inapp.type == ShopInAppType.NonConsumable && inapp.appleBundle.ToLower().Contains("noads"))
 				{
-					Save.Set(PlayerPrefsKeys.NOADS.ToString(), true);
+					Save.Set(PlayerPrefsKeys.NOADS, true);
 					Save.SaveAll();
 				}
 				
@@ -123,9 +127,9 @@ public class ShopManager : MonoBehaviour
 			{
 				if(inapp.isPackOfCoins)
 				{
-					int coinStock = Save.GetInt(PlayerPrefsKeys.COINS.ToString());
+					int coinStock = Save.GetInt(PlayerPrefsKeys.COINS);
 					coinStock += inapp.coinsCount;
-					Save.Set(PlayerPrefsKeys.COINS.ToString(),coinStock);
+					Save.Set(PlayerPrefsKeys.COINS,coinStock);
 					Save.SaveAll();
 				}
 				
@@ -171,12 +175,16 @@ public class ShopManager : MonoBehaviour
 	public ShopItem GetShopItem(string id)
 	{
 		ShopItem item = new ShopItem();
-				
+		
+		//Debug.Log("nome: "+id);
+		
 		for (int i = 0 ; i < itemList.Length ; i++)
 		{
 			if(itemList[i].id == id)
 			{
-				item = itemList[i];
+				item = new ShopItem(itemList[i]);
+				
+				//Debug.Log(item.type);
 				break;
 			}
 		}
@@ -201,7 +209,7 @@ public class ShopManager : MonoBehaviour
 	{
 		foreach(ShopItem itemWithin in item.itemsWithin)
 		{
-			if(Save.HasKey(itemWithin.id) && itemWithin.type == ShopItemType.NonConsumable)
+			if(Save.HasKey(PlayerPrefsKeys.ITEM+itemWithin.id) && itemWithin.type == ShopItemType.NonConsumable)
 			{
 				// ja tem o item
 				Flow.game_native.showMessage("Already has item","You already have this item.");
@@ -227,32 +235,35 @@ public class ShopManager : MonoBehaviour
 			foreach(ShopItem iw in item.itemsWithin)
 			{
 				Debug.Log(iw.id);
+				Debug.Log(Save.HasKey(PlayerPrefsKeys.ITEM+iw.id));
+				Debug.Log(iw.type.ToString());
 				
-				if(Save.HasKey(iw.id) && iw.type == ShopItemType.Consumable)
+				if(Save.HasKey(PlayerPrefsKeys.ITEM+iw.id) && iw.type == ShopItemType.Consumable)
 				{
-					int userStock = Save.GetInt(iw.id);
+					int userStock = Save.GetInt(PlayerPrefsKeys.ITEM+iw.id);
 					userStock += iw.count;
-					Save.Set(iw.id,userStock);
+					Save.Set(PlayerPrefsKeys.ITEM+iw.id,userStock);
 					Debug.Log("tem item, eh consumivel");
 				}
-				else if(!Save.HasKey(iw.id) && item.type == ShopItemType.NonConsumable)
+				else if(!Save.HasKey(PlayerPrefsKeys.ITEM+iw.id) && iw.type == ShopItemType.NonConsumable)
 				{
-					Save.Set(iw.id,1);
+					Save.Set(PlayerPrefsKeys.ITEM+iw.id,1);
 					Debug.Log("nao tem item, eh nao consumivel");
 				}
 				else
 				{
-					Save.Set(iw.id, iw.count);
+					Save.Set(PlayerPrefsKeys.ITEM+iw.id, iw.count);
 					Debug.Log("nao tem item, eh consumivel");
 				}
 			}
 			
-			Save.Set(PlayerPrefsKeys.COINS.ToString(),Flow.header.coins);
+			if(item.type == ShopItemType.NonConsumable) Save.Set(PlayerPrefsKeys.ITEMSPACK+item.id,true);
+			Save.Set(PlayerPrefsKeys.COINS,Flow.header.coins);
 			Save.SaveAll();
 			
 			callback(ShopResultStatus.Success, item.id);
 			
-			if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+			if(Save.HasKey(PlayerPrefsKeys.TOKEN))
 			{
 				// se a compra deu sucesso e o cara esta logado, registrar no server
 				GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
@@ -261,7 +272,7 @@ public class ShopManager : MonoBehaviour
 				for(int i = 0 ; i < item.itemsWithin.Length ; i++)
 				{
 					form.AddField("items["+i+"][id]", item.itemsWithin[i].id);
-					form.AddField("items["+i+"][count]", Save.GetInt(item.itemsWithin[i].id));
+					form.AddField("items["+i+"][count]", Save.GetInt(PlayerPrefsKeys.ITEM+item.itemsWithin[i].id));
 					form.AddField("coins", Flow.header.coins);
 				}
 				
@@ -335,19 +346,19 @@ public class ShopManager : MonoBehaviour
 				{
 					//tList.Add(item.id);
 					
-					if(Save.HasKey(iw.id) && iw.type == ShopItemType.Consumable)
+					if(Save.HasKey(PlayerPrefsKeys.ITEM+iw.id) && iw.type == ShopItemType.Consumable)
 					{
-						int userStock = Save.GetInt(iw.id);
+						int userStock = Save.GetInt(PlayerPrefsKeys.ITEM+iw.id);
 						userStock += iw.count;
-						Save.Set (iw.id,userStock);
+						Save.Set (PlayerPrefsKeys.ITEM+iw.id,userStock);
 					}
-					else if(!Save.HasKey(iw.id) && iw.type == ShopItemType.NonConsumable)
+					else if(!Save.HasKey(PlayerPrefsKeys.ITEM+iw.id) && iw.type == ShopItemType.NonConsumable)
 					{
-						Save.Set(iw.id,1);
+						Save.Set(PlayerPrefsKeys.ITEM+iw.id,1);
 					}
 					else
 					{
-						Save.Set(iw.id, iw.count);
+						Save.Set(PlayerPrefsKeys.ITEM+iw.id, iw.count);
 					}
 					
 				}
@@ -357,7 +368,7 @@ public class ShopManager : MonoBehaviour
 				
 				callback(ShopResultStatus.Success, item.id);
 				
-				if(Save.HasKey(PlayerPrefsKeys.TOKEN.ToString()))
+				if(Save.HasKey(PlayerPrefsKeys.TOKEN))
 				{
 					// se a compra deu sucesso e o cara esta logado, registrar no server
 					GameJsonAuthConnection conn = new GameJsonAuthConnection(Flow.URL_BASE + "login/shop/buy.php", BuyingConfirmation);
@@ -366,7 +377,7 @@ public class ShopManager : MonoBehaviour
 					for(int i = 0 ; i < item.itemsWithin.Length ; i++)
 					{
 						form.AddField("items["+i+"][id]", item.itemsWithin[i].id);
-						form.AddField("items["+i+"][count]", Save.GetInt(item.itemsWithin[i].id));
+						form.AddField("items["+i+"][count]", Save.GetInt(PlayerPrefsKeys.ITEM+item.itemsWithin[i].id));
 						form.AddField("coins", Flow.header.coins);
 					}
 					
@@ -470,6 +481,7 @@ public class ShopManager : MonoBehaviour
 				tempItem.name = item["name"].StringValue;
 				tempItem.coinPrice = item["price"].Int32Value;
 				tempItem.type = item["type"].StringValue == "Item"? ShopItemType.NonConsumable : ShopItemType.Consumable;
+				tempItem.hide = item["hide"].Int32Value == 1;
 				
 				string[] ids = {};
 				string[] counts = {};
@@ -485,16 +497,31 @@ public class ShopManager : MonoBehaviour
 					counts = new string[]{ item["itemsCount"].StringValue };
 				}
 				
-				List<ShopItem> tempIWList = new List<ShopItem>();
-				for(int i = 0 ; i < ids.Length ; i++)
+				if(!item["itemsWithin"].IsNull) 
 				{
-					ShopItem iw = GetShopItem(ids[i]);
-					iw.count = int.Parse(counts[i]);
+					List<ShopItem> tempIWList = new List<ShopItem>();
+				
+					for(int i = 0 ; i < ids.Length ; i++)
+					{
+						//Debug.Log("iti: "+ids[i]);
+						//Debug.Log("counti: "+counts[i]);
+						ShopItem iw = GetShopItem(ids[i].Trim());
+						//ShopItem jose = new ShopItem();
+						
+						iw.count = int.Parse(counts[i]);
+						iw.id = ids[i].Trim();
+						
+						tempIWList.Add(iw);
+					}
+				
+					tempItem.arraySize = tempIWList.Count;
+					tempItem.itemsWithin = tempIWList.ToArray();
 				}
-				
-				tempItem.arraySize = tempIWList.Count;
-				tempItem.itemsWithin = tempIWList.ToArray();
-				
+				else
+				{
+					tempItem.arraySize = 0;
+					tempItem.itemsWithin = new ShopItem[]{};
+				}
 				tempItem.description = item["description"].StringValue;
 				//tempItem.hide = item["hide"].Int32Value == 1;
 				

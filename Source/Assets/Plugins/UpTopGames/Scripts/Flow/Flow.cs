@@ -6,34 +6,36 @@ using System;
 
 public enum GameMode { Multiplayer, SinglePlayer, None }
 
-public enum PlayerPrefsKeys
+public class PlayerPrefsKeys
 {
-	TOKEN = 0,
-	TOKEN_EXPIRATION = 1,
-	FACEBOOK_TOKEN = 2,
-	NAME = 3,
-	ID = 4,
-	EMAIL = 5,
-	PASSWORD = 6,
-	FACEBOOK_ID = 7,
-	FIRST_NAME = 8,
-	LAST_NAME = 9,
-	LOCATION = 10,
-	GENDER = 11,
-	DATE_DAY = 12,
-	DATE_MONTH = 13,
-	DATE_YEAR = 14,
-	APP_ID = 15,
-	COINS = 16,
-	NOADS = 17,
-	VOLUME = 18,
-	PUSHNOTIFICATIONS = 19,
-	LIKE = 20,
-	SHARE = 21,
-	RATE = 22,
-	VIDEO = 23,
-	WIDGET = 24,
-	INVITE = 25
+	public static string TOKEN = "LjA3ZBho8s",
+	TOKEN_EXPIRATION = "JyCoCznHRy",
+	FACEBOOK_TOKEN = "VkhEzPRqc0",
+	NAME = "jg5DhoIXqa",
+	ID = "JvaVoUOrcm",
+	EMAIL = "n5EkU4DSlu",
+	PASSWORD = "pnz5tkIUT9",
+	FACEBOOK_ID = "byuzSrWPFf",
+	FIRST_NAME = "3tcOPoenCF",
+	LAST_NAME = "QDCAHcyfaR",
+	LOCATION = "wFREllNX3A",
+	GENDER = "Jwk8zvfAoA",
+	DATE_DAY = "rOkbQHqs03",
+	DATE_MONTH = "266NDq0ojh",
+	DATE_YEAR = "aJbdakz7KO",
+	APP_ID = "gKYCpFGlOu",
+	COINS = "3MhqRjyPEZ",
+	NOADS = "ekdfuvtNzT",
+	VOLUME = "vyNlbfVkeG",
+	PUSHNOTIFICATIONS = "cPgIPg6Wtq",
+	LIKE = "4CrIiU5lw9",
+	SHARE = "aXI1XTZEbq",
+	RATE = "0NArcBvaJi",
+	VIDEO = "bHneDidbci",
+	WIDGET = "nvq5NmUoSw",
+	INVITE = "Ms1GNXuYIP",
+	ITEM = "qpsHjQx2TC",
+	ITEMSPACK = "MgQTtHaxYF";
 }
 
 public enum PanelToLoad

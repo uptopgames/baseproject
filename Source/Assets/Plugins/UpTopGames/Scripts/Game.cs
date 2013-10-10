@@ -141,16 +141,20 @@ public class Game : MonoBehaviour
 		winsText.Text = turnsWon.ToString();
 		losesText.Text = turnsLost.ToString();
 				
-		if((DateTime.Now - lastUpdate).Days > 2) nudgeButton.SetActive(true);
-		else nudgeButton.SetActive(false);
+		
 		
 		if(whoseMove=="their")
 		{
+			if((DateTime.Now - lastUpdate).Days > 2) nudgeButton.SetActive(true);
+			else nudgeButton.SetActive(false);
+			
 			yourTurnContainer.SetActive(false);
 			theirTurnContainer.SetActive(true);
 		}
 		else if(whoseMove=="your")
 		{
+			nudgeButton.SetActive(false);
+			
 			yourTurnContainer.SetActive(true);
 			theirTurnContainer.SetActive(false);
 		}

@@ -12,12 +12,19 @@ public class ShopInfo : MonoBehaviour
 	// metodo chamado so por itens
 	void ClickedShopItem()
 	{
-		Flow.shopManager.BuyItem(CheckBuyItem, Flow.shopManager.GetShopItem(id));
+		if(!has) Flow.shopManager.BuyItem(CheckBuyItem, Flow.shopManager.GetShopItem(id));
 	}
 	
-	void CheckBuyItem(ShopResultStatus status, string id)
+	void CheckBuyItem(ShopResultStatus status, string product)
 	{
-		
+		Debug.Log("status: "+status);
+		Debug.Log("product: "+product);
+		if(Flow.shopManager.GetShopItem(product).type == ShopItemType.NonConsumable)
+		{
+			has = true;
+			transform.FindChild("Purchased").gameObject.SetActive(true);
+			transform.FindChild("Price").gameObject.SetActive(false);
+		}
 	}
 	
 	// metodo chamado so por inapps
@@ -80,7 +87,14 @@ public class ShopInfo : MonoBehaviour
 		if(error != null) Debug.Log(error);
 		else
 		{
-			itemRenderer.material.mainTexture = data.texture;
+			for(int i = 0 ; i < Flow.config.GetComponent<ConfigManager>().shopItems.Length ; i++)
+			{
+				if(Flow.config.GetComponent<ConfigManager>().shopItems[i].id == id)
+				{
+					Flow.config.GetComponent<ConfigManager>().shopItems[i].image = data.texture;
+				}
+			}
+			//itemRenderer.material.mainTexture = data.texture;
 		}
 	}
 }

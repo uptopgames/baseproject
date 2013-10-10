@@ -55,6 +55,9 @@ public static class ConfigManagerShop
 			GUILayout.Label("Shop Item");
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
+			
+			config.shopItems[i].hide = !EditorGUILayout.BeginToggleGroup("Show", config.shopItems[i].hide);
+			
 			config.shopItems[i].type = (ShopItemType) EditorGUILayout.EnumPopup("Item Type", config.shopItems[i].type);
 			config.shopItems[i].id = EditorGUILayout.TextField("ID",config.shopItems[i].id);
 			config.shopItems[i].name = EditorGUILayout.TextField("Item Name", config.shopItems[i].name);
@@ -66,6 +69,7 @@ public static class ConfigManagerShop
 			
 			if(config.shopItems[i].itemsWithin.Length < config.shopItems[i].arraySize)
 			{
+				//Debug.Log("aha yeye");
 				for(int m = 0 ; m <= (config.shopItems[i].arraySize - config.shopItems[i].itemsWithin.Length) ; m++)
 				{
 					config.shopItems[i].itemsWithin.Add(new ShopItem(), ref config.shopItems[i].itemsWithin);
@@ -73,7 +77,7 @@ public static class ConfigManagerShop
 			}
 			else if(config.shopItems[i].itemsWithin.Length > config.shopItems[i].arraySize)
 			{
-				
+				//Debug.Log("aha yaye");
 				for(int m = 0 ; m <= (config.shopItems[i].itemsWithin.Length - config.shopItems[i].arraySize) ; m++)
 				{
 					config.shopItems[i].itemsWithin.Remove(config.shopItems[i].itemsWithin.Length-1, ref config.shopItems[i].itemsWithin);
@@ -83,10 +87,12 @@ public static class ConfigManagerShop
 			foreach(ShopItem iw in config.shopItems[i].itemsWithin)
 			{
 				iw.id = EditorGUILayout.TextField("ID", iw.id);
-				iw.forFree = EditorGUILayout.Toggle("For Free",iw.forFree);
+				//iw.forFree = EditorGUILayout.Toggle("For Free",iw.forFree);
 				iw.count = EditorGUILayout.IntField("Count",iw.count);
 				EditorGUILayout.Separator();
 			}
+			
+			EditorGUILayout.EndToggleGroup();
 			
 			if(GUILayout.Button("Delete Shop Item"))
 			{

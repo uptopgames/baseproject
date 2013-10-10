@@ -42,17 +42,17 @@ public class GameNativeDefault: GameNativeBase
 	{
 		if(!title.IsEmpty())
 		{
-			Flow.messageOkDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+			Flow.messageOkDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundTitle").FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
 		}
 		
 		if(!message.IsEmpty())
 		{
-			Flow.messageOkDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+			Flow.messageOkDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundBody").FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		if(!button.IsEmpty())
 		{
-			 Flow.messageOkDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
+			 Flow.messageOkDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundBody").FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = button;
 		}
 		
 		Flow.messageOkDialog.SetActive(true);
@@ -86,22 +86,22 @@ public class GameNativeDefault: GameNativeBase
 	{
 		if(!title.IsEmpty())
 		{
-			Flow.messageOkCancelDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+			Flow.messageOkCancelDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundTitle").FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
 		}
 		
 		if(!message.IsEmpty())
 		{
-			Flow.messageOkCancelDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+			Flow.messageOkCancelDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundBody").FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		if(!okButton.IsEmpty())
 		{
-			 Flow.messageOkCancelDialog.transform.FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = okButton;
+			 Flow.messageOkCancelDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundBody").FindChild("ConfirmButtonPanel").FindChild("ConfirmButton").FindChild("control_text").GetComponent<SpriteText>().Text = okButton;
 		}
 		
 		if(!cancelButton.IsEmpty())
 		{
-			 Flow.messageOkCancelDialog.transform.FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text = cancelButton;
+			 Flow.messageOkCancelDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundBody").FindChild("CancelButtonPanel").FindChild("CancelButton").FindChild("control_text").GetComponent<SpriteText>().Text = cancelButton;
 		}
 		
 		Flow.messageOkCancelDialog.SetActive(true);
@@ -119,12 +119,12 @@ public class GameNativeDefault: GameNativeBase
 	{
 		if(!title.IsEmpty())
 		{
-			Flow.loadingDialog.transform.FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
+			Flow.loadingDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundTitle").FindChild("TitlePanel").FindChild("Title").GetComponent<SpriteText>().Text = title;
 		}
 		
 		if(!message.IsEmpty())
 		{
-			Flow.loadingDialog.transform.FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
+			Flow.loadingDialog.transform.FindChild("BackgroundBorder").FindChild("BackgroundBody").FindChild("MessagePanel").FindChild("Message").GetComponent<SpriteText>().Text = message;
 		}
 		
 		Flow.loadingDialog.SetActive(true);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using CodeTitans.JSon;
 using System;
 
@@ -22,7 +23,7 @@ public class Shop : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		Invoke("GanheiItem",30);
+		//Invoke("GanheiItem",30);
 		RefreshItemsScroll(true);
 		GetComponent<UIInteractivePanel>().transitions.list[0].AddTransitionStartDelegate(InitShop);
 		
@@ -37,11 +38,11 @@ public class Shop : MonoBehaviour
 		RefreshCoinsScroll();
 	}
 	
-	void GanheiItem()
+	/*void GanheiItem()
 	{
 		Debug.Log("ganhei");
-		Save.Set("item_2",true);
-	}
+		Save.Set("pack_1",true);
+	}*/
 	
 	public void RefreshCoinsScroll()
 	{
@@ -54,10 +55,11 @@ public class Shop : MonoBehaviour
 				Transform inApp = tempPage.FindChild("ShopInApp"+j);
 				string id = inApp.GetComponent<ShopInfo>().id;
 				
-				if(Save.HasKey(id) || (id.Contains("noads") && Save.HasKey(PlayerPrefsKeys.NOADS.ToString())))
+				if(Save.HasKey(PlayerPrefsKeys.ITEM+id) || (id.Contains("noads") && Save.HasKey(PlayerPrefsKeys.NOADS)))
 				{
 					inApp.FindChild("Purchased").gameObject.SetActive(true);
 					inApp.FindChild("Coins").FindChild("Label").gameObject.SetActive(false);
+					inApp.GetComponent<ShopInfo>().has = true;
 				}
 				else if(!id.Contains("com."))
 				{
@@ -65,7 +67,7 @@ public class Shop : MonoBehaviour
 					if(id == "Like")
 					{
 						inApp.FindChild("Coins").FindChild("Label").GetComponent<SpriteText>().Text = Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsLike.ToString();
-						if(Save.HasKey(PlayerPrefsKeys.LIKE.ToString()))
+						if(Save.HasKey(PlayerPrefsKeys.LIKE))
 						{
 							// se jah deu like, nao pode mais clicar no botao
 							inApp.GetComponent<ShopInfo>().has = true;
@@ -76,7 +78,7 @@ public class Shop : MonoBehaviour
 					else if(id == "Share")
 					{
 						inApp.FindChild("Coins").FindChild("Label").GetComponent<SpriteText>().Text = Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsShare.ToString();
-						if(Save.HasKey(PlayerPrefsKeys.SHARE.ToString()) && (DateTime.Parse(Save.GetString(PlayerPrefsKeys.SHARE.ToString())) - DateTime.UtcNow) > TimeSpan.FromDays(1))
+						if(Save.HasKey(PlayerPrefsKeys.SHARE) && (DateTime.Parse(Save.GetString(PlayerPrefsKeys.SHARE)) - DateTime.UtcNow) > TimeSpan.FromDays(1))
 						{
 							// se jah deu share naquele dia, nao pode dar mais
 							inApp.GetComponent<ShopInfo>().has = true;
@@ -87,7 +89,7 @@ public class Shop : MonoBehaviour
 					else if(id == "Rate")
 					{
 						inApp.FindChild("Coins").FindChild("Label").GetComponent<SpriteText>().Text = Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsRate.ToString();
-						if(Save.HasKey(PlayerPrefsKeys.RATE.ToString()))
+						if(Save.HasKey(PlayerPrefsKeys.RATE))
 						{
 							// se jah deu rate, nao pode mais clicar no botao
 							inApp.GetComponent<ShopInfo>().has = true;
@@ -98,7 +100,7 @@ public class Shop : MonoBehaviour
 					else if(id == "Video")
 					{
 						inApp.FindChild("Coins").FindChild("Label").GetComponent<SpriteText>().Text = Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsVideo.ToString();
-						if(Save.HasKey(PlayerPrefsKeys.VIDEO.ToString()) && (DateTime.Parse(Save.GetString(PlayerPrefsKeys.VIDEO.ToString())) - DateTime.UtcNow) > TimeSpan.FromDays(1))
+						if(Save.HasKey(PlayerPrefsKeys.VIDEO) && (DateTime.Parse(Save.GetString(PlayerPrefsKeys.VIDEO)) - DateTime.UtcNow) > TimeSpan.FromDays(1))
 						{
 							// se jah viu o video naquele dia, nao pode ver mais
 							inApp.GetComponent<ShopInfo>().has = true;
@@ -109,7 +111,7 @@ public class Shop : MonoBehaviour
 					else if(id == "Widget")
 					{
 						inApp.FindChild("Coins").FindChild("Label").GetComponent<SpriteText>().Text = Flow.config.GetComponent<ConfigManager>().shopFeatures.coinsWidget.ToString();
-						if(Save.HasKey(PlayerPrefsKeys.WIDGET.ToString()) && (DateTime.Parse(Save.GetString(PlayerPrefsKeys.WIDGET.ToString())) - DateTime.UtcNow) > TimeSpan.FromDays(1))
+						if(Save.HasKey(PlayerPrefsKeys.WIDGET) && (DateTime.Parse(Save.GetString(PlayerPrefsKeys.WIDGET)) - DateTime.UtcNow) > TimeSpan.FromDays(1))
 						{
 							// se jah viu o link naquele dia, nao pode ver mais
 							inApp.GetComponent<ShopInfo>().has = true;
@@ -135,8 +137,21 @@ public class Shop : MonoBehaviour
 	{
 		if(!start) goodsScroll.ClearList(true);
 		
-		ShopItem[] shopItems = Flow.config.GetComponent<ConfigManager>().shopItems;
+		ShopItem[] allItems = Flow.config.GetComponent<ConfigManager>().shopItems;
+		List<ShopItem> tList = new List<ShopItem>();
+		foreach (ShopItem si in allItems) 
+		{
+			if(!si.hide)
+			{
+				tList.Add(si);
+			}
+		}
+		
+		ShopItem[] shopItems = tList.ToArray();
+		
 		items = shopItems.Length;
+		//foreach (ShopItem si in shopItems) if(!si.hide) items++;
+		
 		pages = items / itemsPerPage;
 		itemsLastPage = items % itemsPerPage;
 		if(itemsLastPage != 0) pages++;
@@ -161,10 +176,11 @@ public class Shop : MonoBehaviour
 				else tempPage.transform.FindChild("Item"+j).GetComponent<ShopInfo>().DownloadImage();
 				
 				// se tem o item, arruma seu transform
-				if(Save.HasKey(tempPage.transform.FindChild("Item"+j).GetComponent<ShopInfo>().id))
+				if(Save.HasKey(PlayerPrefsKeys.ITEMSPACK+tempPage.transform.FindChild("Item"+j).GetComponent<ShopInfo>().id))
 				{
 					tempPage.transform.FindChild("Item"+j).FindChild("Purchased").gameObject.SetActive(true);
 					tempPage.transform.FindChild("Item"+j).FindChild("Price").gameObject.SetActive(false);
+					tempPage.transform.FindChild("Item"+j).GetComponent<ShopInfo>().has = true;
 				}
 			}
 			

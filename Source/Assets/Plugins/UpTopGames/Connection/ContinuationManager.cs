@@ -27,8 +27,10 @@ internal static class ContinuationManager
  
     private static void Update()
     {
+		Debug.Log("pqp...");
         for (int i = 0; i >= 0; --i)
         {
+			Debug.Log("for louco "+i);
             var jobIt = jobs[i];
             if (jobIt.Completed())
             {

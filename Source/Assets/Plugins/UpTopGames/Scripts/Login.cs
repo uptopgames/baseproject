@@ -188,6 +188,8 @@ public class Login : MonoBehaviour
 		
 		Save.SaveAll();
 		
+		ConfigManager.offlineUpdater.UpdateOfflineItems();
+		
 		CheckLogin();
 	}
 	
@@ -324,7 +326,16 @@ public class Login : MonoBehaviour
 			Save.Set(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString(), json["fbtoken"].ToString(), true);
 			Save.Set(PlayerPrefsKeys.FACEBOOK_ID.ToString(), json["facebook_id"].ToString(), true);
 		}
-				
+		
+		// Atualiza token da FacebookAPI
+		if (Save.HasKey(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString())) 
+		{
+			FacebookAPI facebook = new FacebookAPI();
+			facebook.SetToken(Save.GetString(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()));
+		}
+		
+		ConfigManager.offlineUpdater.UpdateOfflineItems();
+		
 		// Verifica se e uma conta nova
 		if (json["new_account"].ToString() != "0")
 		{						
@@ -333,12 +344,7 @@ public class Login : MonoBehaviour
 			return;
 		}
 		
-		// Atualiza token da FacebookAPI
-		if (Save.HasKey(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString())) 
-		{
-			FacebookAPI facebook = new FacebookAPI();
-			facebook.SetToken(Save.GetString(PlayerPrefsKeys.FACEBOOK_TOKEN.ToString()));
-		}
+		
 		
 		
 		
